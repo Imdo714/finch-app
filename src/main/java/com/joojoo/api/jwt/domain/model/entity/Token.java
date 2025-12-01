@@ -1,6 +1,6 @@
 package com.joojoo.api.jwt.domain.model.entity;
 
-import com.joojoo.api.user.domain.model.entity.Users;
+import com.joojoo.api.user.domain.model.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "tokens")
-public class Tokens {
+public class Token {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,11 +24,23 @@ public class Tokens {
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    private Users user;
+    private User user;
 
     @Column(name = "refresh_token")
     private String refreshToken;
 
     @Column(name = "expires_at")
     private LocalDateTime expiresAt;
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public static Token create(User user, String refreshToken, LocalDateTime expiresAt) {
+        return Token.builder()
+                .user(user)
+                .refreshToken(refreshToken)
+                .expiresAt(expiresAt)
+                .build();
+    }
 }

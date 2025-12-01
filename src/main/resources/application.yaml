@@ -2,11 +2,19 @@ spring:
   application:
     name: joojoo-backend
 
-server:
-  port: 8080
-
   datasource:
     url: "${DB_URL}"
     username: "${DB_NAME}"
     password: "${DB_PWD}"
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8080

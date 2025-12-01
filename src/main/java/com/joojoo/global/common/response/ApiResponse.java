@@ -1,4 +1,4 @@
-package com.joojoo.api;
+package com.joojoo.global.common.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

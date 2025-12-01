@@ -1,6 +1,6 @@
 package com.joojoo.global.jwt.filter;
 
-import com.joojoo.api.ApiResponse;
+import com.joojoo.global.common.response.ApiResponse;
 import com.joojoo.api.jwt.domain.service.JwtProvider;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -24,7 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
 
     private final List<String> excludedUrls = List.of( // 인증 제외 URL
-            "/index", "/kakao/login", "/refresh", "/apple/login"
+            "/user/kakao/login"
     );
 
     public JwtAuthenticationFilter(JwtProvider jwtProvider) {
