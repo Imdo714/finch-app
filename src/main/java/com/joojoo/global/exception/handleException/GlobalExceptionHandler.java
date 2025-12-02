@@ -1,8 +1,8 @@
-package com.joojoo.global.exception.handelException;
+package com.joojoo.global.exception.handleException;
 
-import com.joojoo.global.common.exption.ExternalApiError;
+import com.joojoo.global.common.exception.ExternalApiError;
 import com.joojoo.global.common.response.ApiResponse;
-import com.joojoo.global.exception.handelException.auth.SocialAuthException;
+import com.joojoo.global.exception.handleException.auth.SocialAuthException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;

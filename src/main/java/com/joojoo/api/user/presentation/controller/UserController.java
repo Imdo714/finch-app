@@ -18,7 +18,7 @@ public class UserController {
     private final KakaoSocialLoginService kakaoSocialLoginService;
 
     @PostMapping("/kakao/login")
-    public ApiResponse<LoginResponse> aaaLogin(@RequestBody AuthCodeDto payload) {
+    public ApiResponse<LoginResponse> kakaoLogin(@RequestBody AuthCodeDto payload) {
         return ApiResponse.ok(kakaoSocialLoginService.kakaoSocialLogin(payload.getCode()));
     }
 }

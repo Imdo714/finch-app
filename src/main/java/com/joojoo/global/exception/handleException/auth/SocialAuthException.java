@@ -1,4 +1,4 @@
-package com.joojoo.global.exception.handelException.auth;
+package com.joojoo.global.exception.handleException.auth;
 
 public class SocialAuthException extends RuntimeException {
     public SocialAuthException(String message) {
