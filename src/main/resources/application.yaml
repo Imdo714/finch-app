@@ -2,6 +2,11 @@ spring:
   application:
     name: joojoo-backend
 
+  config:
+    import:
+      - optional:file:.env[.properties]
+      - optional:classpath:.env[.properties]
+
   datasource:
     url: "${DB_URL}"
     username: "${DB_NAME}"
@@ -18,3 +23,9 @@ spring:
 
 server:
   port: 8080
+
+cors:
+  origin:
+    local: ${CORS_ORIGIN_LOCAL}
+    development: ${CORS_ORIGIN_DEVELOPMENT}
+    production: ${CORS_ORIGIN_PRODUCTION}
