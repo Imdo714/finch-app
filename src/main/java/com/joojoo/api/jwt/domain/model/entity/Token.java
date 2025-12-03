@@ -2,7 +2,7 @@ package com.joojoo.api.jwt.domain.model.entity;
 
 import com.joojoo.api.user.domain.model.entity.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,17 +10,14 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "tokens")
 public class Token {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "token_id")
-    private Long tokenId;
+    private Long id;
 
     @OneToOne
     @JoinColumn(name = "user_id")
@@ -32,15 +29,23 @@ public class Token {
     @Column(name = "expires_at")
     private LocalDateTime expiresAt;
 
-    public void updateRefreshToken(String refreshToken) {
+    @Builder
+    public Token(User user, String refreshToken, LocalDateTime expiresAt) {
+        this.user = user;
         this.refreshToken = refreshToken;
+        this.expiresAt = expiresAt;
     }
 
     public static Token create(User user, String refreshToken, LocalDateTime expiresAt) {
         return Token.builder()
-                .user(user)
-                .refreshToken(refreshToken)
-                .expiresAt(expiresAt)
-                .build();
+            .user(user)
+            .refreshToken(refreshToken)
+            .expiresAt(expiresAt)
+            .build();
+    }
+
+    public void updateRefreshToken(String refreshToken, LocalDateTime expiresAt) {
+        this.refreshToken = refreshToken;
+        this.expiresAt = expiresAt;
     }
 }
