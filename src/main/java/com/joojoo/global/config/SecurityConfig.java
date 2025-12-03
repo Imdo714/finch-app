@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/index", "/kakao/login", "/refresh", "/apple/login").permitAll()
+                        .requestMatchers("/user/kakao/login").permitAll()
                         .anyRequest().authenticated()
                 )
 

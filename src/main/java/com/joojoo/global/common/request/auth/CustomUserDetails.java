@@ -1,4 +1,4 @@
-package com.joojoo.api.user.domain.model.custom;
+package com.joojoo.global.common.request.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

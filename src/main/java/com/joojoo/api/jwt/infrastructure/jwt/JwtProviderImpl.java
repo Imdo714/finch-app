@@ -1,7 +1,7 @@
 package com.joojoo.api.jwt.infrastructure.jwt;
 
 import com.joojoo.api.jwt.domain.service.JwtProvider;
-import com.joojoo.api.user.domain.model.custom.CustomUserDetails;
+import com.joojoo.global.common.request.auth.CustomUserDetails;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -87,14 +87,12 @@ public class JwtProviderImpl implements JwtProvider {
     }
 
     @Override
-    public Long getExpiration(String token) {
-        // 토큰의 만료 시간 - 현재 시간 = 남은 시간
-        Date expiration = Jwts.parser()
+    public Date getExpiration(String token) {
+        return Jwts.parser()
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody()
                 .getExpiration();
-        return expiration.getTime() - new Date().getTime();
     }
 
 }
