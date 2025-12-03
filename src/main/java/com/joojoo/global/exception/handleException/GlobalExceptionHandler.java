@@ -1,26 +1,28 @@
 package com.joojoo.global.exception.handleException;
 
-import com.joojoo.global.common.exception.ExternalApiError;
-import com.joojoo.global.common.response.ApiResponse;
-import com.joojoo.global.exception.handleException.auth.SocialAuthException;
-import jakarta.servlet.http.HttpServletResponse;
+import com.joojoo.global.common.response.ErrorResponse;
+import com.joojoo.global.exception.ServiceException;
+import com.joojoo.global.exception.enums.ErrorCode;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(SocialAuthException.class)
-    public ApiResponse<Object> socialAuthException(SocialAuthException e, HttpServletResponse response) {
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
-        return ApiResponse.of(HttpStatus.BAD_REQUEST, e.getMessage(), null);
+    // ServiceException 처리
+    @ExceptionHandler(ServiceException.class)
+    public ResponseEntity<ErrorResponse> handleServiceException(ServiceException serviceException) {
+        ErrorCode errorCode = serviceException.getErrorCode();
+        ErrorResponse errorResponse = new ErrorResponse(errorCode, serviceException.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(errorCode.getHttpStatus()));
     }
 
-    @ExceptionHandler(ExternalApiError.class)
-    public ApiResponse<Object> externalApiError(ExternalApiError e, HttpServletResponse response) {
-        response.setStatus(HttpStatus.BAD_GATEWAY.value());
-        return ApiResponse.of(HttpStatus.BAD_GATEWAY, e.getMessage(), null);
+    // 일반 Exception 처리
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(Exception exception) {
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR, exception.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
 }
