@@ -14,12 +14,11 @@ public class KakaoUserDto {
     private String name;
     private String profileImageUrl;
 
-
     public static KakaoUserDto of(KakaoUserResponse.KakaoAccount account, KakaoUserResponse.KakaoAccount.Profile profile) {
         return KakaoUserDto.builder()
-                .email(account.getEmail())
-                .name(profile.getNickname())
-                .profileImageUrl(profile.getProfile_image_url())
-                .build();
+            .email(account.getEmail())
+            .name(profile.getNickname())
+            .profileImageUrl(profile.getProfile_image_url())
+            .build();
     }
 }
