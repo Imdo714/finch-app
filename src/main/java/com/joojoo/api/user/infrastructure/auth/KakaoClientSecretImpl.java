@@ -4,8 +4,7 @@ import com.joojoo.api.user.domain.service.auth.KakaoClientSecret;
 import com.joojoo.api.user.presentation.dto.request.kakao.AccessTokenDto;
 import com.joojoo.api.user.presentation.dto.request.kakao.KakaoUserDto;
 import com.joojoo.api.user.presentation.dto.request.kakao.KakaoUserResponse;
-import com.joojoo.global.common.exception.ExternalApiError;
-import com.joojoo.global.exception.handleException.auth.SocialAuthException;
+import com.joojoo.global.exception.handleException.auth.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
@@ -35,22 +34,22 @@ public class KakaoClientSecretImpl implements KakaoClientSecret {
         params.add("code", code);
 
         AccessTokenDto responseBody = restClient.post()
-                .uri("https://kauth.kakao.com/oauth/token")
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .body(params)
-                .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
-                    log.error("[KakaoAuth] 토큰 발급 실패 (4xx) - 상태코드: {}, 내용: {}", response.getStatusCode(), new String(response.getBody().readAllBytes()));
-                    throw new SocialAuthException("유효하지 않은 인가 코드이거나 만료되었습니다.");
-                })
-                .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
-                    log.error("[KakaoAuth] 토큰 발급 실패 (5xx) - 카카오 서버 오류: {}", response.getStatusCode());
-                    throw new ExternalApiError("카카오 인증 서버에 일시적인 문제가 발생했습니다.");
-                })
-                .body(AccessTokenDto.class);
+            .uri("https://kauth.kakao.com/oauth/token")
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .body(params)
+            .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                log.error("[KakaoAuth] 토큰 발급 실패 (4xx) - 상태코드: {}, 내용: {}", response.getStatusCode(), new String(response.getBody().readAllBytes()));
+                throw new InvalidAuthorizationException();
+            })
+            .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
+                log.error("[KakaoAuth] 토큰 발급 실패 (5xx) - 카카오 서버 오류: {}", response.getStatusCode());
+                throw new KakaoTokenIssueFailedException();
+            })
+            .body(AccessTokenDto.class);
 
         if (responseBody == null || responseBody.getAccessToken() == null) {
-            throw new ExternalApiError("카카오 토큰 발급 응답이 올바르지 않습니다.");
+            throw new KakaoInvalidTokenResponseException();
         }
 
         return responseBody;
@@ -61,21 +60,21 @@ public class KakaoClientSecretImpl implements KakaoClientSecret {
         RestClient restClient = RestClient.create();
 
         KakaoUserResponse response = restClient.get()
-                .uri("https://kapi.kakao.com/v2/user/me")
-                .header("Authorization", "Bearer " + accessToken)
-                .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, (request, res) -> {
-                    log.error("[KakaoAuth] 유저 조회 실패 (4xx) - 상태코드: {}", res.getStatusCode());
-                    throw new SocialAuthException("카카오 액세스 토큰이 유효하지 않습니다.");
-                })
-                .onStatus(HttpStatusCode::is5xxServerError, (request, res) -> {
-                    log.error("[KakaoAuth] 유저 조회 실패 (5xx) - 카카오 서버 오류: {}", res.getStatusCode());
-                    throw new ExternalApiError("카카오 유저 정보 조회 서버에 문제가 발생했습니다.");
-                })
-                .body(KakaoUserResponse.class);
+            .uri("https://kapi.kakao.com/v2/user/me")
+            .header("Authorization", "Bearer " + accessToken)
+            .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError, (request, httpResponse) -> {
+                log.error("[KakaoAuth] 유저 조회 실패 (4xx) - 상태코드: {}", httpResponse.getStatusCode());
+                throw new InvalidAuthorizationException();
+            })
+            .onStatus(HttpStatusCode::is5xxServerError, (request, httpResponse) -> {
+                log.error("[KakaoAuth] 유저 조회 실패 (5xx) - 카카오 서버 오류: {}", httpResponse.getStatusCode());
+                throw new KakaoUserInfoRetrieveFailedException();
+            })
+            .body(KakaoUserResponse.class);
 
         if (response == null || response.getKakaoAccount() == null) {
-            throw new ExternalApiError("카카오 유저 정보를 불러오는데 실패했습니다.");
+            throw new KakaoInvalidUserResponseException();
         }
 
         return KakaoUserDto.of(response.getKakaoAccount(), response.getKakaoAccount().getProfile());
