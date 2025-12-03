@@ -2,25 +2,30 @@ package com.joojoo.api.jwt.infrastructure.rdbms;
 
 import com.joojoo.api.jwt.domain.model.entity.Token;
 import com.joojoo.api.jwt.domain.repository.TokenRepository;
+import com.joojoo.api.user.domain.model.entity.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Service
+@Repository
 @RequiredArgsConstructor
 public class TokenRepositoryImpl implements TokenRepository {
 
     private final TokenJpaRepository tokenJpaRepository;
 
     @Override
-    public Token save(Token refreshToken) {
-        return tokenJpaRepository.save(refreshToken);
+    public Optional<Token> findByUser(User user) {
+        return tokenJpaRepository.findByUser(user);
     }
 
     @Override
     public Optional<Token> findByUserId(Long userId) {
-        return tokenJpaRepository.findByUser_UserId(userId);
+        return tokenJpaRepository.findByUserId(userId);
     }
 
+    @Override
+    public Token save(Token token) {
+        return tokenJpaRepository.save(token);
+    }
 }
