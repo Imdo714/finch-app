@@ -1,6 +1,6 @@
 package com.joojoo.global.jwt.filter;
 
-import com.joojoo.global.common.response.ApiResponse;
+import com.joojoo.global.common.response.BaseResponse;
 import com.joojoo.api.jwt.domain.service.JwtProvider;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import tools.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,7 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
 
     private final List<String> excludedUrls = List.of( // 인증 제외 URL
-            "/user/kakao/login"
+        "/user/kakao/login"
     );
 
     public JwtAuthenticationFilter(JwtProvider jwtProvider) {
@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.info("================ doFilterInternal Action ================");
         log.info("request.getRequestURI() = {}", request.getRequestURI());
 
-        try{
+        try {
             if (isExcludedUrl(request)) { // 필터 제외 URL이면 바로 다음 필터로 진행
                 filterChain.doFilter(request, response);
                 return;
@@ -74,9 +74,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        ApiResponse<Object> apiResponse = ApiResponse.of(status, message);
+        BaseResponse<Object> baseResponse = BaseResponse.of(status, message);
         ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(apiResponse);
+        String json = mapper.writeValueAsString(baseResponse);
 
         response.getWriter().write(json);
     }

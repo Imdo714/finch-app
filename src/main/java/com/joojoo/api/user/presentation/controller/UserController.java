@@ -1,9 +1,9 @@
 package com.joojoo.api.user.presentation.controller;
 
-import com.joojoo.global.common.response.ApiResponse;
 import com.joojoo.api.user.application.socialLogin.kakao.KakaoSocialLoginService;
 import com.joojoo.api.user.presentation.dto.request.AuthCodeDto;
 import com.joojoo.api.user.presentation.dto.response.LoginResponse;
+import com.joojoo.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +18,7 @@ public class UserController {
     private final KakaoSocialLoginService kakaoSocialLoginService;
 
     @PostMapping("/kakao/login")
-    public ApiResponse<LoginResponse> kakaoLogin(@RequestBody AuthCodeDto payload) {
-        return ApiResponse.ok(kakaoSocialLoginService.kakaoSocialLogin(payload.getCode()));
+    public BaseResponse<LoginResponse> kakaoLogin(@RequestBody AuthCodeDto payload) {
+        return BaseResponse.ok(kakaoSocialLoginService.kakaoSocialLogin(payload.getCode()));
     }
 }
