@@ -30,23 +30,25 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+            .csrf(AbstractHttpConfigurer::disable)
+            .formLogin(AbstractHttpConfigurer::disable)
+            .cors(cors -> cors.configurationSource(corsConfigurationSource))
 
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/kakao/login").permitAll()
-                        .anyRequest().authenticated()
-                )
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/user/kakao/login").permitAll()
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                .requestMatchers("/health/**").permitAll()
+                .anyRequest().authenticated()
+            )
 
-                .exceptionHandling(ex -> ex
-                        // Security 에서 걸린 애들 즉, authenticated()에 로그인을 안한 애들은 예외처리
-                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-                )
+            .exceptionHandling(ex -> ex
+                // Security 에서 걸린 애들 즉, authenticated()에 로그인을 안한 애들은 예외처리
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+            )
 
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
         ;
         return http.build();
     }

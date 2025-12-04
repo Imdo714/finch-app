@@ -9,7 +9,7 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class LoginResponse {
-    private Long  id;
+    private Long id;
     private String email;
     private String name;
     private String profileImageUrl;
@@ -18,12 +18,12 @@ public class LoginResponse {
 
     public static LoginResponse of(User user, String accessToken, String refreshToken) {
         return LoginResponse.builder()
-                .id(user.getUserId())
-                .email(user.getEmail())
-                .name(user.getName())
-                .profileImageUrl(user.getProfileImageUrl())
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+            .id(user.getId())
+            .email(user.getEmail())
+            .name(user.getName())
+            .profileImageUrl(user.getProfileImageUrl())
+            .accessToken(accessToken)
+            .refreshToken(refreshToken)
+            .build();
     }
 }

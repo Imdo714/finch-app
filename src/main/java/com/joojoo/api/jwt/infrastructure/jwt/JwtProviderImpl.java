@@ -3,6 +3,7 @@ package com.joojoo.api.jwt.infrastructure.jwt;
 import com.joojoo.api.jwt.domain.service.JwtProvider;
 import com.joojoo.global.common.request.auth.CustomUserDetails;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.List;
 
@@ -26,16 +28,20 @@ public class JwtProviderImpl implements JwtProvider {
     @Value("${JWT_REFRESH_EXPIRATION}")
     private long refreshTokenValidity;
 
+    private SecretKey getSigningKey() {
+        return Keys.hmacShaKeyFor(secretKey.getBytes());
+    }
+
     @Override
     public String createAccessToken(Long userId, String userName) {
-        Claims claims = Jwts.claims().setSubject(userName);
+        Claims claims = Jwts.claims().subject(userName).build();
         claims.put("userId", userId);
         return createToken(claims, accessTokenValidity);
     }
 
     @Override
     public String createRefreshToken(Long userId, String userName) {
-        Claims claims = Jwts.claims().setSubject(userName);
+        Claims claims = Jwts.claims().subject(userName).build();
         claims.put("userId", userId);
         return createToken(claims, refreshTokenValidity);
     }
@@ -45,11 +51,11 @@ public class JwtProviderImpl implements JwtProvider {
         Date expiry = new Date(now.getTime() + validity);
 
         return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(expiry)
-                .signWith(SignatureAlgorithm.HS256, secretKey)
-                .compact();
+            .claims(claims)
+            .issuedAt(now)
+            .expiration(expiry)
+            .signWith(getSigningKey(), Jwts.SIG.HS256)
+            .compact();
     }
 
     @Override
@@ -62,8 +68,10 @@ public class JwtProviderImpl implements JwtProvider {
     public void validateToken(String token) {
         try {
             Jwts.parser()
-                    .setSigningKey(secretKey)
-                    .parseClaimsJws(token);
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token);
+
         } catch (ExpiredJwtException e) {
             throw e;
         } catch (JwtException | IllegalArgumentException e) {
@@ -74,25 +82,25 @@ public class JwtProviderImpl implements JwtProvider {
     @Override
     public Authentication getAuthentication(String token) { // 토큰에서 User 정보를 꺼내서 Authentication 타입으로 반환
         Claims claims = Jwts.parser()
-                .setSigningKey(secretKey)
-                .parseClaimsJws(token)
-                .getBody();
+            .verifyWith(getSigningKey())
+            .build()
+            .parseSignedClaims(token)
+            .getPayload();
 
         String username = claims.getSubject();
         Long userId = Long.valueOf(claims.get("userId").toString());
 
-        CustomUserDetails principal = new CustomUserDetails(userId, username);
-
-        return new UsernamePasswordAuthenticationToken(principal, "", List.of());
+        CustomUserDetails user = new CustomUserDetails(userId, username);
+        return new UsernamePasswordAuthenticationToken(user, "", List.of());
     }
 
     @Override
     public Date getExpiration(String token) {
         return Jwts.parser()
-                .setSigningKey(secretKey)
-                .parseClaimsJws(token)
-                .getBody()
-                .getExpiration();
+            .verifyWith(getSigningKey())
+            .build()
+            .parseSignedClaims(token)
+            .getPayload()
+            .getExpiration();
     }
-
 }
