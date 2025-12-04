@@ -24,7 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
 
     private final List<String> excludedUrls = List.of( // 인증 제외 URL
-        "/user/kakao/login"
+        "/user/kakao/login", "/user/apple/login"
     );
 
     public JwtAuthenticationFilter(JwtProvider jwtProvider) {

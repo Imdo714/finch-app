@@ -34,6 +34,9 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Provider provider;
 
+    @Column(name = "provider_id")
+    private String providerId;
+
     @Enumerated(EnumType.STRING)
     private Status status;
 
@@ -44,11 +47,12 @@ public class User extends BaseTimeEntity {
     private Token token;
 
     @Builder
-    public User(String email, String name, String profileImageUrl, Provider provider, Status status, String socialRefresh, Token token) {
+    public User(String email, String name, String profileImageUrl, Provider provider, String providerId, Status status, String socialRefresh, Token token) {
         this.email = email;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
         this.provider = provider;
+        this.providerId = providerId;
         this.status = status;
         this.socialRefresh = socialRefresh;
         this.token = token;
@@ -63,6 +67,16 @@ public class User extends BaseTimeEntity {
             .socialRefresh(socialRefreshToken)
             .status(Status.ACTIVE)
             .build();
+    }
+
+    public static User createAppleUserBuilder(String providerId, String email, String appleRefreshToken) {
+        return User.builder()
+                .email(email)
+                .provider(Provider.APPLE)
+                .providerId(providerId)
+                .socialRefresh(appleRefreshToken)
+                .status(Status.ACTIVE)
+                .build();
     }
 
     public void updateSocialRefreshToken(String newToken) {

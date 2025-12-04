@@ -28,12 +28,12 @@ public abstract class BaseTimeEntity {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted = false;
+//    @Column(name = "is_deleted", nullable = false)
+//    private Boolean isDeleted = false;
 
     // Soft Delete 메서드
     public void delete() {
-        this.isDeleted = true;
+//        this.isDeleted = true;
         this.deletedAt = LocalDateTime.now();
     }
 }

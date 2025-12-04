@@ -19,6 +19,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public Optional<User> findByProviderId(String providerId) {
+        return userJpaRepository.findByProviderId(providerId);
+    }
+
+    @Override
     public User save(User user) {
         return userJpaRepository.save(user);
     }

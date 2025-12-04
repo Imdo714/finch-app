@@ -34,15 +34,20 @@ public class JwtProviderImpl implements JwtProvider {
 
     @Override
     public String createAccessToken(Long userId, String userName) {
-        Claims claims = Jwts.claims().subject(userName).build();
-        claims.put("userId", userId);
+        Claims claims = Jwts.claims()
+                .subject(userName)
+                .add("userId", userId) // 여기서 값을 추가합니다
+                .build();
         return createToken(claims, accessTokenValidity);
     }
 
     @Override
     public String createRefreshToken(Long userId, String userName) {
-        Claims claims = Jwts.claims().subject(userName).build();
-        claims.put("userId", userId);
+        Claims claims = Jwts.claims()
+                .subject(userName)
+                .add("userId", userId)
+                .build();
+
         return createToken(claims, refreshTokenValidity);
     }
 
