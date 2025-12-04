@@ -8,7 +8,7 @@ import lombok.Builder;
  */
 @Builder
 public record ErrorResponse(
-    int httpStatus, // HTTP 상태 코드
+    int status, // HTTP 상태 코드
     String message, // 사용자에게 보여질 메시지
     String code,    // 에러 식별 코드
     String detailMessage    // 상태 메시지
@@ -33,7 +33,7 @@ public record ErrorResponse(
 
     public static ErrorResponse of(ErrorCode errorCode) {
         return ErrorResponse.builder()
-            .httpStatus(errorCode.getHttpStatus())
+            .status(errorCode.getHttpStatus())
             .code(errorCode.getCode())
             .message(errorCode.getMessage())
             .build();
