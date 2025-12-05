@@ -27,18 +27,19 @@ public class JwtTokenUseCaseImpl implements JwtTokenUseCase {
     @Transactional
     public String createAndSaveRefreshToken(Long userId, String userName, User user) {
         String refreshToken = jwtProvider.createRefreshToken(userId, userName);
-        Date expirationDate = jwtProvider.getExpiration(refreshToken);
-        LocalDateTime expiresAt = TokenExpirationUtil.toLocalDateTime(expirationDate);
+        LocalDateTime expiresAt = TokenExpirationUtil.toLocalDateTime(jwtProvider.getExpiration(refreshToken));
 
-        tokenRepository.findByUserId(userId)
-            .ifPresentOrElse(
-                existingToken -> {
-                    existingToken.updateRefreshToken(refreshToken, expiresAt);  // 기존 토큰이 있으면, 업데이트
-                    tokenRepository.save(existingToken);
-                },
-                () -> tokenRepository.save(Token.create(user, refreshToken, expiresAt)) // 토큰이 없으면, 새로 저장
-            );
+        registerRefreshToken(user, refreshToken, expiresAt);
         return refreshToken;
+    }
+
+    private void registerRefreshToken(User user, String refreshToken, LocalDateTime expiresAt) {
+        Token existingToken = user.getToken();
+        if (existingToken != null) {
+            existingToken.updateRefreshToken(refreshToken, expiresAt);
+        } else {
+            tokenRepository.save(Token.create(user, refreshToken, expiresAt));
+        }
     }
 
     @Override

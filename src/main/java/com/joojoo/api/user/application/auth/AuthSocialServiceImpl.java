@@ -85,16 +85,14 @@ public class AuthSocialServiceImpl implements AuthSocialService {
 
     private User registerOrLogin(KakaoUserDto kakaoUser, String socialRefreshToken) {
         return userRepository.findByEmail(kakaoUser.getEmail())
-                .map(user -> {
-                    // user가 있으면 RefreshToken 업데이트
-                    user.updateSocialRefreshToken(socialRefreshToken);
-                    return userRepository.save(user);
-                })
-                .orElseGet(() -> {
-                    // user가 없다면 DB에 저장
-                    User newUser = User.createKakaoUserBuilder(kakaoUser, socialRefreshToken);
-                    return userRepository.save(newUser);
-                });
+            .map(user -> {
+                user.updateSocialRefreshToken(socialRefreshToken);
+                return user;
+            })
+            .orElseGet(() -> {
+                User newUser = User.createKakaoUserBuilder(kakaoUser, socialRefreshToken);
+                return userRepository.save(newUser);
+            });
     }
 
     // idToken으로 사용자 정보 추출하는 메서드
