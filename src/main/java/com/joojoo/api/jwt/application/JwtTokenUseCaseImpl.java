@@ -3,6 +3,7 @@ package com.joojoo.api.jwt.application;
 import com.joojoo.api.jwt.domain.model.entity.Token;
 import com.joojoo.api.jwt.domain.repository.TokenRepository;
 import com.joojoo.api.jwt.domain.service.JwtProvider;
+import com.joojoo.api.jwt.domain.repository.TokenBlacklistRepository;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.global.common.util.TokenExpirationUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Slf4j
 @Service
@@ -22,6 +22,7 @@ public class JwtTokenUseCaseImpl implements JwtTokenUseCase {
 
     private final TokenRepository tokenRepository;
     private final JwtProvider jwtProvider;
+    private final TokenBlacklistRepository tokenBlacklistRepository;
 
     @Override
     @Transactional
@@ -53,9 +54,8 @@ public class JwtTokenUseCaseImpl implements JwtTokenUseCase {
         String accessToken = jwtProvider.extractBearerToken(request);
         Long expiration = jwtProvider.getRemainingTime(accessToken);
 
-        // TODO : Redis에 키 값으로 accessToken 넣고 만료시간 expiration으로 정의
-
-        tokenRepository.delete(userId);
+        tokenBlacklistRepository.add(accessToken, expiration); // AccessToken 블랙리스트에 저장
+        tokenRepository.delete(userId); // DB에서 RefreshToken 삭제
     }
 
 }

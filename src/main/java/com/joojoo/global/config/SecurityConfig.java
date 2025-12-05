@@ -1,6 +1,7 @@
 package com.joojoo.global.config;
 
 import com.joojoo.api.jwt.domain.service.JwtProvider;
+import com.joojoo.api.jwt.domain.repository.TokenBlacklistRepository;
 import com.joojoo.global.exception.authentication.CustomAuthenticationEntryPoint;
 import com.joojoo.global.jwt.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
@@ -18,15 +19,17 @@ public class SecurityConfig {
 
     private final CorsConfigurationSource corsConfigurationSource;
     private final JwtProvider jwtProvider;
+    private final TokenBlacklistRepository tokenBlacklistRepository;
 
-    public SecurityConfig(CorsConfigurationSource corsConfigurationSource, JwtProvider jwtProvider) {
+    public SecurityConfig(CorsConfigurationSource corsConfigurationSource, JwtProvider jwtProvider, TokenBlacklistRepository tokenBlacklistRepository) {
         this.corsConfigurationSource = corsConfigurationSource;
         this.jwtProvider = jwtProvider;
+        this.tokenBlacklistRepository = tokenBlacklistRepository;
     }
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtProvider);
+        return new JwtAuthenticationFilter(jwtProvider, tokenBlacklistRepository);
     }
 
     @Bean
