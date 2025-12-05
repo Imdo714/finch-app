@@ -11,4 +11,6 @@ public interface TokenRepository {
     Optional<Token> findByUserId(Long userId);
 
     Token save(Token token);
+
+    void delete(Long userId);
 }

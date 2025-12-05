@@ -5,6 +5,7 @@ import com.joojoo.api.jwt.domain.repository.TokenRepository;
 import com.joojoo.api.jwt.domain.service.JwtProvider;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.global.common.util.TokenExpirationUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,4 +45,16 @@ public class JwtTokenUseCaseImpl implements JwtTokenUseCase {
     public String createAccessToken(Long userId, String userName) {
         return jwtProvider.createAccessToken(userId, userName);
     }
+
+    @Override
+    @Transactional
+    public void clearUserTokens(Long userId, HttpServletRequest request) {
+        String accessToken = jwtProvider.extractBearerToken(request);
+        Long expiration = jwtProvider.getRemainingTime(accessToken);
+
+        // TODO : Redis에 키 값으로 accessToken 넣고 만료시간 expiration으로 정의
+
+        tokenRepository.delete(userId);
+    }
+
 }

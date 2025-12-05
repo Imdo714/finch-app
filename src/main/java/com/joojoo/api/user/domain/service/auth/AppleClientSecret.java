@@ -11,4 +11,6 @@ public interface AppleClientSecret {
     AppleTokenResponse requestAppleToken(String authorizationCode, String clientSecret);
     // idToken 파싱
     Map<String, Object> getAppleUserIdFromIdToken(String idToken);
+    // 애플 서버에 계정 탈퇴 요청
+    void sendRevokeRequest(String clientSecret, String socialRefreshToken);
 }

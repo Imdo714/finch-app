@@ -84,4 +84,14 @@ public class User extends BaseTimeEntity {
             this.socialRefresh = newToken;
         }
     }
+
+    public void withdraw() {
+        this.email = null;
+        this.name = null;
+        this.profileImageUrl = null;
+        this.status = Status.DELETED;
+        this.delete();
+        this.socialRefresh = null;
+        this.providerId = null;
+    }
 }
