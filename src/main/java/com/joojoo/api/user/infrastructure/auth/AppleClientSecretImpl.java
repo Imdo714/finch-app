@@ -10,11 +10,14 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 import tools.jackson.databind.ObjectMapper;
@@ -110,6 +113,30 @@ public class AppleClientSecretImpl implements AppleClientSecret {
             log.error("[AppleAuth] 알 수 없는 오류 발생: {}", e.getMessage());
             throw new InvalidAuthorizationException();
         }
+    }
+
+    @Override
+    public void sendRevokeRequest(String clientSecret, String socialRefreshToken) {
+        RestClient restClient = RestClient.create();
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("client_id", clientId);
+        params.add("client_secret", clientSecret);
+        params.add("token", socialRefreshToken);
+        params.add("token_type_hint", "refresh_token");
+
+        restClient.post()
+                .uri("https://appleid.apple.com/auth/revoke")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(params)
+                .retrieve() // 요청 전송 시작
+                .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                    log.warn("애플 연결 해제 실패 (4xx) - 이미 해제되었거나 유효하지 않음. 진행 계속함. 상태: {}", response.getStatusCode());
+                })
+                .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
+                    log.error("애플 연결 해제 실패 (5xx) - 애플 서버 오류. 로컬 탈퇴 진행함. 상태: {}", response.getStatusCode());
+                })
+                .toBodilessEntity();
     }
 
     // PrivateKey 객체 생성 헬퍼 (BouncyCastle 라이브러리 필요할 수 있음)

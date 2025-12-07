@@ -1,5 +1,6 @@
 package com.joojoo.global.jwt.filter;
 
+import com.joojoo.api.jwt.domain.repository.TokenBlacklistRepository;
 import com.joojoo.global.common.response.BaseResponse;
 import com.joojoo.api.jwt.domain.service.JwtProvider;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -22,13 +23,15 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
+    private final TokenBlacklistRepository tokenBlacklistRepository;
 
     private final List<String> excludedUrls = List.of( // 인증 제외 URL
         "/user/kakao/login", "/user/apple/login"
     );
 
-    public JwtAuthenticationFilter(JwtProvider jwtProvider) {
+    public JwtAuthenticationFilter(JwtProvider jwtProvider, TokenBlacklistRepository tokenBlacklistRepository) {
         this.jwtProvider = jwtProvider;
+        this.tokenBlacklistRepository = tokenBlacklistRepository;
     }
 
     @Override
@@ -57,6 +60,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void authenticateIfTokenExists(HttpServletRequest request) {
         String token = jwtProvider.extractBearerToken(request);
         if (token == null) return;
+
+        if (tokenBlacklistRepository.isBlacklisted(token)) {
+            throw new JwtException("로그아웃된 토큰입니다.");
+        }
 
         jwtProvider.validateToken(token);
         Authentication auth = jwtProvider.getAuthentication(token);

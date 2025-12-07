@@ -23,4 +23,7 @@ public interface JwtProvider {
 
     // 로그아웃 구현 시 필요: 토큰의 남은 유효시간(ms) 조회
     Date getExpiration(String token);
+
+    // 토큰 남은 시간 반환
+    Long getRemainingTime(String token);
 }

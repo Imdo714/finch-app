@@ -1,4 +1,4 @@
-package com.joojoo.global.exception.handleException.auth;
+package com.joojoo.global.exception.handleException.auth.kakao;
 
 import com.joojoo.global.exception.ServiceException;
 import com.joojoo.global.exception.enums.ErrorCode;

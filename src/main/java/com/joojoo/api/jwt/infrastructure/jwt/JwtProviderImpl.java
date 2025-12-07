@@ -108,4 +108,11 @@ public class JwtProviderImpl implements JwtProvider {
             .getPayload()
             .getExpiration();
     }
+
+    @Override
+    public Long getRemainingTime(String token) {
+        Date expiration = getExpiration(token);
+        long now = new Date().getTime();
+        return expiration.getTime() - now;
+    }
 }

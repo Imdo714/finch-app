@@ -5,6 +5,10 @@ import com.joojoo.api.user.presentation.dto.request.kakao.AccessTokenDto;
 import com.joojoo.api.user.presentation.dto.request.kakao.KakaoUserDto;
 import com.joojoo.api.user.presentation.dto.request.kakao.KakaoUserResponse;
 import com.joojoo.global.exception.handleException.auth.*;
+import com.joojoo.global.exception.handleException.auth.kakao.KakaoInvalidTokenResponseException;
+import com.joojoo.global.exception.handleException.auth.kakao.KakaoInvalidUserResponseException;
+import com.joojoo.global.exception.handleException.auth.kakao.KakaoTokenIssueFailedException;
+import com.joojoo.global.exception.handleException.auth.kakao.KakaoUserInfoRetrieveFailedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
@@ -78,6 +82,40 @@ public class KakaoClientSecretImpl implements KakaoClientSecret {
         }
 
         return KakaoUserDto.of(response.getKakaoAccount(), response.getKakaoAccount().getProfile());
+    }
+
+    @Override
+    public String renewKakaoAccessToken(String refreshToken) {
+        RestClient restClient = RestClient.create();
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "refresh_token");
+        params.add("client_id", client_id);
+        params.add("refresh_token", refreshToken);
+
+        AccessTokenDto responseBody = restClient.post()
+                .uri("https://kauth.kakao.com/oauth/token")
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .body(params)
+                .retrieve()
+                .body(AccessTokenDto.class);
+
+        if (responseBody == null || responseBody.getAccessToken() == null) {
+            throw new InvalidAuthorizationException();
+        }
+
+        return responseBody.getAccessToken();
+    }
+
+    @Override
+    public void unlinkKakaoUser(String kakaoAccessToken) {
+        RestClient restClient = RestClient.create();
+
+        restClient.post()
+                .uri("https://kapi.kakao.com/v1/user/unlink")
+                .header("Authorization", "Bearer " + kakaoAccessToken)
+                .retrieve()
+                .toBodilessEntity();
     }
 
 }
