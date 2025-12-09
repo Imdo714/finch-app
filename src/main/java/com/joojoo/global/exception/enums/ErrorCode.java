@@ -36,6 +36,10 @@ public enum ErrorCode {
     APPLE_TOKEN_ISSUE_FAILED(502, "APPLE_TOKEN_ISSUE_FAILED", "애플 토큰 발급 서버에 문제가 발생했습니다."),
     APPLE_INVALID_TOKEN_RESPONSE(400, "APPLE_INVALID_TOKEN_RESPONSE", "애플 토큰 발급 응답이 올바르지 않습니다."),
     APPLE_INVALID_ID_TOKEN(400, "APPLE_INVALID_ID_TOKEN", "애플 ID Token 형식이 올바르지 않거나 파싱에 실패했습니다."),
+
+    // ---------------------------- 소셜로그인 (Apple) ----------------------------
+    INVALID_TICKER_NAME(401, "INVALID_TICKER_NAME", "티커 또는 이름을 작성하세요."),
+
     ;
 
     private final int httpStatus;

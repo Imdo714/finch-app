@@ -1,7 +1,7 @@
 package com.joojoo.global.config;
 
-import com.joojoo.api.jwt.domain.service.JwtProvider;
 import com.joojoo.api.jwt.domain.repository.TokenBlacklistRepository;
+import com.joojoo.api.jwt.domain.service.JwtProvider;
 import com.joojoo.global.exception.authentication.CustomAuthenticationEntryPoint;
 import com.joojoo.global.jwt.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
@@ -40,7 +40,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource))
 
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/user/kakao/login", "/user/apple/login").permitAll()
+                .requestMatchers("/user/kakao/login", "/user/apple/login", "/add").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
                 .requestMatchers("/health/**").permitAll()
                 .anyRequest().authenticated()

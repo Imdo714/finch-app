@@ -1,8 +1,9 @@
 package com.joojoo.global.jwt.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joojoo.api.jwt.domain.repository.TokenBlacklistRepository;
-import com.joojoo.global.common.response.BaseResponse;
 import com.joojoo.api.jwt.domain.service.JwtProvider;
+import com.joojoo.global.common.response.BaseResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -14,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,7 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final TokenBlacklistRepository tokenBlacklistRepository;
 
     private final List<String> excludedUrls = List.of( // 인증 제외 URL
-        "/user/kakao/login", "/user/apple/login"
+        "/user/kakao/login", "/user/apple/login", "/add"
     );
 
     public JwtAuthenticationFilter(JwtProvider jwtProvider, TokenBlacklistRepository tokenBlacklistRepository) {
