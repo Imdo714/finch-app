@@ -6,6 +6,7 @@ import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;
 import com.joojoo.api.user.domain.service.auth.AppleClientSecret;
 import com.joojoo.api.user.domain.service.auth.KakaoClientSecret;
+import com.joojoo.api.user.presentation.dto.request.AuthTokenDto;
 import com.joojoo.api.user.presentation.dto.request.apple.AppleTokenResponse;
 import com.joojoo.api.user.presentation.dto.request.apple.AppleUserInfo;
 import com.joojoo.api.user.presentation.dto.request.kakao.AccessTokenDto;
@@ -39,6 +40,17 @@ public class AuthSocialServiceImpl implements AuthSocialService {
         KakaoUserDto userInfo = kakaoClientSecret.getUserInfoFromKakao(kakaoAccessToken.getAccessToken());
 
         User user = registerOrLogin(userInfo, kakaoAccessToken.getRefreshToken());
+        String refreshToken = jwtTokenUseCase.createAndSaveRefreshToken(user.getId(), user.getName(), user);
+        String accessToken = jwtTokenUseCase.createAccessToken(user.getId(), user.getName());
+
+        return LoginResponse.of(user, accessToken, refreshToken);
+    }
+
+    @Override
+    public LoginResponse kakaoAppSocialLogin(AuthTokenDto authTokenDto) {
+        KakaoUserDto userInfo = kakaoClientSecret.getUserInfoFromKakao(authTokenDto.getAccessToken());
+
+        User user = registerOrLogin(userInfo, authTokenDto.getRefreshToken());
         String refreshToken = jwtTokenUseCase.createAndSaveRefreshToken(user.getId(), user.getName(), user);
         String accessToken = jwtTokenUseCase.createAccessToken(user.getId(), user.getName());
 
