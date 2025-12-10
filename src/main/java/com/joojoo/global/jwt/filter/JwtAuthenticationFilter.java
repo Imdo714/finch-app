@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joojoo.api.jwt.domain.repository.TokenBlacklistRepository;
 import com.joojoo.api.jwt.domain.service.JwtProvider;
 import com.joojoo.global.common.response.BaseResponse;
+import com.joojoo.global.common.response.ErrorResponse;
+import com.joojoo.global.exception.handleException.redis.RedisConnectionFailException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -26,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final TokenBlacklistRepository tokenBlacklistRepository;
 
     private final List<String> excludedUrls = List.of( // 인증 제외 URL
-        "/user/kakao/login", "/user/apple/login", "/add"
+        "/user/kakao/login", "/user/apple/login", "/ticker/add"
     );
 
     public JwtAuthenticationFilter(JwtProvider jwtProvider, TokenBlacklistRepository tokenBlacklistRepository) {
@@ -50,6 +52,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             setErrorResponse(response, HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다.");
         } catch (JwtException e) {
             setErrorResponse(response, HttpStatus.UNAUTHORIZED, e.getMessage());
+        } catch (RedisConnectionFailException e) {
+            log.error("Redis 장애 발생");
+            setErrorResponse(response, HttpStatus.SERVICE_UNAVAILABLE, "시스템 Redis가 접속 불량이여 점검 중입니다.");
         } catch (Exception e) {
             log.error("Unknown error in JwtAuthenticationFilter", e);
             setErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생");
@@ -81,9 +86,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        BaseResponse<Object> baseResponse = BaseResponse.of(status, message);
+        // BaseResponse -> ErrorResponse 로 교체
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .status(status.value())
+                .message(message)           // 예: "시스템 점검 중입니다 (Redis)."
+                .code(status.name())        // 예: "SERVICE_UNAVAILABLE" (HTTP 상태 이름을 코드로 사용)
+                .detailMessage(message)     // 상세 메시지도 동일하게 넣음
+                .build();
+
         ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(baseResponse);
+        String json = mapper.writeValueAsString(errorResponse);
 
         response.getWriter().write(json);
     }
