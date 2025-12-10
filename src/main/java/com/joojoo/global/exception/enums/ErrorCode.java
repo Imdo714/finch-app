@@ -16,6 +16,7 @@ public enum ErrorCode {
     INVALID_TOKEN(422, "INVALID_TOKEN", "유효하지 않은 토큰입니다."),
     EXPIRED_ACCESS_TOKEN(401, "EXPIRED_ACCESS_TOKEN", "Access 토큰이 만료되었습니다."),
     EXPIRED_REFRESH_TOKEN(401, "EXPIRED_REFRESH_TOKEN", "Refresh 토큰이 만료되었습니다."),
+    REDIS_CONNECTION_FAIL(401, "REDIS_CONNECTION_FAIL", "Redis 연결에 실패하였습니다."),
 
     // ───────────────────────────── 회원(users) ─────────────────────────────
     USER_NOT_FOUND(404, "USER_NOT_FOUND", "회원을 찾을 수 없습니다."),
@@ -36,6 +37,10 @@ public enum ErrorCode {
     APPLE_TOKEN_ISSUE_FAILED(502, "APPLE_TOKEN_ISSUE_FAILED", "애플 토큰 발급 서버에 문제가 발생했습니다."),
     APPLE_INVALID_TOKEN_RESPONSE(400, "APPLE_INVALID_TOKEN_RESPONSE", "애플 토큰 발급 응답이 올바르지 않습니다."),
     APPLE_INVALID_ID_TOKEN(400, "APPLE_INVALID_ID_TOKEN", "애플 ID Token 형식이 올바르지 않거나 파싱에 실패했습니다."),
+
+    // ---------------------------- 티커 (Ticker) ----------------------------
+    INVALID_TICKER_NAME(401, "INVALID_TICKER_NAME", "티커 또는 이름을 작성하세요."),
+
     ;
 
     private final int httpStatus;
