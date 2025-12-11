@@ -2,7 +2,11 @@ package com.joojoo.api.jwt.infrastructure.jwt;
 
 import com.joojoo.api.jwt.domain.service.JwtProvider;
 import com.joojoo.global.common.request.auth.CustomUserDetails;
-import io.jsonwebtoken.*;
+import com.joojoo.global.exception.handleException.jwt.TokenVerificationException;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -93,6 +97,11 @@ public class JwtProviderImpl implements JwtProvider {
             .getPayload();
 
         String username = claims.getSubject();
+        Object userIdObj = claims.get("userId");
+
+        if (userIdObj == null) { // userId NPE 방지
+            throw new TokenVerificationException();
+        }
         Long userId = Long.valueOf(claims.get("userId").toString());
 
         CustomUserDetails user = new CustomUserDetails(userId, username);

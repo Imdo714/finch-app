@@ -3,7 +3,6 @@ package com.joojoo.global.jwt.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joojoo.api.jwt.domain.repository.TokenBlacklistRepository;
 import com.joojoo.api.jwt.domain.service.JwtProvider;
-import com.joojoo.global.common.response.BaseResponse;
 import com.joojoo.global.common.response.ErrorResponse;
 import com.joojoo.global.exception.handleException.redis.RedisConnectionFailException;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -16,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -26,14 +26,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
     private final TokenBlacklistRepository tokenBlacklistRepository;
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
-    private final List<String> excludedUrls = List.of( // 인증 제외 URL
-        "/user/kakao/login", "/user/apple/login", "/ticker/add"
+    private final List<String> excludedUrls = List.of(
+            "/user/kakao/login",
+            "/user/apple/login",
+            "/token/reissue",
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-resources/**",
+            "/health/**"
     );
 
     public JwtAuthenticationFilter(JwtProvider jwtProvider, TokenBlacklistRepository tokenBlacklistRepository) {
         this.jwtProvider = jwtProvider;
         this.tokenBlacklistRepository = tokenBlacklistRepository;
+    }
+
+    // shouldNotFilter 메서드가 true를 반환하면 doFilterInternal메서드는 실행되지 않음
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return excludedUrls.stream()
+                .anyMatch(pattern -> pathMatcher.match(pattern, path));
     }
 
     @Override
@@ -42,10 +57,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.info("request.getRequestURI() = {}", request.getRequestURI());
 
         try {
-            if (isExcludedUrl(request)) { // 필터 제외 URL이면 바로 다음 필터로 진행
-                filterChain.doFilter(request, response);
-                return;
-            }
             authenticateIfTokenExists(request); // JWT 인증 처리 후 SecurityContext에 User정보 저장
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
@@ -73,12 +84,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwtProvider.validateToken(token);
         Authentication auth = jwtProvider.getAuthentication(token);
         SecurityContextHolder.getContext().setAuthentication(auth);
-    }
-
-    // 인증 제외 URL인지 검증
-    private boolean isExcludedUrl(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        return excludedUrls.contains(path);
     }
 
     private void setErrorResponse(HttpServletResponse response, HttpStatus status, String message) throws IOException {

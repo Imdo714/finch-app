@@ -1,4 +1,4 @@
-package com.joojoo.api.ticker.presentation;
+package com.joojoo.api.ticker.presentation.controller;
 
 import com.joojoo.api.ticker.application.TickerService;
 import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
