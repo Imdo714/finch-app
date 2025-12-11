@@ -31,25 +31,20 @@ public class UserController {
     private final AuthSocialService authSocialService;
     private final UserService userService;
 
-//    @Operation(summary = "카카오 로그인", description = "카카오 인가 코드를 전달받아 소셜 로그인을 진행합니다.")
-//    @ApiResponses({
-//            @ApiResponse(responseCode = "200", description = "로그인 성공"),
-//            @ApiResponse(responseCode = "400", description = "잘못된 인가 코드",
-//                    content = @Content(
-//                            schema = @Schema(implementation = ErrorResponse.class)
-//                    )
-//            ),
-//            @ApiResponse(responseCode = "502", description = "카카오 서버 통신 오류",
-//                    content = @Content(
-//                            schema = @Schema(implementation = ErrorResponse.class)
-//                    )
-//            )
-//    })
-//    @PostMapping("/kakao/login")
-//    public BaseResponse<LoginResponse> kakaoLogin(@RequestBody AuthCodeDto payload) {
-//        return BaseResponse.ok(authSocialService.kakaoSocialLogin(payload.getCode()));
-//    }
-
+    @Operation(summary = "카카오 로그인", description = "카카오 인가 코드를 전달받아 소셜 로그인을 진행합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "로그인 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 인가 코드",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "502", description = "카카오 서버 통신 오류",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
     @PostMapping("/kakao/login")
     public BaseResponse<LoginResponse> kakaoAppLogin(@RequestBody AuthTokenDto authTokenDto) {
         return BaseResponse.ok(authSocialService.kakaoAppSocialLogin(authTokenDto));

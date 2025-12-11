@@ -12,7 +12,6 @@ import com.joojoo.api.user.presentation.dto.request.apple.AppleUserInfo;
 import com.joojoo.api.user.presentation.dto.request.kakao.AccessTokenDto;
 import com.joojoo.api.user.presentation.dto.request.kakao.KakaoUserDto;
 import com.joojoo.api.user.presentation.dto.response.LoginResponse;
-import com.joojoo.global.exception.handleException.auth.InvalidAuthorizationException;
 import com.joojoo.global.exception.handleException.users.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -35,15 +34,12 @@ public class AuthSocialServiceImpl implements AuthSocialService {
 
     @Override
     @Transactional
-    public LoginResponse kakaoSocialLogin(String code) {
+    public LoginResponse kakaoWebSocialLogin(String code) {
         AccessTokenDto kakaoAccessToken = kakaoClientSecret.getKakaoAccessToken(code);
         KakaoUserDto userInfo = kakaoClientSecret.getUserInfoFromKakao(kakaoAccessToken.getAccessToken());
 
         User user = registerOrLogin(userInfo, kakaoAccessToken.getRefreshToken());
-        String refreshToken = jwtTokenUseCase.createAndSaveRefreshToken(user.getId(), user.getName(), user);
-        String accessToken = jwtTokenUseCase.createAccessToken(user.getId(), user.getName());
-
-        return LoginResponse.of(user, accessToken, refreshToken);
+        return generateLoginResponse(user);
     }
 
     @Override
@@ -51,10 +47,7 @@ public class AuthSocialServiceImpl implements AuthSocialService {
         KakaoUserDto userInfo = kakaoClientSecret.getUserInfoFromKakao(authTokenDto.getAccessToken());
 
         User user = registerOrLogin(userInfo, authTokenDto.getRefreshToken());
-        String refreshToken = jwtTokenUseCase.createAndSaveRefreshToken(user.getId(), user.getName(), user);
-        String accessToken = jwtTokenUseCase.createAccessToken(user.getId(), user.getName());
-
-        return LoginResponse.of(user, accessToken, refreshToken);
+        return generateLoginResponse(user);
     }
 
     @Override
@@ -62,17 +55,10 @@ public class AuthSocialServiceImpl implements AuthSocialService {
     public LoginResponse appleSocialLogin(String code) {
         String clientSecret = appleClientSecret.createClientSecret();
         AppleTokenResponse appleTokenResponse = appleClientSecret.requestAppleToken(code, clientSecret);
-        log.info("Apple Token Response: {}", appleTokenResponse);
-
         AppleUserInfo appleUser = getAppleUserInfo(appleTokenResponse.getIdToken());
-        log.info("Apple User ID: {}", appleUser.getProviderId());
-        log.info("Apple User Email: {}", appleUser.getEmail());
 
-        User user = registerOrLogin(appleUser.getProviderId(), appleTokenResponse, appleUser.getEmail());
-        String refreshToken = jwtTokenUseCase.createAndSaveRefreshToken(user.getId(), user.getName(), user);
-        String accessToken = jwtTokenUseCase.createAccessToken(user.getId(), user.getName());
-
-        return LoginResponse.of(user, accessToken, refreshToken);
+        User user = registerOrLogin(appleUser.getProviderId(), appleTokenResponse.getRefreshToken(), appleUser.getEmail());
+        return generateLoginResponse(user);
     }
 
     @Override
@@ -95,6 +81,12 @@ public class AuthSocialServiceImpl implements AuthSocialService {
         }
     }
 
+    private LoginResponse generateLoginResponse(User user){
+        String refreshToken = jwtTokenUseCase.createAndSaveRefreshToken(user.getId(), user.getName(), user);
+        String accessToken = jwtTokenUseCase.createAccessToken(user.getId(), user.getName());
+        return LoginResponse.of(user, accessToken, refreshToken);
+    }
+
     private User registerOrLogin(KakaoUserDto kakaoUser, String socialRefreshToken) {
         return userRepository.findByEmail(kakaoUser.getEmail())
             .map(user -> {
@@ -113,16 +105,16 @@ public class AuthSocialServiceImpl implements AuthSocialService {
         return AppleUserInfo.from(claims);
     }
 
-    private User registerOrLogin(String providerId, AppleTokenResponse appleTokenResponse, String email) {
+    private User registerOrLogin(String providerId, String appleRefreshToken, String email) {
         return userRepository.findByProviderId(providerId)
                 .map(user -> {
-                    if (appleTokenResponse.getRefreshToken() != null) {
-                        user.updateSocialRefreshToken(appleTokenResponse.getRefreshToken());
+                    if (appleRefreshToken != null) {
+                        user.updateSocialRefreshToken(appleRefreshToken);
                     }
                     return user;
                 })
                 .orElseGet(() -> {
-                    User newUser = User.createAppleUserBuilder(providerId, email, appleTokenResponse.getRefreshToken());
+                    User newUser = User.createAppleUserBuilder(providerId, email, appleRefreshToken);
                     return userRepository.save(newUser);
                 });
     }
