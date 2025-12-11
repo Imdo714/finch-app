@@ -3,6 +3,7 @@ package com.joojoo.api.user.presentation.controller;
 import com.joojoo.api.user.application.UserService;
 import com.joojoo.api.user.application.auth.AuthSocialService;
 import com.joojoo.api.user.presentation.dto.request.AuthCodeDto;
+import com.joojoo.api.user.presentation.dto.request.AuthTokenDto;
 import com.joojoo.api.user.presentation.dto.response.LoginResponse;
 import com.joojoo.global.common.request.auth.CustomUserDetails;
 import com.joojoo.global.common.response.BaseResponse;
@@ -45,8 +46,8 @@ public class UserController {
             )
     })
     @PostMapping("/kakao/login")
-    public BaseResponse<LoginResponse> kakaoLogin(@RequestBody AuthCodeDto payload) {
-        return BaseResponse.ok(authSocialService.kakaoSocialLogin(payload.getCode()));
+    public BaseResponse<LoginResponse> kakaoAppLogin(@RequestBody AuthTokenDto authTokenDto) {
+        return BaseResponse.ok(authSocialService.kakaoAppSocialLogin(authTokenDto));
     }
 
     @Operation(summary = "애플 로그인", description = "애플 인가 코드를 전달받아 소셜 로그인을 진행합니다.")
