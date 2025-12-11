@@ -1,5 +1,6 @@
 package com.joojoo.api.jwt.application;
 
+import com.joojoo.api.jwt.presentation.dto.response.ReissueTokenResponse;
 import com.joojoo.api.user.domain.model.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -12,4 +13,7 @@ public interface JwtTokenUseCase {
 
     // 로그아웃시 토큰 블랙리스트 삽입 및 DB제거
     void clearUserTokens(Long userId, HttpServletRequest request);
+
+    // Refresh 토큰으로 AccessToken을 재 발급
+    ReissueTokenResponse reissueAccessToken(String refreshToken);
 }

@@ -1,14 +1,21 @@
 package com.joojoo.api.jwt.application;
 
 import com.joojoo.api.jwt.domain.model.entity.Token;
+import com.joojoo.api.jwt.domain.repository.TokenBlacklistRepository;
 import com.joojoo.api.jwt.domain.repository.TokenRepository;
 import com.joojoo.api.jwt.domain.service.JwtProvider;
-import com.joojoo.api.jwt.domain.repository.TokenBlacklistRepository;
+import com.joojoo.api.jwt.presentation.dto.response.ReissueTokenResponse;
 import com.joojoo.api.user.domain.model.entity.User;
+import com.joojoo.global.common.request.auth.CustomUserDetails;
 import com.joojoo.global.common.util.TokenExpirationUtil;
+import com.joojoo.global.exception.handleException.jwt.RefreshTokenExpiredException;
+import com.joojoo.global.exception.handleException.jwt.TokenVerificationException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +63,29 @@ public class JwtTokenUseCaseImpl implements JwtTokenUseCase {
 
         tokenBlacklistRepository.add(accessToken, expiration); // AccessToken 블랙리스트에 저장
         tokenRepository.delete(userId); // DB에서 RefreshToken 삭제
+    }
+
+    @Override
+    public ReissueTokenResponse reissueAccessToken(String refreshToken) {
+        validateToken(refreshToken);
+        Authentication authentication = jwtProvider.getAuthentication(refreshToken);
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        Token storedToken = tokenRepository.findByUserId(userDetails.getUserId())
+                .orElseThrow(RefreshTokenExpiredException::new);
+
+        storedToken.validateSameToken(refreshToken);
+        return new ReissueTokenResponse(jwtProvider.createAccessToken(userDetails.getUserId(), userDetails.getUsername()));
+    }
+
+    private void validateToken(String refreshToken) {
+        try {
+            jwtProvider.validateToken(refreshToken);
+        } catch (ExpiredJwtException e) {
+            throw new RefreshTokenExpiredException();
+        } catch (JwtException e) {
+            throw new TokenVerificationException();
+        }
     }
 
 }

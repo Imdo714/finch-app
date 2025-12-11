@@ -1,6 +1,7 @@
 package com.joojoo.api.jwt.domain.model.entity;
 
 import com.joojoo.api.user.domain.model.entity.User;
+import com.joojoo.global.exception.handleException.jwt.TokenVerificationException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -19,7 +20,7 @@ public class Token {
     @Column(name = "token_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -47,5 +48,11 @@ public class Token {
     public void updateRefreshToken(String refreshToken, LocalDateTime expiresAt) {
         this.refreshToken = refreshToken;
         this.expiresAt = expiresAt;
+    }
+
+    public void validateSameToken(String refreshToken) {
+        if (!this.refreshToken.equals(refreshToken)) {
+            throw new TokenVerificationException();
+        }
     }
 }
