@@ -5,10 +5,10 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Status {
+public enum Currency {
 
-    ACTIVE("활동"),
-    DELETED("탈퇴"),
+    KRW("KRW"),
+    USD("USD"),
     ;
 
     private final String text;
