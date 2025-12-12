@@ -41,20 +41,20 @@ public class User extends BaseTimeEntity {
     private String socialRefresh;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "base_currency")
-    private Currency baseCurrency;
+    @Column(name = "currency")
+    private Currency currency;
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Token token;
 
     @Builder
-    public User(String email, String name, String profileImageUrl, Provider provider, String providerId, Currency baseCurrency, String socialRefresh, Token token) {
+    public User(String email, String name, String profileImageUrl, Provider provider, String providerId, Currency currency, String socialRefresh, Token token) {
         this.email = email;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
         this.provider = provider;
         this.providerId = providerId;
-        this.baseCurrency = baseCurrency;
+        this.currency = currency;
         this.socialRefresh = socialRefresh;
         this.token = token;
     }
@@ -65,7 +65,7 @@ public class User extends BaseTimeEntity {
             .name(kakaoUser.getName())
             .profileImageUrl(kakaoUser.getProfileImageUrl())
             .provider(Provider.KAKAO)
-            .baseCurrency(Currency.KRW)
+            .currency(Currency.KRW)
             .providerId(kakaoUser.getProviderId())
             .socialRefresh(socialRefreshToken)
             .build();
@@ -77,7 +77,7 @@ public class User extends BaseTimeEntity {
                 .provider(Provider.APPLE)
                 .providerId(providerId)
                 .socialRefresh(appleRefreshToken)
-                .baseCurrency(Currency.KRW)
+                .currency(Currency.KRW)
                 .build();
     }
 
