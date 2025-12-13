@@ -19,7 +19,7 @@ public class Ticker {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "symbol", nullable = false)
+    @Column(name = "symbol", nullable = false, unique = true)
     private String symbol;
 
     @Column(name = "name", nullable = false)
@@ -38,9 +38,10 @@ public class Ticker {
     private boolean isDeleted = false;
 
     @Builder
-    public Ticker(String symbol, String name, MarketType market) {
+    public Ticker(String symbol, String name, MarketType market, LocalDate listingDate) {
         this.symbol = symbol;
         this.name = name;
         this.market = market;
+        this.listingDate = listingDate;
     }
 }

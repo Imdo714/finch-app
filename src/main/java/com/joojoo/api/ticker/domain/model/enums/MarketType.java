@@ -6,9 +6,12 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum MarketType {
-    
+
     KOSPI("코스피"),
-    NASDAQ("나스닥큐"),
+    KOSDAQ("코스닥"),
+    KOSDAQ_GLOBAL("코스닥 글로벌"),
+    KONEX("코넥스"),
+    ETC("기타"),
     ;
 
     private final String text;
