@@ -11,5 +11,5 @@ public interface TickerService {
     void initTickerData();
 
     // 운영 DB에 있는 주식을 Redis에 저장
-    void dbToRedis(Long userId);
+    void loadTickersToCache(Long userId);
 }

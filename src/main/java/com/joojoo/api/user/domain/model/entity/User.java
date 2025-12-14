@@ -3,8 +3,10 @@ package com.joojoo.api.user.domain.model.entity;
 import com.joojoo.api.jwt.domain.model.entity.Token;
 import com.joojoo.api.user.domain.model.enums.Currency;
 import com.joojoo.api.user.domain.model.enums.Provider;
+import com.joojoo.api.user.domain.model.enums.Role;
 import com.joojoo.api.user.presentation.dto.request.kakao.KakaoUserDto;
 import com.joojoo.global.common.entity.BaseTimeEntity;
+import com.joojoo.global.exception.handleException.users.AdminOnlyAccessException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -44,11 +46,15 @@ public class User extends BaseTimeEntity {
     @Column(name = "currency")
     private Currency currency;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Token token;
 
     @Builder
-    public User(String email, String name, String profileImageUrl, Provider provider, String providerId, Currency currency, String socialRefresh, Token token) {
+    public User(String email, String name, String profileImageUrl, Provider provider, String providerId, Currency currency, String socialRefresh, Token token, Role role) {
         this.email = email;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
@@ -56,6 +62,7 @@ public class User extends BaseTimeEntity {
         this.providerId = providerId;
         this.currency = currency;
         this.socialRefresh = socialRefresh;
+        this.role = role;
         this.token = token;
     }
 
@@ -66,6 +73,7 @@ public class User extends BaseTimeEntity {
             .profileImageUrl(kakaoUser.getProfileImageUrl())
             .provider(Provider.KAKAO)
             .currency(Currency.KRW)
+            .role(Role.USER)
             .providerId(kakaoUser.getProviderId())
             .socialRefresh(socialRefreshToken)
             .build();
@@ -78,6 +86,7 @@ public class User extends BaseTimeEntity {
                 .providerId(providerId)
                 .socialRefresh(appleRefreshToken)
                 .currency(Currency.KRW)
+                .role(Role.USER)
                 .build();
     }
 
@@ -94,5 +103,11 @@ public class User extends BaseTimeEntity {
         this.delete();
         this.socialRefresh = null;
         this.providerId = null;
+    }
+
+    public void validateAdminPermission() {
+        if (Role.ADMIN.equals(this.role)) {
+            throw new AdminOnlyAccessException();
+        }
     }
 }

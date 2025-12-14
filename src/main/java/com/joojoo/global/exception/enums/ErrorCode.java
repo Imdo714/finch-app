@@ -23,7 +23,7 @@ public enum ErrorCode {
     USER_INACTIVE(403, "USER_INACTIVE", "비활성화된 회원입니다."),
     EMAIL_ALREADY_IN_USE(409, "USER_EMAIL_DUPLICATED", "이미 사용 중인 이메일입니다."),
     USER_MISMATCH(403, "USER_MISMATCH", "회원 정보가 일치하지 않습니다."),
-    ADMIN_MISMATCH(403, "ADMIN_MISMATCH", "관리자만 접근할 수 있습니다."),
+    ADMIN_ONLY(403, "ADMIN_ONLY", "관리자 권한이 필요합니다."),
 
     // ───────────────────────────── 인증/인가(auth) ─────────────────────────────
     INVALID_AUTHORIZATION_CODE(400, "INVALID_AUTHORIZATION_CODE", "유효하지 않은 인가 코드입니다."),

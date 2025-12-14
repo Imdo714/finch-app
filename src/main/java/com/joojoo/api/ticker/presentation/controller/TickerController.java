@@ -53,8 +53,8 @@ public class TickerController {
         return BaseResponse.ok(tickerService.search(query));
     }
 
-    @PostMapping("/db-to-redis")
+    @PostMapping("/load-Cache")
     public void dbToRedis(@AuthenticationPrincipal CustomUserDetails user){
-        tickerService.dbToRedis(user.getUserId());
+        tickerService.loadTickersToCache(user.getUserId());
     }
 }

@@ -1,16 +1,17 @@
 package com.joojoo.api.ticker.application;
 
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
+import com.joojoo.api.ticker.domain.provider.TickerDataProvider;
 import com.joojoo.api.ticker.domain.repository.TickerRedisRepository;
 import com.joojoo.api.ticker.domain.repository.TickerRepository;
-import com.joojoo.api.ticker.domain.provider.TickerDataProvider;
 import com.joojoo.api.ticker.presentation.dto.request.TickerDataDto;
 import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
+import com.joojoo.api.user.domain.model.entity.User;
+import com.joojoo.api.user.domain.repository.UserRepository;
 import com.joojoo.global.exception.handleException.tickers.InvalidTickerOrNameException;
-import com.joojoo.global.exception.handleException.users.UserMismatchException;
+import com.joojoo.global.exception.handleException.users.UserNotFoundException;
 import com.joojoo.global.util.HangulUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Range;
 import org.springframework.data.redis.connection.Limit;
@@ -31,6 +32,7 @@ public class TickerServiceImpl implements TickerService {
     private final TickerRedisRepository tickerRedisRepository;
     private final TickerRepository tickerRepository;
     private final TickerDataProvider tickerDataProvider;
+    private final UserRepository userRepository;
 
     @Override
     public void addStockToRedis(String name, String ticker) {
@@ -80,17 +82,13 @@ public class TickerServiceImpl implements TickerService {
         log.info("티커 데이터 업데이트 완료: {}건 처리됨", saveList.size());
     }
 
-    @Value("${USER_ADMIN_NUM}")
-    private Long USER_NO;
-
     @Override
-    public void dbToRedis(Long userId) {
-        if (!USER_NO.equals(userId)) {
-            throw new UserMismatchException();
-        }
+    public void loadTickersToCache(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+        user.validateAdminPermission();
 
         List<Ticker> allStocks = tickerRepository.findAll();
-
         Set<String> tickers = allStocks.stream()
                 .filter(ticker -> StringUtils.hasText(ticker.getName()) && StringUtils.hasText(ticker.getSymbol()))
                 .flatMap(this::generateSearchKeywords)
@@ -99,6 +97,7 @@ public class TickerServiceImpl implements TickerService {
         if (!tickers.isEmpty()) {
             tickerRedisRepository.addStocksToRedis(tickers);
         }
+        log.info("티커 Cache 업데이트 완료: {}건 처리됨", tickers.size());
     }
 
     private Stream<String> generateSearchKeywords(Ticker stock) {

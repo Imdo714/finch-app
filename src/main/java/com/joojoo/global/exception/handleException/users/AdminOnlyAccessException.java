@@ -4,7 +4,7 @@ import com.joojoo.global.exception.ServiceException;
 import com.joojoo.global.exception.enums.ErrorCode;
 
 public class AdminOnlyAccessException extends ServiceException {
-    private static final ErrorCode errorCode = ErrorCode.USER_MISMATCH;
+    private static final ErrorCode errorCode = ErrorCode.ADMIN_ONLY;
 
     public AdminOnlyAccessException() {
         super(errorCode);
