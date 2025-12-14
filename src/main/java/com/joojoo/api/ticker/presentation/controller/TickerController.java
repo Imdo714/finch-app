@@ -2,6 +2,7 @@ package com.joojoo.api.ticker.presentation.controller;
 
 import com.joojoo.api.ticker.application.TickerService;
 import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
+import com.joojoo.global.common.request.auth.CustomUserDetails;
 import com.joojoo.global.common.response.BaseResponse;
 import com.joojoo.global.common.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -49,5 +51,10 @@ public class TickerController {
             @RequestParam String query
     ) {
         return BaseResponse.ok(tickerService.search(query));
+    }
+
+    @PostMapping("/load-Cache")
+    public void dbToRedis(@AuthenticationPrincipal CustomUserDetails user){
+        tickerService.loadTickersToCache(user.getUserId());
     }
 }
