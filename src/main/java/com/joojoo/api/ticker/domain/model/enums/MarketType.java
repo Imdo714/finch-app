@@ -15,4 +15,17 @@ public enum MarketType {
     ;
 
     private final String text;
+
+    public static MarketType fromString(String market) {
+        if (market == null || market.isBlank()) {
+            return ETC;
+        }
+
+        String normalizedMarket = market.toUpperCase().replace(" ", "_");
+        try {
+            return MarketType.valueOf(normalizedMarket);
+        } catch (IllegalArgumentException e) {
+            return ETC;
+        }
+    }
 }

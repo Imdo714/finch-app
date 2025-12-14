@@ -1,24 +1,32 @@
 package com.joojoo.api.ticker.application;
 
+import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.ticker.domain.repository.TickerRedisRepository;
+import com.joojoo.api.ticker.domain.repository.TickerRepository;
+import com.joojoo.api.ticker.domain.provider.TickerDataProvider;
+import com.joojoo.api.ticker.presentation.dto.request.TickerDataDto;
 import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
 import com.joojoo.global.exception.handleException.tickers.InvalidTickerOrNameException;
 import com.joojoo.global.util.HangulUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Range;
 import org.springframework.data.redis.connection.Limit;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TickerServiceImpl implements TickerService {
 
     private final TickerRedisRepository tickerRedisRepository;
+    private final TickerRepository tickerRepository;
+    private final TickerDataProvider tickerDataProvider;
 
     @Override
     public void addStockToRedis(String name, String ticker) {
@@ -41,4 +49,30 @@ public class TickerServiceImpl implements TickerService {
         Range<String> range = Range.rightOpen(convertedQuery, convertedQuery + "\uffff");
         return TickerSearchResponse.of(tickerRedisRepository.searchTickerQuery(range, Limit.limit().count(10)));
     }
+
+    @Transactional
+    public void initTickerData() {
+        List<TickerDataDto> externalStocks = tickerDataProvider.getTickerCsvData();
+
+        // 과연 전체 주식을 다 가져오는게 효율적일 까??
+        Map<String, Ticker> existingTickerMap = tickerRepository.findAll().stream()
+                .collect(Collectors.toMap(Ticker::getSymbol, ticker -> ticker));
+
+        List<Ticker> saveList = new ArrayList<>();
+
+        for (TickerDataDto data : externalStocks) {
+            Ticker ticker = existingTickerMap.get(data.getSymbol());
+
+            if (ticker != null) {
+                ticker.updateInfo(data.getName(), data.getMarket(), data.getListingDate());
+                saveList.add(ticker);
+            } else {
+                saveList.add(new Ticker(data.getSymbol(), data.getName(), data.getMarket(), data.getListingDate()));
+            }
+        }
+
+        tickerRepository.saveAll(saveList);
+        log.info("티커 데이터 업데이트 완료: {}건 처리됨", saveList.size());
+    }
+
 }

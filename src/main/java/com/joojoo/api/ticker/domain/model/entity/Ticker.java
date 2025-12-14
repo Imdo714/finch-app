@@ -44,4 +44,11 @@ public class Ticker {
         this.market = market;
         this.listingDate = listingDate;
     }
+
+    public void updateInfo(String name, MarketType market, LocalDate listingDate) {
+        this.name = name;
+        this.market = market;
+        this.listingDate = listingDate;
+    }
+
 }
