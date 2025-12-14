@@ -1,14 +1,13 @@
-package com.joojoo.api.user.domain.model.enums;
+package com.joojoo.global.common.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Status {
-
-    ACTIVE("활동"),
-    DELETED("탈퇴"),
+public enum TradeType {
+    BUY("매수"),
+    SELL("매도"),
     ;
 
     private final String text;
