@@ -81,7 +81,7 @@ public class KakaoClientSecretImpl implements KakaoClientSecret {
             throw new KakaoInvalidUserResponseException();
         }
 
-        return KakaoUserDto.of(response.getKakaoAccount(), response.getKakaoAccount().getProfile());
+        return KakaoUserDto.of(response.getId(), response.getKakaoAccount(), response.getKakaoAccount().getProfile());
     }
 
     @Override

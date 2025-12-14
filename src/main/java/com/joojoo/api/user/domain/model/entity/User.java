@@ -1,8 +1,8 @@
 package com.joojoo.api.user.domain.model.entity;
 
 import com.joojoo.api.jwt.domain.model.entity.Token;
+import com.joojoo.api.user.domain.model.enums.Currency;
 import com.joojoo.api.user.domain.model.enums.Provider;
-import com.joojoo.api.user.domain.model.enums.Status;
 import com.joojoo.api.user.presentation.dto.request.kakao.KakaoUserDto;
 import com.joojoo.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -19,7 +19,7 @@ public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "email")
@@ -37,23 +37,24 @@ public class User extends BaseTimeEntity {
     @Column(name = "provider_id")
     private String providerId;
 
-    @Enumerated(EnumType.STRING)
-    private Status status;
-
     @Column(name = "social_refresh")
     private String socialRefresh;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "currency")
+    private Currency currency;
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Token token;
 
     @Builder
-    public User(String email, String name, String profileImageUrl, Provider provider, String providerId, Status status, String socialRefresh, Token token) {
+    public User(String email, String name, String profileImageUrl, Provider provider, String providerId, Currency currency, String socialRefresh, Token token) {
         this.email = email;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
         this.provider = provider;
         this.providerId = providerId;
-        this.status = status;
+        this.currency = currency;
         this.socialRefresh = socialRefresh;
         this.token = token;
     }
@@ -64,8 +65,9 @@ public class User extends BaseTimeEntity {
             .name(kakaoUser.getName())
             .profileImageUrl(kakaoUser.getProfileImageUrl())
             .provider(Provider.KAKAO)
+            .currency(Currency.KRW)
+            .providerId(kakaoUser.getProviderId())
             .socialRefresh(socialRefreshToken)
-            .status(Status.ACTIVE)
             .build();
     }
 
@@ -75,7 +77,7 @@ public class User extends BaseTimeEntity {
                 .provider(Provider.APPLE)
                 .providerId(providerId)
                 .socialRefresh(appleRefreshToken)
-                .status(Status.ACTIVE)
+                .currency(Currency.KRW)
                 .build();
     }
 
@@ -89,7 +91,6 @@ public class User extends BaseTimeEntity {
         this.email = null;
         this.name = null;
         this.profileImageUrl = null;
-        this.status = Status.DELETED;
         this.delete();
         this.socialRefresh = null;
         this.providerId = null;
