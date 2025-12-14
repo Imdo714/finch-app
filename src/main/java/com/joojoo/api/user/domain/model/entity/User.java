@@ -106,7 +106,7 @@ public class User extends BaseTimeEntity {
     }
 
     public void validateAdminPermission() {
-        if (Role.ADMIN.equals(this.role)) {
+        if (!Role.ADMIN.equals(this.role)) {
             throw new AdminOnlyAccessException();
         }
     }
