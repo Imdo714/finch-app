@@ -37,4 +37,9 @@ public class UserRepositoryImpl implements UserRepository {
     public void delete(User user) {
         userJpaRepository.delete(user);
     }
+
+    @Override
+    public boolean existsByName(String nickname) {
+        return userJpaRepository.existsUserByName(nickname);
+    }
 }

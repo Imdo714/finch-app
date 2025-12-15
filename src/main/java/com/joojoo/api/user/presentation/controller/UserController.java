@@ -4,8 +4,10 @@ import com.joojoo.api.user.application.UserService;
 import com.joojoo.api.user.application.auth.AuthSocialService;
 import com.joojoo.api.user.presentation.dto.request.AuthCodeDto;
 import com.joojoo.api.user.presentation.dto.request.AuthTokenDto;
+import com.joojoo.api.user.presentation.dto.request.UpdateProfileDto;
 import com.joojoo.api.user.presentation.dto.response.DefaultProfileImageResponse;
 import com.joojoo.api.user.presentation.dto.response.LoginResponse;
+import com.joojoo.api.user.presentation.dto.response.UserInfoResponse;
 import com.joojoo.global.common.request.auth.CustomUserDetails;
 import com.joojoo.global.common.response.BaseResponse;
 import com.joojoo.global.common.response.ErrorResponse;
@@ -104,6 +106,27 @@ public class UserController {
     @GetMapping("/profile-images/default")
     public BaseResponse<DefaultProfileImageResponse> getDefaultProfileImages(){
         return BaseResponse.ok(userService.getDefaultProfileImages());
+    }
+
+    @Operation(summary = "프로필 업데이트 API", description = "기본 프로필 이미지 또는 이름을 변경합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "업데이트 성공"),
+            @ApiResponse(responseCode = "409", description = "이미 사용 중인 닉네임입니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "회원을 찾을 수 없습니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    @PatchMapping("/profile")
+    public BaseResponse<UserInfoResponse> updateProfile(@AuthenticationPrincipal CustomUserDetails user,
+                                                        @RequestBody UpdateProfileDto updateProfileDto
+    ){
+        return BaseResponse.ok(userService.updateProfile(user.getUserId(), updateProfileDto));
     }
 
 }

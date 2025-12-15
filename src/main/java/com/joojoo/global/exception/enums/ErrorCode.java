@@ -24,6 +24,8 @@ public enum ErrorCode {
     EMAIL_ALREADY_IN_USE(409, "USER_EMAIL_DUPLICATED", "이미 사용 중인 이메일입니다."),
     USER_MISMATCH(403, "USER_MISMATCH", "회원 정보가 일치하지 않습니다."),
     ADMIN_ONLY(403, "ADMIN_ONLY", "관리자 권한이 필요합니다."),
+    USER_NAME_REQUIRED(400, "USER_NAME_REQUIRED", "초기 설정 시 닉네임은 필수입니다."),
+    USER_NAME_DUPLICATED(409, "USER_NAME_DUPLICATED", "이미 사용 중인 닉네임입니다."),
 
     // ───────────────────────────── 인증/인가(auth) ─────────────────────────────
     INVALID_AUTHORIZATION_CODE(400, "INVALID_AUTHORIZATION_CODE", "유효하지 않은 인가 코드입니다."),

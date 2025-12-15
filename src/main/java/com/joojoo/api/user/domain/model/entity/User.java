@@ -50,6 +50,7 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private Role role;
 
+    // 이거 양방향 할 필요가 없는거 같아서 기능 구현후 삭제 할 예정
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Token token;
 
@@ -109,5 +110,13 @@ public class User extends BaseTimeEntity {
         if (!Role.ADMIN.equals(this.role)) {
             throw new AdminOnlyAccessException();
         }
+    }
+
+    public void updateName(String newName) {
+        this.name = newName;
+    }
+
+    public void updateProfileImage(String fileName) {
+        this.profileImageUrl = fileName;
     }
 }
