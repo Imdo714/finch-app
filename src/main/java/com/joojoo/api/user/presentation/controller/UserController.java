@@ -4,6 +4,7 @@ import com.joojoo.api.user.application.UserService;
 import com.joojoo.api.user.application.auth.AuthSocialService;
 import com.joojoo.api.user.presentation.dto.request.AuthCodeDto;
 import com.joojoo.api.user.presentation.dto.request.AuthTokenDto;
+import com.joojoo.api.user.presentation.dto.response.DefaultProfileImageResponse;
 import com.joojoo.api.user.presentation.dto.response.LoginResponse;
 import com.joojoo.global.common.request.auth.CustomUserDetails;
 import com.joojoo.global.common.response.BaseResponse;
@@ -17,10 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "User API", description = "유저 관련 API")
 @RestController
@@ -98,4 +96,14 @@ public class UserController {
         userService.logout(user.getUserId(), request);
         return BaseResponse.ok("로그아웃이 완료되었습니다.");
     }
+
+    @Operation(summary = "기본 프로필 API", description = "기본 프로필 이미지 리스트를 반홥합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "이미지 조회 성공"),
+    })
+    @GetMapping("/profile-images/default")
+    public BaseResponse<DefaultProfileImageResponse> getDefaultProfileImages(){
+        return BaseResponse.ok(userService.getDefaultProfileImages());
+    }
+
 }
