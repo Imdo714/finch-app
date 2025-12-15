@@ -42,12 +42,15 @@ public class JwtTokenUseCaseImpl implements JwtTokenUseCase {
     }
 
     private void registerRefreshToken(User user, String refreshToken, LocalDateTime expiresAt) {
-        Token existingToken = user.getToken();
-        if (existingToken != null) {
-            existingToken.updateRefreshToken(refreshToken, expiresAt);
-        } else {
-            tokenRepository.save(Token.create(user, refreshToken, expiresAt));
-        }
+        tokenRepository.findByUserId(user.getId())
+                .ifPresentOrElse(
+                        existingToken -> {
+                            existingToken.updateRefreshToken(refreshToken, expiresAt);
+                        },
+                        () -> {
+                            tokenRepository.save(Token.create(user, refreshToken, expiresAt));
+                        }
+                );
     }
 
     @Override

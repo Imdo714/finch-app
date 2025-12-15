@@ -1,6 +1,5 @@
 package com.joojoo.api.user.domain.model.entity;
 
-import com.joojoo.api.jwt.domain.model.entity.Token;
 import com.joojoo.api.user.domain.model.enums.Currency;
 import com.joojoo.api.user.domain.model.enums.Provider;
 import com.joojoo.api.user.domain.model.enums.Role;
@@ -50,12 +49,8 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private Role role;
 
-    // 이거 양방향 할 필요가 없는거 같아서 기능 구현후 삭제 할 예정
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
-    private Token token;
-
     @Builder
-    public User(String email, String name, String profileImageUrl, Provider provider, String providerId, Currency currency, String socialRefresh, Token token, Role role) {
+    public User(String email, String name, String profileImageUrl, Provider provider, String providerId, Currency currency, String socialRefresh, Role role) {
         this.email = email;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
@@ -64,7 +59,6 @@ public class User extends BaseTimeEntity {
         this.currency = currency;
         this.socialRefresh = socialRefresh;
         this.role = role;
-        this.token = token;
     }
 
     public static User createKakaoUserBuilder(KakaoUserDto kakaoUser, String socialRefreshToken) {
