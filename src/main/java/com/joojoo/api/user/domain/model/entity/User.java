@@ -1,6 +1,5 @@
 package com.joojoo.api.user.domain.model.entity;
 
-import com.joojoo.api.jwt.domain.model.entity.Token;
 import com.joojoo.api.user.domain.model.enums.Currency;
 import com.joojoo.api.user.domain.model.enums.Provider;
 import com.joojoo.api.user.domain.model.enums.Role;
@@ -50,11 +49,8 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private Role role;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
-    private Token token;
-
     @Builder
-    public User(String email, String name, String profileImageUrl, Provider provider, String providerId, Currency currency, String socialRefresh, Token token, Role role) {
+    public User(String email, String name, String profileImageUrl, Provider provider, String providerId, Currency currency, String socialRefresh, Role role) {
         this.email = email;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
@@ -63,7 +59,6 @@ public class User extends BaseTimeEntity {
         this.currency = currency;
         this.socialRefresh = socialRefresh;
         this.role = role;
-        this.token = token;
     }
 
     public static User createKakaoUserBuilder(KakaoUserDto kakaoUser, String socialRefreshToken) {
@@ -109,5 +104,13 @@ public class User extends BaseTimeEntity {
         if (!Role.ADMIN.equals(this.role)) {
             throw new AdminOnlyAccessException();
         }
+    }
+
+    public void updateName(String newName) {
+        this.name = newName;
+    }
+
+    public void updateProfileImage(String fileName) {
+        this.profileImageUrl = fileName;
     }
 }
