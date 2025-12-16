@@ -1,6 +1,7 @@
 package com.joojoo.api.file.domain.model.entity;
 
 import com.joojoo.api.block.domain.model.entity.Block;
+import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -20,8 +21,12 @@ public class FileEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "block_id", nullable = false)
+    @JoinColumn(name = "block_id")
     private Block block;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trade_log_id")
+    private TradeLog tradeLog;
 
     @Column(name = "file_url", nullable = false)
     private String fileUrl;
@@ -31,8 +36,9 @@ public class FileEntity {
     private LocalDateTime createdAt;
 
     @Builder
-    public FileEntity(Block block, String fileUrl) {
+    public FileEntity(Block block, TradeLog tradeLog, String fileUrl) {
         this.block = block;
+        this.tradeLog = tradeLog;
         this.fileUrl = fileUrl;
     }
 }
