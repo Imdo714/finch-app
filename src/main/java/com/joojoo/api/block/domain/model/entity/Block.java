@@ -1,6 +1,5 @@
 package com.joojoo.api.block.domain.model.entity;
 
-import com.joojoo.api.block.domain.model.enums.BlockType;
 import com.joojoo.api.block.presentation.dto.request.createBlock.BlockRequestDto;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.global.common.entity.BaseTimeEntity;
@@ -42,22 +41,16 @@ public class Block extends BaseTimeEntity {
     @Column(nullable = false)
     private Integer sequence;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    @JoinColumn(name = "block_type")
-    private BlockType blockType;
-
     @Column(name = "is_saved", nullable = false)
     private Boolean isSaved;
 
     @Builder
-    public Block(User user, Block parent, String content, Integer depth, Integer sequence, BlockType blockType, Boolean isSaved) {
+    public Block(User user, Block parent, String content, Integer depth, Integer sequence, Boolean isSaved) {
         this.user = user;
         this.parent = parent;
         this.content = content;
         this.depth = depth;
         this.sequence = sequence;
-        this.blockType = blockType;
         this.isSaved = (isSaved != null) ? isSaved : false;
     }
 
@@ -66,7 +59,6 @@ public class Block extends BaseTimeEntity {
                 .user(user)
                 .parent(parentBlock)
                 .content(dto.getContent())
-                .blockType(BlockType.valueOf(dto.getBlockType().getText()))
                 .depth(dto.getDepth())
                 .sequence(dto.getSequence())
                 .isSaved(dto.getIsSaved())
