@@ -6,9 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum BlockType {
-    TEXT("글"),
-    IMAGE("이미지"),
-    TRADE("거래 정보"),
+    TEXT("TEXT"),
+    IMAGE("IMAGE"),
     ;
 
     private final String text;
