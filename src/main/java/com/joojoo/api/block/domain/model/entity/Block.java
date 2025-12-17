@@ -1,7 +1,7 @@
 package com.joojoo.api.block.domain.model.entity;
 
 import com.joojoo.api.block.domain.model.enums.BlockType;
-import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
+import com.joojoo.api.block.presentation.dto.request.createBlock.BlockRequestDto;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -33,10 +33,6 @@ public class Block extends BaseTimeEntity {
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
     private List<Block> children = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "template_id")
-    private TradeLog tradeLog;
-
     @Column(columnDefinition = "TEXT")
     private String content;
 
@@ -48,18 +44,32 @@ public class Block extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private BlockType type;
+    @JoinColumn(name = "block_type")
+    private BlockType blockType;
 
     @Column(name = "is_saved", nullable = false)
-    private Boolean isSaved = false;
+    private Boolean isSaved;
 
     @Builder
-    public Block(User user, Block parent, String content, Integer depth, Integer sequence, BlockType type) {
+    public Block(User user, Block parent, String content, Integer depth, Integer sequence, BlockType blockType, Boolean isSaved) {
         this.user = user;
         this.parent = parent;
         this.content = content;
         this.depth = depth;
         this.sequence = sequence;
-        this.type = type;
+        this.blockType = blockType;
+        this.isSaved = (isSaved != null) ? isSaved : false;
+    }
+
+    public static Block createBlockBuild(User user, Block parentBlock, BlockRequestDto dto){
+        return Block.builder()
+                .user(user)
+                .parent(parentBlock)
+                .content(dto.getContent())
+                .blockType(BlockType.valueOf(dto.getBlockType().getText()))
+                .depth(dto.getDepth())
+                .sequence(dto.getSequence())
+                .isSaved(dto.getIsSaved())
+                .build();
     }
 }

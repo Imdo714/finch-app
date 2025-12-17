@@ -45,6 +45,10 @@ public enum ErrorCode {
     // ---------------------------- 티커 (Ticker) ----------------------------
     INVALID_TICKER_NAME(401, "INVALID_TICKER_NAME", "티커 또는 이름을 작성하세요."),
 
+    //---------------------------- 블럭 (Block) ----------------------------
+    INVALID_ROOT_BLOCK_COUNT(400, "INVALID_ROOT_BLOCK_COUNT", "최상위 블록(부모)은 반드시 1개여야 합니다."),
+    MAX_BLOCK_DEPTH_EXCEEDED(400, "MAX_BLOCK_DEPTH_EXCEEDED", "블록 계층은 최대 2단계(Depth 2)까지만 허용됩니다."),
+
     ;
 
     private final int httpStatus;
