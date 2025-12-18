@@ -13,7 +13,6 @@ import java.util.List;
 public class BlockResponseDto {
     private Long blockId;
     private String content;
-    private String blockType;
     private Integer depth;
     private Integer sequence;
     private List<BlockResponseDto> children;
@@ -22,7 +21,6 @@ public class BlockResponseDto {
         return BlockResponseDto.builder()
                 .blockId(block.getId())
                 .content(block.getContent())
-                .blockType(block.getBlockType().name())
                 .depth(block.getDepth())
                 .sequence(block.getSequence())
                 .children(children)
