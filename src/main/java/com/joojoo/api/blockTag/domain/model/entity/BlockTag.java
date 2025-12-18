@@ -3,6 +3,7 @@ package com.joojoo.api.blockTag.domain.model.entity;
 import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.tag.domain.model.entity.Tag;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
+import com.joojoo.global.common.entity.BaseCreateEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "block_tags")
-public class BlockTag {
+public class BlockTag extends BaseCreateEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,10 +39,6 @@ public class BlockTag {
 
     @Column(name = "start_offset")
     private Integer startOffset;
-
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
 
     @Builder
     public BlockTag(Tag tag, Block block, TradeLog tradeLog, Integer sequence, Integer startOffset) {
