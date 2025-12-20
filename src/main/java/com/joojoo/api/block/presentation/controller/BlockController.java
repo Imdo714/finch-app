@@ -3,6 +3,7 @@ package com.joojoo.api.block.presentation.controller;
 import com.joojoo.api.block.application.BlockService;
 import com.joojoo.api.block.presentation.dto.request.createBlock.BlockSaveRequestDto;
 import com.joojoo.api.block.presentation.dto.response.blockDetail.BlockResponse;
+import com.joojoo.api.block.presentation.dto.response.detail.BlockDetailResponseDto;
 import com.joojoo.global.common.request.auth.CustomUserDetails;
 import com.joojoo.global.common.response.BaseResponse;
 import com.joojoo.global.common.response.ErrorResponse;
@@ -14,10 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Block API", description = "블럭(노트) 관련 API")
 @RestController
@@ -46,6 +44,24 @@ public class BlockController {
             @RequestBody BlockSaveRequestDto requestDto
     ) {
         return BaseResponse.ok(blockService.saveBlockTree(user.getUserId(), requestDto));
+    }
+
+    @Operation(summary = "블럭(노트) 상세 페이지", description = "메인 페이지에서 더보기 버튼 누르면 자식, 자손 블럭까지 응답 합니다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "조회 성공",
+                    content = @Content(schema = @Schema(implementation = BlockResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "없는 블럭입니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    @GetMapping("/detail/{blockId}")
+    public BaseResponse<BlockDetailResponseDto> getBlockDetail(@PathVariable Long blockId) {
+        return BaseResponse.ok(blockService.getBlockDetail(blockId));
     }
 
 }

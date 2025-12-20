@@ -1,5 +1,6 @@
 package com.joojoo.api.block.application;
 
+import com.joojoo.api.block.application.detail.BlockDtoAssembler;
 import com.joojoo.api.block.application.metadata.MetadataService;
 import com.joojoo.api.block.application.validate.blockerTree.BlockTreeValidator;
 import com.joojoo.api.block.domain.model.entity.Block;
@@ -8,8 +9,14 @@ import com.joojoo.api.block.presentation.dto.request.createBlock.BlockRequestDto
 import com.joojoo.api.block.presentation.dto.request.createBlock.BlockSaveRequestDto;
 import com.joojoo.api.block.presentation.dto.response.blockDetail.BlockResponse;
 import com.joojoo.api.block.presentation.dto.response.blockDetail.BlockResponseDto;
+import com.joojoo.api.block.presentation.dto.response.detail.BlockDetailResponseDto;
+import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
+import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
+import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
+import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;
+import com.joojoo.global.exception.handleException.block.BlockNotFoundException;
 import com.joojoo.global.exception.handleException.users.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +38,10 @@ public class BlockServiceImpl implements BlockService {
     private final BlockTreeValidator blockTreeValidator;
     private final MetadataService metadataService;
 
+    private final BlockDtoAssembler blockDtoAssembler;
+    private final BlockTagRepository blockTagRepository;
+    private final BlockTickerRepository blockTickerRepository;
+
     @Override
     @Transactional
     public BlockResponse saveBlockTree(Long userId, BlockSaveRequestDto requestDto) {
@@ -43,6 +54,19 @@ public class BlockServiceImpl implements BlockService {
 
         metadataService.processMetadata(allBlocks);
         return blockResponse;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BlockDetailResponseDto getBlockDetail(Long rootId) {
+        List<Block> blocks = blockRepository.findAllChildrenByRootId(rootId);
+        if (blocks.isEmpty()) throw new BlockNotFoundException();
+
+        List<Long> ids = blocks.stream().map(Block::getId).toList();
+        List<BlockTag> tags = blockTagRepository.findAllBlockTags(ids);
+        List<BlockTicker> tickers = blockTickerRepository.findAllBlockTickers(ids);
+
+        return blockDtoAssembler.assembleTree(rootId, blocks, tags, tickers);
     }
 
     /** 리스트에 블럭을 담아 한번에 저장하는 메서드 */

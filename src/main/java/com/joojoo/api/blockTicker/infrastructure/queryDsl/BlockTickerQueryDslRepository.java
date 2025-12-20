@@ -1,11 +1,9 @@
-package com.joojoo.api.blockTicker.domain.repository;
+package com.joojoo.api.blockTicker.infrastructure.queryDsl;
 
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
 
 import java.util.List;
 
-public interface BlockTickerRepository {
-    List<BlockTicker> saveAll(List<BlockTicker> blockTickers);
-
+public interface BlockTickerQueryDslRepository {
     List<BlockTicker> findAllBlockTickers(List<Long> blockIds);
 }
