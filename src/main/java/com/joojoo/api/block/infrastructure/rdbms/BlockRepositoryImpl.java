@@ -19,7 +19,7 @@ public class BlockRepositoryImpl implements BlockRepository {
     }
 
     @Override
-    public void saveAll(List<Block> allBlocks) {
-        blockJpaRepository.saveAll(allBlocks);
+    public List<Block> saveAll(List<Block> allBlocks) {
+        return blockJpaRepository.saveAll(allBlocks);
     }
 }

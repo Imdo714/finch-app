@@ -48,4 +48,13 @@ public class BlockTag extends BaseCreateEntity {
         this.sequence = sequence;
         this.startOffset = startOffset;
     }
+
+    public static BlockTag create(Block block, Tag tag, int start, int tagSeq) {
+        return BlockTag.builder()
+                .block(block)
+                .tag(tag)
+                .sequence(tagSeq)
+                .startOffset(start)
+                .build();
+    }
 }

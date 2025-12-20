@@ -1,13 +1,10 @@
-package com.joojoo.api.tag.domain.repository;
+package com.joojoo.api.tag.infrastructure.queryDsl;
 
 import com.joojoo.api.tag.domain.model.entity.Tag;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-public interface TagRepository {
+public interface TagQueryDslRepository {
     List<Tag> findAllByNames(Set<String> names);
-
-    List<Tag> saveAll(List<Tag> newTags);
 }
