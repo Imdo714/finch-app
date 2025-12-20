@@ -4,6 +4,7 @@ import com.joojoo.api.block.application.BlockService;
 import com.joojoo.api.block.presentation.dto.request.createBlock.BlockSaveRequestDto;
 import com.joojoo.api.block.presentation.dto.response.blockDetail.BlockResponse;
 import com.joojoo.api.block.presentation.dto.response.detail.BlockDetailResponseDto;
+import com.joojoo.api.block.presentation.dto.response.detail.BlockMainViewResponseDto;
 import com.joojoo.global.common.request.auth.CustomUserDetails;
 import com.joojoo.global.common.response.BaseResponse;
 import com.joojoo.global.common.response.ErrorResponse;
@@ -51,7 +52,7 @@ public class BlockController {
             @ApiResponse(
                     responseCode = "200",
                     description = "조회 성공",
-                    content = @Content(schema = @Schema(implementation = BlockResponse.class))
+                    content = @Content(schema = @Schema(implementation = BlockDetailResponseDto.class))
             ),
             @ApiResponse(
                     responseCode = "404",
@@ -62,6 +63,23 @@ public class BlockController {
     @GetMapping("/detail/{blockId}")
     public BaseResponse<BlockDetailResponseDto> getBlockDetail(@PathVariable Long blockId) {
         return BaseResponse.ok(blockService.getBlockDetail(blockId));
+    }
+
+    @Operation(summary = "블럭(노트) 메인 페이지 API", description = "메인 페이지에 보여주는 부모 블럭 리스트 입니다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "조회 성공",
+                    content = @Content(schema = @Schema(implementation = BlockMainViewResponseDto.class))
+            )
+    })
+    @GetMapping("/detail")
+    public BaseResponse<BlockMainViewResponseDto> getBlockMainView(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @RequestParam(required = false) Long lastId,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        return BaseResponse.ok(blockService.getBlockMainView(user.getUserId(), lastId, size));
     }
 
 }

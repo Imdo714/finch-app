@@ -10,6 +10,7 @@ import com.joojoo.api.block.presentation.dto.request.createBlock.BlockSaveReques
 import com.joojoo.api.block.presentation.dto.response.blockDetail.BlockResponse;
 import com.joojoo.api.block.presentation.dto.response.blockDetail.BlockResponseDto;
 import com.joojoo.api.block.presentation.dto.response.detail.BlockDetailResponseDto;
+import com.joojoo.api.block.presentation.dto.response.detail.BlockMainViewResponseDto;
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -67,6 +69,49 @@ public class BlockServiceImpl implements BlockService {
         List<BlockTicker> tickers = blockTickerRepository.findAllBlockTickers(ids);
 
         return blockDtoAssembler.assembleTree(rootId, blocks, tags, tickers);
+    }
+
+    @Override
+    public BlockMainViewResponseDto getBlockMainView(Long userId, Long lastId, int size) {
+        List<Block> rootBlocks = blockRepository.findRootBlocks(userId, lastId, size);
+        if (rootBlocks.isEmpty()) return null;
+
+        List<Long> rootIds = rootBlocks.stream().map(Block::getId).toList();
+        List<BlockTag> tags = blockTagRepository.findAllBlockTags(rootIds);
+        List<BlockTicker> tickers = blockTickerRepository.findAllBlockTickers(rootIds);
+
+        Map<Long, Long> childCounts = blockRepository.getChildCounts(rootIds);
+
+        Map<Long, List<BlockDetailResponseDto.MetadataResponse>> tagMap = tags.stream()
+                .collect(Collectors.groupingBy(
+                        bt -> bt.getBlock().getId(),
+                        Collectors.mapping(bt -> BlockDetailResponseDto.MetadataResponse.of(
+                                bt.getTag().getId(),
+                                bt.getTag().getName(),
+                                bt.getSequence(),
+                                bt.getStartOffset()), Collectors.toList())
+                ));
+
+        Map<Long, List<BlockDetailResponseDto.MetadataResponse>> tickerMap = tickers.stream()
+                .collect(Collectors.groupingBy(
+                        bt -> bt.getBlock().getId(),
+                        Collectors.mapping(bt -> BlockDetailResponseDto.MetadataResponse.of(
+                                bt.getTicker().getId(),
+                                bt.getTicker().getName(),
+                                bt.getSequence(),
+                                bt.getStartOffset()), Collectors.toList())
+                ));
+
+        List<BlockDetailResponseDto> blockList = rootBlocks.stream()
+                .map(block -> BlockDetailResponseDto.fromSummary(
+                        block,
+                        tagMap.getOrDefault(block.getId(), Collections.emptyList()),
+                        tickerMap.getOrDefault(block.getId(), Collections.emptyList()),
+                        childCounts.getOrDefault(block.getId(), 0L)
+                ))
+                .toList();
+
+        return BlockMainViewResponseDto.of(blockList);
     }
 
     /** 리스트에 블럭을 담아 한번에 저장하는 메서드 */

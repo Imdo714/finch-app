@@ -1,8 +1,10 @@
 package com.joojoo.api.block.presentation.dto.response.detail;
 
+import com.joojoo.api.block.domain.model.entity.Block;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -16,6 +18,20 @@ public class BlockDetailResponseDto {
     private List<MetadataResponse> tagNames;
     private List<MetadataResponse> tickerNames;
     private List<BlockDetailResponseDto> children;
+
+    private Long childCount;
+
+    public static BlockDetailResponseDto fromSummary(Block block, List<MetadataResponse> tags, List<MetadataResponse> tickers, Long childCount) {
+        return BlockDetailResponseDto.builder()
+                .blockId(block.getId())
+                .content(block.getContent())
+                .createdAt(block.getCreatedAt())
+                .tagNames(tags)
+                .tickerNames(tickers)
+                .children(new ArrayList<>())
+                .childCount(childCount)
+                .build();
+    }
 
     @Getter
     @Builder
