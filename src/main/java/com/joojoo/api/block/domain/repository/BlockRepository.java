@@ -7,5 +7,5 @@ import java.util.List;
 public interface BlockRepository {
     Block save(Block block);
 
-    void saveAll(List<Block> allBlocks);
+    List<Block> saveAll(List<Block> allBlocks);
 }

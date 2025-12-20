@@ -2,13 +2,11 @@ package com.joojoo.api.ticker.domain.model.entity;
 
 import com.joojoo.api.ticker.domain.model.enums.MarketType;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
+@ToString
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

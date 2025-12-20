@@ -9,9 +9,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -47,5 +44,14 @@ public class BlockTicker extends BaseCreateEntity {
         this.tradeLog = tradeLog;
         this.sequence = sequence;
         this.startOffset = startOffset;
+    }
+
+    public static BlockTicker create(Block block, Ticker ticker, int start, int tSeq) {
+        return BlockTicker.builder()
+                .block(block)
+                .ticker(ticker)
+                .sequence(tSeq)
+                .startOffset(start)
+                .build();
     }
 }
