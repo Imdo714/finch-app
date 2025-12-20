@@ -1,11 +1,9 @@
-package com.joojoo.api.blockTag.domain.repository;
+package com.joojoo.api.blockTag.infrastructure.queryDsl;
 
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 
 import java.util.List;
 
-public interface BlockTagRepository {
-    List<BlockTag> saveAll(List<BlockTag> blockTags);
-
+public interface BlockTagQueryDslRepository {
     List<BlockTag> findAllBlockTags(List<Long> blockIds);
 }

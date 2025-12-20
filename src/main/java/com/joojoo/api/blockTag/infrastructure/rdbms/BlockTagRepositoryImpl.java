@@ -2,6 +2,7 @@ package com.joojoo.api.blockTag.infrastructure.rdbms;
 
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
+import com.joojoo.api.blockTag.infrastructure.queryDsl.BlockTagQueryDslRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -12,10 +13,15 @@ import java.util.List;
 public class BlockTagRepositoryImpl implements BlockTagRepository {
 
     private final BlockTagJpaRepository blockTagJpaRepository;
-
+    private final BlockTagQueryDslRepository blockTagQueryDslRepository;
 
     @Override
     public List<BlockTag> saveAll(List<BlockTag> blockTags) {
         return blockTagJpaRepository.saveAll(blockTags);
+    }
+
+    @Override
+    public List<BlockTag> findAllBlockTags(List<Long> blockIds) {
+        return blockTagQueryDslRepository.findAllBlockTags(blockIds);
     }
 }

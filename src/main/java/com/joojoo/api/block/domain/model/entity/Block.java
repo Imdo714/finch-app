@@ -1,6 +1,8 @@
 package com.joojoo.api.block.domain.model.entity;
 
 import com.joojoo.api.block.presentation.dto.request.createBlock.BlockRequestDto;
+import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
+import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -41,6 +43,12 @@ public class Block extends BaseTimeEntity {
 
     @Column(name = "is_saved", nullable = false)
     private Boolean isSaved;
+
+    @OneToMany(mappedBy = "block", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BlockTag> blockTags = new ArrayList<>();
+
+    @OneToMany(mappedBy = "block", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BlockTicker> blockTickers = new ArrayList<>();
 
     @Builder
     public Block(User user, Block parent, String content, Integer depth, Integer sequence, Boolean isSaved) {
