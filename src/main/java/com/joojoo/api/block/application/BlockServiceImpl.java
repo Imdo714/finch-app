@@ -50,7 +50,6 @@ public class BlockServiceImpl implements BlockService {
         blockTreeValidator.validateStructure(requestDto);
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
-        // 블록 엔티티 저장
         List<Block> allBlocks = createAndSaveBlocks(user, requestDto.getBlocks());
         BlockResponse blockResponse = reconstructBlockTree(allBlocks);
 
@@ -72,46 +71,17 @@ public class BlockServiceImpl implements BlockService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BlockMainViewResponseDto getBlockMainView(Long userId, Long lastId, int size) {
         List<Block> rootBlocks = blockRepository.findRootBlocks(userId, lastId, size);
-        if (rootBlocks.isEmpty()) return null;
+        if (rootBlocks.isEmpty()) return new BlockMainViewResponseDto(null);
 
         List<Long> rootIds = rootBlocks.stream().map(Block::getId).toList();
         List<BlockTag> tags = blockTagRepository.findAllBlockTags(rootIds);
         List<BlockTicker> tickers = blockTickerRepository.findAllBlockTickers(rootIds);
-
         Map<Long, Long> childCounts = blockRepository.getChildCounts(rootIds);
 
-        Map<Long, List<BlockDetailResponseDto.MetadataResponse>> tagMap = tags.stream()
-                .collect(Collectors.groupingBy(
-                        bt -> bt.getBlock().getId(),
-                        Collectors.mapping(bt -> BlockDetailResponseDto.MetadataResponse.of(
-                                bt.getTag().getId(),
-                                bt.getTag().getName(),
-                                bt.getSequence(),
-                                bt.getStartOffset()), Collectors.toList())
-                ));
-
-        Map<Long, List<BlockDetailResponseDto.MetadataResponse>> tickerMap = tickers.stream()
-                .collect(Collectors.groupingBy(
-                        bt -> bt.getBlock().getId(),
-                        Collectors.mapping(bt -> BlockDetailResponseDto.MetadataResponse.of(
-                                bt.getTicker().getId(),
-                                bt.getTicker().getName(),
-                                bt.getSequence(),
-                                bt.getStartOffset()), Collectors.toList())
-                ));
-
-        List<BlockDetailResponseDto> blockList = rootBlocks.stream()
-                .map(block -> BlockDetailResponseDto.fromSummary(
-                        block,
-                        tagMap.getOrDefault(block.getId(), Collections.emptyList()),
-                        tickerMap.getOrDefault(block.getId(), Collections.emptyList()),
-                        childCounts.getOrDefault(block.getId(), 0L)
-                ))
-                .toList();
-
-        return BlockMainViewResponseDto.of(blockList);
+        return BlockMainViewResponseDto.of(blockDtoAssembler.assembleMainList(rootBlocks, tags, tickers, childCounts));
     }
 
     /** 리스트에 블럭을 담아 한번에 저장하는 메서드 */

@@ -20,53 +20,63 @@ public class BlockDtoAssemblerImpl implements BlockDtoAssembler {
 
     @Override
     public BlockDetailResponseDto assembleTree(Long rootId, List<Block> blocks, List<BlockTag> tags, List<BlockTicker> tickers) {
-        Map<Long, List<BlockDetailResponseDto.MetadataResponse>> tagMap = createMetadataMap(tags,
-                bt -> bt.getBlock().getId(),
-                bt -> createMetadataDto(bt.getTag().getId(), bt.getTag().getName(), bt.getSequence(), bt.getStartOffset()));
+        Map<Long, List<BlockDetailResponseDto.MetadataResponse>> tagMap = createTagMap(tags);
+        Map<Long, List<BlockDetailResponseDto.MetadataResponse>> tickerMap = createTickerMap(tickers);
 
-        Map<Long, List<BlockDetailResponseDto.MetadataResponse>> tickerMap = createMetadataMap(tickers,
-                bt -> bt.getBlock().getId(),
-                bt -> createMetadataDto(bt.getTicker().getId(), bt.getTicker().getName(), bt.getSequence(), bt.getStartOffset()));
+        Map<Long, Long> childCountMap = calculateChildCounts(blocks);
 
-        Map<Long, BlockDetailResponseDto> dtoMap = createBlockDetailResponseDto(blocks, tagMap, tickerMap);
-
-        BlockDetailResponseDto rootDto = null;
-        for (Block b : blocks) {
-            BlockDetailResponseDto currentDto = dtoMap.get(b.getId());
-            if (b.getId().equals(rootId)) {
-                rootDto = currentDto;
-            } else if (b.getParent() != null) {
-                BlockDetailResponseDto parentDto = dtoMap.get(b.getParent().getId());
-                if (parentDto != null) {
-                    parentDto.getChildren().add(currentDto);
-                }
-            }
-        }
-
-        return rootDto;
-    }
-
-    /** BlockDetailResponseDto 응답 값 생성해주는 메서드 */
-    private Map<Long, BlockDetailResponseDto> createBlockDetailResponseDto(
-            List<Block> blocks,
-            Map<Long, List<BlockDetailResponseDto.MetadataResponse>> tagMap,
-            Map<Long, List<BlockDetailResponseDto.MetadataResponse>> tickerMap) {
-
-        return blocks.stream()
+        Map<Long, BlockDetailResponseDto> dtoMap = blocks.stream()
                 .collect(Collectors.toMap(
                         Block::getId,
-                        b -> BlockDetailResponseDto.builder()
-                                .blockId(b.getId())
-                                .content(b.getContent())
-                                .createdAt(b.getCreatedAt())
-                                .tagNames(tagMap.getOrDefault(b.getId(), new ArrayList<>()))
-                                .tickerNames(tickerMap.getOrDefault(b.getId(), new ArrayList<>()))
-                                .children(new ArrayList<>())
-                                .build()
+                        b -> BlockDetailResponseDto.fromSummary(
+                                b, tagMap.getOrDefault(b.getId(),
+                                new ArrayList<>()), tickerMap.getOrDefault(b.getId(),
+                                new ArrayList<>()),
+                                childCountMap.getOrDefault(b.getId(), 0L)
+                        )
+                ));
+
+        return buildTreeAndGetRoot(rootId, blocks, dtoMap);
+    }
+
+    @Override
+    public List<BlockDetailResponseDto> assembleMainList(List<Block> blocks, List<BlockTag> tags, List<BlockTicker> tickers, Map<Long, Long> childCounts) {
+        Map<Long, List<BlockDetailResponseDto.MetadataResponse>> tagMap = createTagMap(tags);
+        Map<Long, List<BlockDetailResponseDto.MetadataResponse>> tickerMap = createTickerMap(tickers);
+
+        return blocks.stream()
+                .map(b -> BlockDetailResponseDto.fromSummary(
+                        b,
+                        tagMap.getOrDefault(b.getId(), new ArrayList<>()),
+                        tickerMap.getOrDefault(b.getId(), new ArrayList<>()),
+                        childCounts.getOrDefault(b.getId(), 0L)
+                ))
+                .toList();
+    }
+
+    /** Tag 전용 맵 생성 */
+    private Map<Long, List<BlockDetailResponseDto.MetadataResponse>> createTagMap(List<BlockTag> tags) {
+        return createMetadataMap(tags, bt -> bt.getBlock().getId(),
+                bt -> BlockDetailResponseDto.MetadataResponse.of(bt.getTag().getId(), bt.getTag().getName(), bt.getSequence(), bt.getStartOffset()));
+    }
+
+    /** Ticker 전용 맵 생성 */
+    private Map<Long, List<BlockDetailResponseDto.MetadataResponse>> createTickerMap(List<BlockTicker> tickers) {
+        return createMetadataMap(tickers, bt -> bt.getBlock().getId(),
+                bt -> BlockDetailResponseDto.MetadataResponse.of(bt.getTicker().getId(), bt.getTicker().getName(), bt.getSequence(), bt.getStartOffset()));
+    }
+
+    /** 자식 개수 계산 로직 분리 */
+    private Map<Long, Long> calculateChildCounts(List<Block> blocks) {
+        return blocks.stream()
+                .filter(b -> b.getParent() != null)
+                .collect(Collectors.groupingBy(
+                        b -> b.getParent().getId(),
+                        Collectors.counting()
                 ));
     }
 
-    /** 공통 맵 생성 메서드 BlockTag, BlockTicker 뭐가 들어올지 모르니 제네릭 활용 */
+    /** 공통 제네릭 맵 생성 및 정렬 로직 */
     private <T> Map<Long, List<BlockDetailResponseDto.MetadataResponse>> createMetadataMap(
             List<T> items,
             Function<T, Long> blockIdExtractor,
@@ -85,14 +95,23 @@ public class BlockDtoAssemblerImpl implements BlockDtoAssembler {
                 ));
     }
 
-    /** MetadataResponse DTO로 만들어주는 메서드 */
-    private BlockDetailResponseDto.MetadataResponse createMetadataDto(Long id, String name, Integer seq, Integer offset) {
-        return BlockDetailResponseDto.MetadataResponse.builder()
-                .id(id)
-                .name(name)
-                .sequence(seq)
-                .startOffset(offset)
-                .build();
+    /** 트리 조립 로직 분리 */
+    private BlockDetailResponseDto buildTreeAndGetRoot(Long rootId, List<Block> blocks, Map<Long, BlockDetailResponseDto> dtoMap) {
+        BlockDetailResponseDto rootDto = null;
+
+        for (Block b : blocks) {
+            BlockDetailResponseDto currentDto = dtoMap.get(b.getId());
+
+            if (b.getId().equals(rootId)) {
+                rootDto = currentDto;
+            } else if (b.getParent() != null) {
+                BlockDetailResponseDto parentDto = dtoMap.get(b.getParent().getId());
+                if (parentDto != null) {
+                    parentDto.getChildren().add(currentDto);
+                }
+            }
+        }
+        return rootDto;
     }
 
 }

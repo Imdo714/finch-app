@@ -17,9 +17,8 @@ public class BlockDetailResponseDto {
     private LocalDateTime createdAt;
     private List<MetadataResponse> tagNames;
     private List<MetadataResponse> tickerNames;
-    private List<BlockDetailResponseDto> children;
-
     private Long childCount;
+    private List<BlockDetailResponseDto> children;
 
     public static BlockDetailResponseDto fromSummary(Block block, List<MetadataResponse> tags, List<MetadataResponse> tickers, Long childCount) {
         return BlockDetailResponseDto.builder()
@@ -28,8 +27,8 @@ public class BlockDetailResponseDto {
                 .createdAt(block.getCreatedAt())
                 .tagNames(tags)
                 .tickerNames(tickers)
-                .children(new ArrayList<>())
                 .childCount(childCount)
+                .children(new ArrayList<>())
                 .build();
     }
 
