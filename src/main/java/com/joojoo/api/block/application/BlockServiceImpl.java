@@ -10,7 +10,7 @@ import com.joojoo.api.block.presentation.dto.request.createBlock.BlockSaveReques
 import com.joojoo.api.block.presentation.dto.response.blockDetail.BlockResponse;
 import com.joojoo.api.block.presentation.dto.response.blockDetail.BlockResponseDto;
 import com.joojoo.api.block.presentation.dto.response.detail.BlockDetailResponseDto;
-import com.joojoo.api.block.presentation.dto.response.detail.BlockMainViewResponseDto;
+import com.joojoo.api.block.presentation.dto.response.mainView.BlockMainViewResponse;
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -72,16 +73,32 @@ public class BlockServiceImpl implements BlockService {
 
     @Override
     @Transactional(readOnly = true)
-    public BlockMainViewResponseDto getBlockMainView(Long userId, Long lastId, int size) {
-        List<Block> rootBlocks = blockRepository.findRootBlocks(userId, lastId, size);
-        if (rootBlocks.isEmpty()) return new BlockMainViewResponseDto(null);
+    public BlockMainViewResponse getBlockMainView(Long userId, LocalDate lastDate) {
+        LocalDate targetDate = validateAndGetTargetDate(lastDate);
+
+        List<Block> rootBlocks = blockRepository.findBlocksByLatestDates(userId, targetDate, 2);
+        if (rootBlocks.isEmpty()) {
+            return new BlockMainViewResponse(Collections.emptyList(), null);
+        }
 
         List<Long> rootIds = rootBlocks.stream().map(Block::getId).toList();
         List<BlockTag> tags = blockTagRepository.findAllBlockTags(rootIds);
         List<BlockTicker> tickers = blockTickerRepository.findAllBlockTickers(rootIds);
         Map<Long, Long> childCounts = blockRepository.getChildCounts(rootIds);
 
-        return BlockMainViewResponseDto.of(blockDtoAssembler.assembleMainList(rootBlocks, tags, tickers, childCounts));
+        List<BlockDetailResponseDto> allDtos = blockDtoAssembler.assembleMainList(rootBlocks, tags, tickers, childCounts);
+        LocalDate oldestDateInResult = allDtos.get(allDtos.size() - 1).getCreatedAt().toLocalDate();
+        LocalDate nextDate = blockRepository.findNextAvailableDate(userId, oldestDateInResult);
+
+        return BlockMainViewResponse.of(allDtos, nextDate);
+    }
+
+    /** 날짜가 없거나, 미래 날짜이면 오늘 날짜로 변경 */
+    private LocalDate validateAndGetTargetDate(LocalDate lastDate) {
+        if (lastDate == null || lastDate.isAfter(LocalDate.now())) {
+            return LocalDate.now();
+        }
+        return lastDate;
     }
 
     /** 리스트에 블럭을 담아 한번에 저장하는 메서드 */
