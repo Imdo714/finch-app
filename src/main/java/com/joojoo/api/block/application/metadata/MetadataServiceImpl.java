@@ -31,7 +31,7 @@ public class MetadataServiceImpl implements MetadataService {
     private final BlockTagRepository blockTagRepository;
 
     @Override
-    public void processMetadata(List<Block> blocks) {
+    public void processMetadata(List<Block> blocks, Long userId) {
         // 정규식 메타데이버 검사
         Set<String> tickerNames = new HashSet<>();
         Set<String> tagNames = new HashSet<>();
@@ -47,7 +47,7 @@ public class MetadataServiceImpl implements MetadataService {
 
         for (Block block : blocks) {
             List<MatchedMetadataDto> matches = analysisMap.getOrDefault(block, Collections.emptyList());
-            mapToEntities(block, matches, tickerMap, tagMap, blockTickers, blockTags);
+            mapToEntities(block, matches, tickerMap, tagMap, blockTickers, blockTags, userId);
         }
 
         // TODO : JDBC Batch Insert 고려, 지금 중간 테이블이 10개면 10개의 Insert 쿼리 작동 중
@@ -84,8 +84,7 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     /** 추출된 맵을 바탕으로 BlockTicker, BlockTag 중간 테이블 엔티티 생성 */
-    @Override
-    public void mapToEntities(Block block, List<MatchedMetadataDto> matches, Map<String, Ticker> tickerMap, Map<String, Tag> tagMap, List<BlockTicker> bTickers, List<BlockTag> bTags) {
+    public void mapToEntities(Block block, List<MatchedMetadataDto> matches, Map<String, Ticker> tickerMap, Map<String, Tag> tagMap, List<BlockTicker> bTickers, List<BlockTag> bTags, Long userId) {
         if (block.getContent() == null) return;
 
         AtomicInteger tSeq = new AtomicInteger();
@@ -94,10 +93,10 @@ public class MetadataServiceImpl implements MetadataService {
         for (MatchedMetadataDto match : matches) {
             if (match.isTicker()) {
                 Optional.ofNullable(tickerMap.get(match.name()))
-                        .ifPresent(t -> bTickers.add(BlockTicker.create(block, t, match.start(), tSeq.getAndIncrement())));
+                        .ifPresent(t -> bTickers.add(BlockTicker.create(block, t, userId, match.start(), tSeq.getAndIncrement())));
             } else {
                 Optional.ofNullable(tagMap.get(match.name()))
-                        .ifPresent(tag -> bTags.add(BlockTag.create(block, tag, match.start(), tagSeq.getAndIncrement())));
+                        .ifPresent(tag -> bTags.add(BlockTag.create(block, tag, userId, match.start(), tagSeq.getAndIncrement())));
             }
         }
     }

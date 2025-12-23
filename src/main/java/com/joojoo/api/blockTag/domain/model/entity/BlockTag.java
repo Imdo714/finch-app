@@ -9,9 +9,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -35,24 +32,29 @@ public class BlockTag extends BaseCreateEntity {
     @JoinColumn(name = "trade_log_id")
     private TradeLog tradeLog;
 
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
     private Integer sequence;
 
     @Column(name = "start_offset")
     private Integer startOffset;
 
     @Builder
-    public BlockTag(Tag tag, Block block, TradeLog tradeLog, Integer sequence, Integer startOffset) {
+    public BlockTag(Tag tag, Block block, TradeLog tradeLog, Long userId, Integer sequence, Integer startOffset) {
         this.tag = tag;
         this.block = block;
         this.tradeLog = tradeLog;
+        this.userId = userId;
         this.sequence = sequence;
         this.startOffset = startOffset;
     }
 
-    public static BlockTag create(Block block, Tag tag, int start, int tagSeq) {
+    public static BlockTag create(Block block, Tag tag, Long userId, int start, int tagSeq) {
         return BlockTag.builder()
                 .block(block)
                 .tag(tag)
+                .userId(userId)
                 .sequence(tagSeq)
                 .startOffset(start)
                 .build();

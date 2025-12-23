@@ -54,7 +54,7 @@ public class BlockServiceImpl implements BlockService {
         List<Block> allBlocks = createAndSaveBlocks(user, requestDto.getBlocks());
         BlockResponse blockResponse = reconstructBlockTree(allBlocks);
 
-        metadataService.processMetadata(allBlocks);
+        metadataService.processMetadata(allBlocks, user.getId());
         return blockResponse;
     }
 
