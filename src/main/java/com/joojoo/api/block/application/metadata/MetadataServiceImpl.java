@@ -30,31 +30,6 @@ public class MetadataServiceImpl implements MetadataService {
     private final BlockTickerRepository blockTickerRepository;
     private final BlockTagRepository blockTagRepository;
 
-    @Override
-    public void processMetadata(List<Block> blocks) {
-        // 정규식 메타데이버 검사
-        Set<String> tickerNames = new HashSet<>();
-        Set<String> tagNames = new HashSet<>();
-        Map<Block, List<MatchedMetadataDto>> analysisMap = scanBlocks(blocks, tickerNames, tagNames);
-
-        // Ticker, Tag Entity 준비
-        Map<String, Ticker> tickerMap = tickerInService.getTickerMap(tickerNames);
-        Map<String, Tag> tagMap = tagInService.getOrCreateTagMap(tagNames);
-
-        // 연관관계 엔티티 생성
-        List<BlockTicker> blockTickers = new ArrayList<>();
-        List<BlockTag> blockTags = new ArrayList<>();
-
-        for (Block block : blocks) {
-            List<MatchedMetadataDto> matches = analysisMap.getOrDefault(block, Collections.emptyList());
-            mapToEntities(block, matches, tickerMap, tagMap, blockTickers, blockTags);
-        }
-
-        // TODO : JDBC Batch Insert 고려, 지금 중간 테이블이 10개면 10개의 Insert 쿼리 작동 중
-        blockTickerRepository.saveAll(blockTickers);
-        blockTagRepository.saveAll(blockTags);
-    }
-
     /** Block.content을 읽어 Ticker, Tag를 찾아서 담기 */
     @Override
     public Map<Block, List<MatchedMetadataDto>> scanBlocks(List<Block> blocks, Set<String> tickerNames, Set<String> tagNames) {
@@ -83,9 +58,33 @@ public class MetadataServiceImpl implements MetadataService {
         return analysisResult;
     }
 
-    /** 추출된 맵을 바탕으로 BlockTicker, BlockTag 중간 테이블 엔티티 생성 */
     @Override
-    public void mapToEntities(Block block, List<MatchedMetadataDto> matches, Map<String, Ticker> tickerMap, Map<String, Tag> tagMap, List<BlockTicker> bTickers, List<BlockTag> bTags) {
+    public void processMetadata(List<Block> blocks, Long userId) {
+        // 정규식 메타데이버 검사
+        Set<String> tickerNames = new HashSet<>();
+        Set<String> tagNames = new HashSet<>();
+        Map<Block, List<MatchedMetadataDto>> analysisMap = scanBlocks(blocks, tickerNames, tagNames);
+
+        // Ticker, Tag Entity 준비
+        Map<String, Ticker> tickerMap = tickerInService.getTickerMap(tickerNames);
+        Map<String, Tag> tagMap = tagInService.getOrCreateTagMap(tagNames);
+
+        // 연관관계 엔티티 생성
+        List<BlockTicker> blockTickers = new ArrayList<>();
+        List<BlockTag> blockTags = new ArrayList<>();
+
+        for (Block block : blocks) {
+            List<MatchedMetadataDto> matches = analysisMap.getOrDefault(block, Collections.emptyList());
+            mapToEntities(block, userId, matches, tickerMap, tagMap, blockTickers, blockTags);
+        }
+
+        // TODO : JDBC Batch Insert 고려, 지금 중간 테이블이 10개면 10개의 Insert 쿼리 작동 중
+        blockTickerRepository.saveAll(blockTickers);
+        blockTagRepository.saveAll(blockTags);
+    }
+
+    /** 추출된 맵을 바탕으로 BlockTicker, BlockTag 중간 테이블 엔티티 생성 */
+    public void mapToEntities(Block block, Long userId, List<MatchedMetadataDto> matches, Map<String, Ticker> tickerMap, Map<String, Tag> tagMap, List<BlockTicker> bTickers, List<BlockTag> bTags) {
         if (block.getContent() == null) return;
 
         AtomicInteger tSeq = new AtomicInteger();
@@ -94,10 +93,10 @@ public class MetadataServiceImpl implements MetadataService {
         for (MatchedMetadataDto match : matches) {
             if (match.isTicker()) {
                 Optional.ofNullable(tickerMap.get(match.name()))
-                        .ifPresent(t -> bTickers.add(BlockTicker.create(block, t, match.start(), tSeq.getAndIncrement())));
+                        .ifPresent(t -> bTickers.add(BlockTicker.create(block, t, userId, match.start(), tSeq.getAndIncrement())));
             } else {
                 Optional.ofNullable(tagMap.get(match.name()))
-                        .ifPresent(tag -> bTags.add(BlockTag.create(block, tag, match.start(), tagSeq.getAndIncrement())));
+                        .ifPresent(tag -> bTags.add(BlockTag.create(block, tag, userId, match.start(), tagSeq.getAndIncrement())));
             }
         }
     }

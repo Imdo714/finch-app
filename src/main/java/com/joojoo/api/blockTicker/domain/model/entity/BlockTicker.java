@@ -32,24 +32,29 @@ public class BlockTicker extends BaseCreateEntity {
     @JoinColumn(name = "trade_log_id")
     private TradeLog tradeLog;
 
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
     private Integer sequence;
 
     @Column(name = "start_offset")
     private Integer startOffset;
 
     @Builder
-    public BlockTicker(Block block, Ticker ticker, TradeLog tradeLog, Integer sequence, Integer startOffset) {
+    public BlockTicker(Block block, Ticker ticker, TradeLog tradeLog, Long userId, Integer sequence, Integer startOffset) {
         this.block = block;
         this.ticker = ticker;
         this.tradeLog = tradeLog;
+        this.userId = userId;
         this.sequence = sequence;
         this.startOffset = startOffset;
     }
 
-    public static BlockTicker create(Block block, Ticker ticker, int start, int tSeq) {
+    public static BlockTicker create(Block block, Ticker ticker, Long userId, int start, int tSeq) {
         return BlockTicker.builder()
                 .block(block)
                 .ticker(ticker)
+                .userId(userId)
                 .sequence(tSeq)
                 .startOffset(start)
                 .build();
