@@ -6,6 +6,8 @@ import com.joojoo.global.exception.enums.ErrorCode;
 import com.joojoo.global.exception.handleException.block.InvalidBlockStructureException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
 public class BlockTreeValidatorImpl implements BlockTreeValidator {
 
@@ -18,6 +20,14 @@ public class BlockTreeValidatorImpl implements BlockTreeValidator {
         }
 
         validateDepth(requestDto.getBlocks().get(0), 0);
+    }
+
+    @Override /** 날짜가 없거나, 미래 날짜이면 오늘 날짜로 변경 */
+    public LocalDate validateAndGetTargetDate(LocalDate lastDate) {
+        if (lastDate == null || lastDate.isAfter(LocalDate.now())) {
+            return LocalDate.now();
+        }
+        return lastDate;
     }
 
     private void validateDepth(BlockRequestDto block, int currentDepth) {

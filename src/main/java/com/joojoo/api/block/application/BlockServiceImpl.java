@@ -74,7 +74,7 @@ public class BlockServiceImpl implements BlockService {
     @Override
     @Transactional(readOnly = true)
     public BlockMainViewResponse getBlockMainView(Long userId, LocalDate lastDate) {
-        LocalDate targetDate = validateAndGetTargetDate(lastDate);
+        LocalDate targetDate = blockTreeValidator.validateAndGetTargetDate(lastDate);
 
         List<Block> rootBlocks = blockRepository.findBlocksByLatestDates(userId, targetDate, 2);
         if (rootBlocks.isEmpty()) {
@@ -91,14 +91,6 @@ public class BlockServiceImpl implements BlockService {
         LocalDate nextDate = blockRepository.findNextAvailableDate(userId, oldestDateInResult);
 
         return BlockMainViewResponse.of(allDtos, nextDate);
-    }
-
-    /** 날짜가 없거나, 미래 날짜이면 오늘 날짜로 변경 */
-    private LocalDate validateAndGetTargetDate(LocalDate lastDate) {
-        if (lastDate == null || lastDate.isAfter(LocalDate.now())) {
-            return LocalDate.now();
-        }
-        return lastDate;
     }
 
     /** 리스트에 블럭을 담아 한번에 저장하는 메서드 */
