@@ -8,7 +8,6 @@ import com.joojoo.api.block.domain.repository.BlockRepository;
 import com.joojoo.api.block.presentation.dto.request.createBlock.BlockRequestDto;
 import com.joojoo.api.block.presentation.dto.request.createBlock.BlockSaveRequestDto;
 import com.joojoo.api.block.presentation.dto.response.blockDetail.BlockResponse;
-import com.joojoo.api.block.presentation.dto.response.blockDetail.BlockResponseDto;
 import com.joojoo.api.block.presentation.dto.response.detail.BlockDetailResponseDto;
 import com.joojoo.api.block.presentation.dto.response.mainView.BlockMainViewResponse;
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
@@ -29,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -52,7 +50,7 @@ public class BlockServiceImpl implements BlockService {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
         List<Block> allBlocks = createAndSaveBlocks(user, requestDto.getBlocks());
-        metadataService.processMetadata(allBlocks);
+        metadataService.processMetadata(allBlocks, user.getId());
         return blockDtoAssembler.assembleReconstructBlockTree(allBlocks);
     }
 
