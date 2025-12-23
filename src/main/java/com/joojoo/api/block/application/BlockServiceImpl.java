@@ -52,10 +52,8 @@ public class BlockServiceImpl implements BlockService {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
         List<Block> allBlocks = createAndSaveBlocks(user, requestDto.getBlocks());
-        BlockResponse blockResponse = reconstructBlockTree(allBlocks);
-
         metadataService.processMetadata(allBlocks);
-        return blockResponse;
+        return blockDtoAssembler.assembleReconstructBlockTree(allBlocks);
     }
 
     @Override
@@ -98,30 +96,6 @@ public class BlockServiceImpl implements BlockService {
         List<Block> allBlocks = new ArrayList<>();
         blocksRecursive(user, null, dtos, allBlocks);
         return blockRepository.saveAll(allBlocks); // TODO : JDBC Batch Insert 고려, 지금 블럭이 10개면 10개의 Insert 쿼리 작동 중
-    }
-
-    /** List에서 다시 트리 형식으로 변환 */
-    private BlockResponse reconstructBlockTree(List<Block> blocks) {
-        // ID를 키로 하는 DTO Map 생성
-        Map<Long, BlockResponseDto> dtoMap = blocks.stream()
-                .map(block -> BlockResponseDto.of(block, new ArrayList<>()))
-                .collect(Collectors.toMap(BlockResponseDto::getBlockId, dto -> dto));
-
-        // 부모-자식 연결 및 루트 블록 추출
-        List<BlockResponseDto> rootBlocks = new ArrayList<>();
-        for (Block block : blocks) {
-            BlockResponseDto currentDto = dtoMap.get(block.getId());
-
-            if (block.getParent() == null) {
-                rootBlocks.add(currentDto);
-            } else {
-                BlockResponseDto parentDto = dtoMap.get(block.getParent().getId());
-                if (parentDto != null) {
-                    parentDto.getChildren().add(currentDto);
-                }
-            }
-        }
-        return BlockResponse.of(rootBlocks);
     }
 
     /** RequestDto를 순회하며 JPA 엔티티(Block)를 생성하고, allBlocks에 수집하는 메서드 */
