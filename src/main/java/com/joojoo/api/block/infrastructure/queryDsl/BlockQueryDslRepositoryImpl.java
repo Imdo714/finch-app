@@ -2,6 +2,8 @@ package com.joojoo.api.block.infrastructure.queryDsl;
 
 import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.block.domain.model.entity.QBlock;
+import com.joojoo.api.blockTag.domain.model.entity.QBlockTag;
+import com.joojoo.api.tag.domain.model.entity.QTag;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -20,6 +22,8 @@ public class BlockQueryDslRepositoryImpl implements BlockQueryDslRepository {
 
     private final JPAQueryFactory queryFactory;
     private final QBlock block = QBlock.block;
+    private final QBlockTag blockTag = QBlockTag.blockTag;
+    private final QTag tag = QTag.tag;
 
     @Override
     public List<Block> findAllChildrenByRootId(Long rootId) {
@@ -68,6 +72,30 @@ public class BlockQueryDslRepositoryImpl implements BlockQueryDslRepository {
                 t -> t.get(block.count()),
                 (v1, v2) -> v1
         ));
+    }
+
+    @Override
+    public List<Block> getBlocksByTagId(Long userId, Long tagId, Long lastBlockId, int limit) {
+        return queryFactory
+                .selectFrom(block)
+                .join(block.blockTags, blockTag).fetchJoin()
+                .join(blockTag.tag, tag).fetchJoin()
+                .where(
+                        tag.id.eq(tagId),
+                        block.user.id.eq(userId),
+                        ltBlockId(lastBlockId)
+                )
+                .orderBy(block.id.desc())
+                .limit(limit + 1)
+                .distinct()
+                .fetch();
+    }
+
+    private BooleanExpression ltBlockId(Long lastBlockId) {
+        if (lastBlockId == null) {
+            return null;
+        }
+        return block.id.lt(lastBlockId);
     }
 
     private BooleanExpression ltLastId(Long lastId) {

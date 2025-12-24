@@ -65,6 +65,13 @@ public class BlockDtoAssemblerImpl implements BlockDtoAssembler {
         return BlockResponse.of(getRootBlocks(allBlocks, dtoMap));
     }
 
+    @Override
+    public List<Long> toIds(List<Block> blockIds) {
+        return blockIds.stream()
+                .map(Block::getId)
+                .collect(Collectors.toList());
+    }
+
     /** Root 블럭만 추출해 리스트로 변환 */
     private static List<BlockResponseDto> getRootBlocks(List<Block> allBlocks, Map<Long, BlockResponseDto> dtoMap) {
         return allBlocks.stream()

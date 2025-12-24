@@ -18,4 +18,6 @@ public interface BlockDtoAssembler {
 
     // 리스트형식에서 응답 형식인 트리구조로 변환
     BlockResponse assembleReconstructBlockTree(List<Block> allBlocks);
+
+    List<Long> toIds(List<Block> blockIds);
 }

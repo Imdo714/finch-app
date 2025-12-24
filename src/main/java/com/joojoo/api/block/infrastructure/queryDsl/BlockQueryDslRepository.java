@@ -11,4 +11,6 @@ public interface BlockQueryDslRepository {
     List<Block> findRootBlocks(Long userId, Long lastId, int size);
 
     Map<Long, Long> getChildCounts(List<Long> rootIds);
+
+    List<Block> getBlocksByTagId(Long userId, Long tagId, Long lastBlockId, int limit);
 }
