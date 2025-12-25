@@ -6,6 +6,7 @@ import com.joojoo.api.block.domain.repository.BlockRepository;
 import com.joojoo.api.block.presentation.dto.response.detail.BlockDetailResponseDto;
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
+import com.joojoo.api.blockTag.presentation.dto.response.BlockTagCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.BlockTagsResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.RecentTagsResponse;
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
@@ -52,6 +53,11 @@ public class BlockTagServiceImpl implements BlockTagService {
         Long nextLastBlockId = hasNext ? blocksByTagIds.get(blocksByTagIds.size() - 1).getId() : null;
 
         return BlockTagsResponse.of(allDtos, hasNext, nextLastBlockId);
+    }
+
+    @Override
+    public BlockTagCountResponse getBlockCount(Long userId, Long tagId) {
+         return blockTagRepository.getBlockCount(userId, tagId);
     }
 
     private boolean isHasNext(List<Block> blocksByTagIds, int pageSize) {

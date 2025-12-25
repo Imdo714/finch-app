@@ -1,6 +1,7 @@
 package com.joojoo.api.blockTag.presentation.controller;
 
 import com.joojoo.api.blockTag.application.BlockTagService;
+import com.joojoo.api.blockTag.presentation.dto.response.BlockTagCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.BlockTagsResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.RecentTagsResponse;
 import com.joojoo.global.common.request.auth.CustomUserDetails;
@@ -52,6 +53,14 @@ public class BlockTagController {
             @RequestParam(defaultValue = "5") int pageSize
     ){
         return BaseResponse.ok(blockTagService.getUserTagIdsByTagId(user.getUserId(), tagId, lastBlockId, pageSize));
+    }
+
+    @GetMapping("/{tagId}/count")
+    public BaseResponse<BlockTagCountResponse> getBlockCount(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @PathVariable Long tagId
+    ){
+        return BaseResponse.ok(blockTagService.getBlockCount(user.getUserId(), tagId));
     }
 
 }
