@@ -2,8 +2,8 @@ package com.joojoo.api.blockTag.infrastructure.queryDsl;
 
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.domain.model.entity.QBlockTag;
-import com.joojoo.api.blockTag.presentation.dto.response.BlockTagCountResponse;
-import com.joojoo.api.blockTag.presentation.dto.response.RecentTagsResponse;
+import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
+import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
 import com.joojoo.api.tag.domain.model.entity.QTag;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;

@@ -1,9 +1,9 @@
 package com.joojoo.api.blockTag.presentation.controller;
 
 import com.joojoo.api.blockTag.application.BlockTagService;
-import com.joojoo.api.blockTag.presentation.dto.response.BlockTagCountResponse;
-import com.joojoo.api.blockTag.presentation.dto.response.BlockTagsResponse;
-import com.joojoo.api.blockTag.presentation.dto.response.RecentTagsResponse;
+import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
+import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
+import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
 import com.joojoo.global.common.request.auth.CustomUserDetails;
 import com.joojoo.global.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
