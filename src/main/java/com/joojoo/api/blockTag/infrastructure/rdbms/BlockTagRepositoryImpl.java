@@ -3,7 +3,8 @@ package com.joojoo.api.blockTag.infrastructure.rdbms;
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
 import com.joojoo.api.blockTag.infrastructure.queryDsl.BlockTagQueryDslRepository;
-import com.joojoo.api.blockTag.presentation.dto.response.RecentTagsResponse;
+import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
+import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -29,5 +30,10 @@ public class BlockTagRepositoryImpl implements BlockTagRepository {
     @Override
     public List<RecentTagsResponse.RecentTagsDto> findRecentTags(Long userId) {
         return blockTagQueryDslRepository.findRecentTags(userId);
+    }
+
+    @Override
+    public BlockTagCountResponse getBlockCount(Long userId, Long tagId) {
+        return blockTagQueryDslRepository.getBlockCount(userId, tagId);
     }
 }

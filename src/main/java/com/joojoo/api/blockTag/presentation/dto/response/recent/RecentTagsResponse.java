@@ -1,4 +1,4 @@
-package com.joojoo.api.blockTag.presentation.dto.response;
+package com.joojoo.api.blockTag.presentation.dto.response.recent;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

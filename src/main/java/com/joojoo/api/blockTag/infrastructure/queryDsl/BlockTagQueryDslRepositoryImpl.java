@@ -2,7 +2,8 @@ package com.joojoo.api.blockTag.infrastructure.queryDsl;
 
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.domain.model.entity.QBlockTag;
-import com.joojoo.api.blockTag.presentation.dto.response.RecentTagsResponse;
+import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
+import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
 import com.joojoo.api.tag.domain.model.entity.QTag;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -42,5 +43,22 @@ public class BlockTagQueryDslRepositoryImpl implements BlockTagQueryDslRepositor
                 .orderBy(blockTag.id.max().desc())
                 .limit(10)
                 .fetch();
+    }
+
+    @Override
+    public BlockTagCountResponse getBlockCount(Long userId, Long tagId) {
+        return queryFactory
+                .select(Projections.constructor(BlockTagCountResponse.class,
+                        tag.name,
+                        blockTag.block.id.countDistinct()
+                ))
+                .from(blockTag)
+                .join(blockTag.tag, tag)
+                .where(
+                        tag.id.eq(tagId),
+                        blockTag.userId.eq(userId)
+                )
+                .groupBy(tag.id)
+                .fetchOne();
     }
 }

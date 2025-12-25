@@ -20,4 +20,6 @@ public interface BlockRepository {
     List<Block> findBlocksByLatestDates(Long userId, LocalDate lastDate, int dateCount);
 
     LocalDate findNextAvailableDate(Long userId, LocalDate oldestDateInResult);
+
+    List<Block> getBlocksByTagId(Long userId, Long tagId, Long lastBlockId, int limit);
 }

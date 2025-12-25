@@ -54,4 +54,9 @@ public class BlockRepositoryImpl implements BlockRepository {
         return blockQueryDslDateRepository.findNextAvailableDate(userId, oldestDateInResult);
     }
 
+    @Override
+    public List<Block> getBlocksByTagId(Long userId, Long tagId, Long lastBlockId, int limit) {
+        return blockQueryDslRepository.getBlocksByTagId(userId, tagId, lastBlockId, limit);
+    }
+
 }
