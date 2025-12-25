@@ -33,13 +33,10 @@ public interface BlockRepository {
 
     void updateChildrenParent(Block targetBlock, Block parentBlock);
 
-    long countByParentIsNullAndUser(User user);
-
     void updateSequenceWithParent(User user, Block parent, int seq, int offset);
 
     void updateSequenceRoot(User user, int seq, int offset);
 
     Optional<Block> findByIdWithChildren(Long blockId);
 
-    void decreaseDepthByIds(User user, List<Long> allDescendantIds);
 }

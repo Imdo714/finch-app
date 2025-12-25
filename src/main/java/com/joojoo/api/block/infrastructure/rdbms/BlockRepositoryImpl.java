@@ -82,11 +82,6 @@ public class BlockRepositoryImpl implements BlockRepository {
     }
 
     @Override
-    public long countByParentIsNullAndUser(User user) {
-        return blockJpaRepository.countByParentIsNullAndUser(user);
-    }
-
-    @Override
     public void updateSequenceWithParent(User user, Block parent, int seq, int offset) {
         blockJpaRepository.updateSequenceWithParent(user, parent, seq, offset);
     }
@@ -101,9 +96,5 @@ public class BlockRepositoryImpl implements BlockRepository {
         return blockJpaRepository.findByIdWithChildren(blockId);
     }
 
-    @Override
-    public void decreaseDepthByIds(User user, List<Long> allDescendantIds) {
-        blockJpaRepository.decreaseDepthByIds(user, allDescendantIds);
-    }
 
 }

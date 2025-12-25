@@ -19,8 +19,6 @@ public interface BlockJpaRepository extends JpaRepository<Block, Long> {
     @Query("UPDATE Block b SET b.parent = :newParent WHERE b.parent = :oldParent")
     void updateChildrenParent(@Param("oldParent") Block oldParent, @Param("newParent") Block newParent);
 
-    long countByParentIsNullAndUser(User user);
-
     // 시퀀스 조정 (부모가 있을 때)
     @Modifying
     @Query("UPDATE Block b SET b.sequence = b.sequence + :offset " +
@@ -38,8 +36,4 @@ public interface BlockJpaRepository extends JpaRepository<Block, Long> {
             "WHERE b.id = :blockId")
     Optional<Block> findByIdWithChildren(Long blockId);
 
-    @Modifying
-    @Query("UPDATE Block b SET b.depth = b.depth - 1 " +
-            "WHERE b.user = :user AND b.id IN :ids")
-    void decreaseDepthByIds(@Param("user") User user, @Param("ids") List<Long> ids);
 }
