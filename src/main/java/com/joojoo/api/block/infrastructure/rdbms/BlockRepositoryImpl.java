@@ -4,12 +4,14 @@ import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.block.domain.repository.BlockRepository;
 import com.joojoo.api.block.infrastructure.queryDsl.BlockQueryDslRepository;
 import com.joojoo.api.block.infrastructure.queryDsl.date.blockQueryDslDateRepository;
+import com.joojoo.api.user.domain.model.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -58,5 +60,41 @@ public class BlockRepositoryImpl implements BlockRepository {
     public List<Block> getBlocksByTagId(Long userId, Long tagId, Long lastBlockId, int limit) {
         return blockQueryDslRepository.getBlocksByTagId(userId, tagId, lastBlockId, limit);
     }
+
+    @Override
+    public Optional<Block> findById(Long blockId) {
+        return blockJpaRepository.findById(blockId);
+    }
+
+    @Override
+    public void delete(Block targetBlock) {
+        blockJpaRepository.delete(targetBlock);
+    }
+
+    @Override
+    public void deleteAllByIdInBatch(List<Long> idsToDelete) {
+        blockJpaRepository.deleteAllByIdInBatch(idsToDelete);
+    }
+
+    @Override
+    public void updateChildrenParent(Block targetBlock, Block parentBlock) {
+        blockJpaRepository.updateChildrenParent(targetBlock, parentBlock);
+    }
+
+    @Override
+    public void updateSequenceWithParent(User user, Block parent, int seq, int offset) {
+        blockJpaRepository.updateSequenceWithParent(user, parent, seq, offset);
+    }
+
+    @Override
+    public void updateSequenceRoot(User user, int seq, int offset) {
+        blockJpaRepository.updateSequenceRoot(user, seq, offset);
+    }
+
+    @Override
+    public Optional<Block> findByIdWithChildren(Long blockId) {
+        return blockJpaRepository.findByIdWithChildren(blockId);
+    }
+
 
 }

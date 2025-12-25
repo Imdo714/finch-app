@@ -1,6 +1,7 @@
 package com.joojoo.api.block.presentation.controller;
 
 import com.joojoo.api.block.application.BlockService;
+import com.joojoo.api.block.domain.model.enums.DeleteMode;
 import com.joojoo.api.block.presentation.dto.request.createBlock.BlockSaveRequestDto;
 import com.joojoo.api.block.presentation.dto.response.blockDetail.BlockResponse;
 import com.joojoo.api.block.presentation.dto.response.detail.BlockDetailResponseDto;
@@ -82,6 +83,34 @@ public class BlockController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lastDate
     ) {
         return BaseResponse.ok(blockService.getBlockMainView(user.getUserId(), lastDate));
+    }
+
+    @Operation(summary = "블럭(노트) 삭제 API", description = "블럭 삭제 API입니다. 부모만 삭제하면 자식들이 한단계식 승급을하는 형식입니다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "조회 성공",
+                    content = @Content(schema = @Schema(implementation = BlockDetailResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "승격될 자식 블록이 한도(3개)를 초과합니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "해당 블록에 대한 권한이 없습니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    @DeleteMapping("/delete/{blockId}")
+    public BaseResponse<String> deleteBlock(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @PathVariable Long blockId,
+            @RequestParam(defaultValue = "SINGLE") DeleteMode mode
+    ) {
+        blockService.deleteBlock(user.getUserId(), blockId, mode);
+        return BaseResponse.ok("삭제 성공!");
     }
 
 }

@@ -4,6 +4,7 @@ import com.joojoo.api.block.application.detail.BlockDtoAssembler;
 import com.joojoo.api.block.application.metadata.MetadataService;
 import com.joojoo.api.block.application.validate.blockerTree.BlockTreeValidator;
 import com.joojoo.api.block.domain.model.entity.Block;
+import com.joojoo.api.block.domain.model.enums.DeleteMode;
 import com.joojoo.api.block.domain.repository.BlockRepository;
 import com.joojoo.api.block.presentation.dto.request.createBlock.BlockRequestDto;
 import com.joojoo.api.block.presentation.dto.request.createBlock.BlockSaveRequestDto;
@@ -17,6 +18,7 @@ import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;
 import com.joojoo.global.exception.handleException.block.BlockNotFoundException;
+import com.joojoo.global.exception.handleException.block.BlockOwnerMismatchException;
 import com.joojoo.global.exception.handleException.users.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -87,6 +89,65 @@ public class BlockServiceImpl implements BlockService {
         LocalDate nextDate = blockRepository.findNextAvailableDate(userId, oldestDateInResult);
 
         return BlockMainViewResponse.of(allDtos, nextDate);
+    }
+
+    @Override
+    @Transactional
+    public void deleteBlock(Long userId, Long blockId, DeleteMode mode) {
+        Block targetBlock = blockRepository.findByIdWithChildren(blockId)
+                .orElseThrow(BlockNotFoundException::new);
+
+        blockTreeValidator.validateOwner(targetBlock, userId);
+
+        if (mode == DeleteMode.ALL) {
+            handleRecursiveDelete(targetBlock);
+        } else {
+            handleSingleDeleteWithPromotion(targetBlock);
+        }
+    }
+
+    /** 자식들 시퀀스 앞으로 댕기고 삭제 */
+    private void handleRecursiveDelete(Block targetBlock) {
+        // 형제들 시퀀스 앞으로 한 칸씩 당기기
+        shiftSiblings(targetBlock, -1);
+
+        // 삭제할 모든 ID 수집 후 일괄 삭제
+        List<Long> idsToDelete = new ArrayList<>();
+        targetBlock.collectAllIds(idsToDelete);
+        blockRepository.deleteAllByIdInBatch(idsToDelete);
+    }
+
+    /** 블럭 정보를 수정한 후 연관관계 삭제 */
+    private void handleSingleDeleteWithPromotion(Block targetBlock) {
+        Block parentBlock = targetBlock.getParent();
+        List<Block> children = new ArrayList<>(targetBlock.getChildren());
+        blockTreeValidator.validatePromotionLimit(targetBlock, parentBlock);
+
+        // 시퀀스 공간 확보
+        int offset = children.size() - 1;
+        shiftSiblings(targetBlock, offset);
+
+        // 수정된 부모Id 일괄 수정, 그런데 영속성 컨텍스트의 객체들은 여전히 이전 부모를 가리킴
+        blockRepository.updateChildrenParent(targetBlock, parentBlock);
+
+        // 자식 및 모든 자손의 뎁스/시퀀스 조정, 벌크 연산은 메모리 정보를 수정되지 않아 Dirty Checking 해줘야 함
+        int startSeq = targetBlock.getSequence();
+        for (int i = 0; i < children.size(); i++) {
+            children.get(i).promote(parentBlock, startSeq + i);
+        }
+
+        targetBlock.disconnectChildren();
+        blockRepository.delete(targetBlock);
+    }
+
+    /** 시퀀스 조정 메서드 */
+    private void shiftSiblings(Block targetBlock, int offset) {
+        if (offset == 0) return;
+        if (targetBlock.getParent() != null) {
+            blockRepository.updateSequenceWithParent(targetBlock.getUser(), targetBlock.getParent(), targetBlock.getSequence(), offset);
+        } else {
+            blockRepository.updateSequenceRoot(targetBlock.getUser(), targetBlock.getSequence(), offset);
+        }
     }
 
     /** 리스트에 블럭을 담아 한번에 저장하는 메서드 */
