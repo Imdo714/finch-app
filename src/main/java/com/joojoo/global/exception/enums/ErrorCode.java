@@ -49,7 +49,8 @@ public enum ErrorCode {
     INVALID_ROOT_BLOCK_COUNT(400, "INVALID_ROOT_BLOCK_COUNT", "최상위 블록(부모)은 반드시 1개여야 합니다."),
     MAX_BLOCK_DEPTH_EXCEEDED(400, "MAX_BLOCK_DEPTH_EXCEEDED", "블록 계층은 최대 2단계(Depth 2)까지만 허용됩니다."),
     BLOCK_NOT_FOUND(404, "BLOCK_NOT_FOUND", "해당 블록을 찾을 수 없습니다."),
-
+    BLOCK_FORBIDDEN_ACCESS(403, "BLOCK_FORBIDDEN_ACCESS", "해당 블록에 대한 권한이 없습니다."),
+    BLOCK_PROMOTION_LIMIT_EXCEEDED(401, "BLOCK_PROMOTION_LIMIT_EXCEEDED", "승격될 자식 블록이 한도(3개)를 초과합니다."),
     ;
 
     private final int httpStatus;

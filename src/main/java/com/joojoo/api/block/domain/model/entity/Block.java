@@ -69,4 +69,33 @@ public class Block extends BaseTimeEntity {
                 .isSaved(dto.getIsSaved())
                 .build();
     }
+
+
+    public void promote(Block newParent, int newSequence) {
+        this.parent = newParent;
+        this.sequence = newSequence;
+
+        int targetDepth = (newParent == null) ? 0 : newParent.getDepth() + 1;
+        this.updateDepthRecursive(targetDepth);
+    }
+
+    private void updateDepthRecursive(int newDepth) {
+        this.depth = newDepth;
+        for (Block child : children) {
+            child.updateDepthRecursive(newDepth + 1);
+        }
+    }
+
+    /** 자신을 포함한 모든 하위 자손 ID 수집 (재귀) */
+    public void collectAllIds(List<Long> ids) {
+        ids.add(this.id);
+        for (Block child : children) {
+            child.collectAllIds(ids);
+        }
+    }
+
+    public void disconnectChildren() {
+        this.children.clear();
+    }
+
 }
