@@ -3,6 +3,7 @@ package com.joojoo.api.block.infrastructure.queryDsl.date;
 import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.block.domain.model.entity.QBlock;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -92,8 +93,8 @@ public class blockQueryDslDateRepositoryImpl implements blockQueryDslDateReposit
 
     private BooleanExpression leLastDate(LocalDate lastDate) {
         if (lastDate == null) return null;
-        // block.createdAt >= 21일 00:00
-        return block.createdAt.loe(lastDate.atTime(LocalTime.MAX));
+        // 해당 날짜(lastDate)의 23:59:59까지
+        return block.createdAt.lt(lastDate.plusDays(1).atStartOfDay());
     }
 
 }
