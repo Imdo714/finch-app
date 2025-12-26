@@ -31,10 +31,6 @@ public class BlockTag extends BaseCreateEntity {
     @JoinColumn(name = "block_id")
     private Block block;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "trade_log_id")
-    private TradeLog tradeLog;
-
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
@@ -44,10 +40,9 @@ public class BlockTag extends BaseCreateEntity {
     private Integer startOffset;
 
     @Builder
-    public BlockTag(Tag tag, Block block, TradeLog tradeLog, Long userId, Integer sequence, Integer startOffset) {
+    public BlockTag(Tag tag, Block block, Long userId, Integer sequence, Integer startOffset) {
         this.tag = tag;
         this.block = block;
-        this.tradeLog = tradeLog;
         this.userId = userId;
         this.sequence = sequence;
         this.startOffset = startOffset;

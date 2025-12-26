@@ -48,13 +48,17 @@ public class TradeLog extends BaseTimeEntity {
     @Column(name = "executed_at", nullable = false)
     private LocalDateTime executedAt; // 실제 매매 일시
 
-    // JSON 처리 (Hibernate 6 기준)
-    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.JSON)
-    @Column(columnDefinition = "json", nullable = false)
-    private Map<String, Object> content;
+    private String memo;
+
+    @Column(name = "risk_factor")
+    private String riskFactor;
+
+    @Column(name = "trading_plan")
+    private String tradingPlan;
 
     @Builder
-    public TradeLog(User user, Ticker ticker, TradeType tradeType, BigDecimal price, BigDecimal amount, String currency, LocalDateTime executedAt, Map<String, Object> content) {
+    public TradeLog(User user, Ticker ticker, TradeType tradeType, BigDecimal price, BigDecimal amount, String currency, LocalDateTime executedAt,
+                    String memo, String riskFactor, String tradingPlan) {
         this.user = user;
         this.ticker = ticker;
         this.tradeType = tradeType;
@@ -62,6 +66,9 @@ public class TradeLog extends BaseTimeEntity {
         this.amount = amount;
         this.currency = currency;
         this.executedAt = executedAt;
-        this.content = content;
+        this.memo = memo;
+        this.riskFactor = riskFactor;
+        this.tradingPlan = tradingPlan;
     }
+
 }

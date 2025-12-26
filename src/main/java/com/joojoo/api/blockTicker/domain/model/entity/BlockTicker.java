@@ -28,10 +28,6 @@ public class BlockTicker extends BaseCreateEntity {
     @JoinColumn(name = "ticker_id", nullable = false)
     private Ticker ticker;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "trade_log_id")
-    private TradeLog tradeLog;
-
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
@@ -41,10 +37,9 @@ public class BlockTicker extends BaseCreateEntity {
     private Integer startOffset;
 
     @Builder
-    public BlockTicker(Block block, Ticker ticker, TradeLog tradeLog, Long userId, Integer sequence, Integer startOffset) {
+    public BlockTicker(Block block, Ticker ticker, Long userId, Integer sequence, Integer startOffset) {
         this.block = block;
         this.ticker = ticker;
-        this.tradeLog = tradeLog;
         this.userId = userId;
         this.sequence = sequence;
         this.startOffset = startOffset;
