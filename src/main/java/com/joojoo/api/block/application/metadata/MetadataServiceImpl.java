@@ -83,6 +83,13 @@ public class MetadataServiceImpl implements MetadataService {
         blockTagRepository.saveAll(blockTags);
     }
 
+    @Override
+    public void processMetadata(Block targetBlock, Long userId) {
+        blockTickerRepository.deleteByBlockIds(targetBlock.getId());
+        blockTagRepository.deleteByBlockIds(targetBlock.getId());
+        this.processMetadata(Collections.singletonList(targetBlock), userId);
+    }
+
     /** 추출된 맵을 바탕으로 BlockTicker, BlockTag 중간 테이블 엔티티 생성 */
     public void mapToEntities(Block block, Long userId, List<MatchedMetadataDto> matches, Map<String, Ticker> tickerMap, Map<String, Tag> tagMap, List<BlockTicker> bTickers, List<BlockTag> bTags) {
         if (block.getContent() == null) return;

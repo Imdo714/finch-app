@@ -36,4 +36,9 @@ public class BlockTagRepositoryImpl implements BlockTagRepository {
     public BlockTagCountResponse getBlockCount(Long userId, Long tagId) {
         return blockTagQueryDslRepository.getBlockCount(userId, tagId);
     }
+
+    @Override
+    public void deleteByBlockIds(Long id) {
+        blockTagJpaRepository.deleteByBlockIds(id);
+    }
 }

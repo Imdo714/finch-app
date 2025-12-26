@@ -8,6 +8,7 @@ import com.joojoo.api.block.domain.model.enums.DeleteMode;
 import com.joojoo.api.block.domain.repository.BlockRepository;
 import com.joojoo.api.block.presentation.dto.request.createBlock.BlockRequestDto;
 import com.joojoo.api.block.presentation.dto.request.createBlock.BlockSaveRequestDto;
+import com.joojoo.api.block.presentation.dto.request.updateBlock.BlockUpdateDto;
 import com.joojoo.api.block.presentation.dto.response.blockDetail.BlockResponse;
 import com.joojoo.api.block.presentation.dto.response.detail.BlockDetailResponseDto;
 import com.joojoo.api.block.presentation.dto.response.mainView.BlockMainViewResponse;
@@ -104,6 +105,17 @@ public class BlockServiceImpl implements BlockService {
         } else {
             handleSingleDeleteWithPromotion(targetBlock);
         }
+    }
+
+    @Override
+    @Transactional
+    public void updateBlock(Long userId, Long blockId, BlockUpdateDto blockUpdateDto) {
+        Block targetBlock = blockRepository.findByIdWithChildren(blockId)
+                .orElseThrow(BlockNotFoundException::new);
+        blockTreeValidator.validateOwner(targetBlock, userId);
+
+        targetBlock.updateContent(blockUpdateDto.getContent());
+        metadataService.processMetadata(targetBlock, userId);
     }
 
     /** 자식들 시퀀스 앞으로 댕기고 삭제 */
