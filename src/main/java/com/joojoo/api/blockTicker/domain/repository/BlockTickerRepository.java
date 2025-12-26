@@ -8,4 +8,6 @@ public interface BlockTickerRepository {
     List<BlockTicker> saveAll(List<BlockTicker> blockTickers);
 
     List<BlockTicker> findAllBlockTickers(List<Long> blockIds);
+
+    void deleteByBlockIds(Long id);
 }

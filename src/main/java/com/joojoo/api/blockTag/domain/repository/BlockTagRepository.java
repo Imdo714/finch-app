@@ -14,4 +14,6 @@ public interface BlockTagRepository {
     List<RecentTagsResponse.RecentTagsDto> findRecentTags(Long userId);
 
     BlockTagCountResponse getBlockCount(Long userId, Long tagId);
+
+    void deleteByBlockIds(Long id);
 }

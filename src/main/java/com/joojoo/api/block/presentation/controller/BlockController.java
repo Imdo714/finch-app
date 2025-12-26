@@ -3,6 +3,7 @@ package com.joojoo.api.block.presentation.controller;
 import com.joojoo.api.block.application.BlockService;
 import com.joojoo.api.block.domain.model.enums.DeleteMode;
 import com.joojoo.api.block.presentation.dto.request.createBlock.BlockSaveRequestDto;
+import com.joojoo.api.block.presentation.dto.request.updateBlock.BlockUpdateDto;
 import com.joojoo.api.block.presentation.dto.response.blockDetail.BlockResponse;
 import com.joojoo.api.block.presentation.dto.response.detail.BlockDetailResponseDto;
 import com.joojoo.api.block.presentation.dto.response.mainView.BlockMainViewResponse;
@@ -89,7 +90,7 @@ public class BlockController {
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "조회 성공",
+                    description = "삭제 성공",
                     content = @Content(schema = @Schema(implementation = BlockDetailResponseDto.class))
             ),
             @ApiResponse(
@@ -101,6 +102,11 @@ public class BlockController {
                     responseCode = "403",
                     description = "해당 블록에 대한 권한이 없습니다.",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "해당 블록을 찾을 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
     })
     @DeleteMapping("/delete/{blockId}")
@@ -111,6 +117,34 @@ public class BlockController {
     ) {
         blockService.deleteBlock(user.getUserId(), blockId, mode);
         return BaseResponse.ok("삭제 성공!");
+    }
+
+    @Operation(summary = "블럭(노트) 수정 API", description = "블럭(노트) 내용을 수정하는 API입니다. ")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "수정 성공",
+                    content = @Content(schema = @Schema(implementation = BlockDetailResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "해당 블록에 대한 권한이 없습니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "해당 블록을 찾을 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    @PatchMapping("/update/{blockId}")
+    public BaseResponse<String> updateBlock(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @PathVariable Long blockId,
+            @RequestBody BlockUpdateDto blockUpdateDto
+    ) {
+        blockService.updateBlock(user.getUserId(), blockId, blockUpdateDto);
+        return BaseResponse.ok("수정 성공!");
     }
 
 }

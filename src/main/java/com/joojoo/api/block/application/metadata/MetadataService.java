@@ -11,4 +11,5 @@ public interface MetadataService {
     Map<Block, List<MatchedMetadataDto>> scanBlocks(List<Block> allBlocks, Set<String> tickerNames, Set<String> tagNames);
 
     void processMetadata(List<Block> allBlocks, Long userId);
+    void processMetadata(Block targetBlock, Long userId);
 }

@@ -98,4 +98,7 @@ public class Block extends BaseTimeEntity {
         this.children.clear();
     }
 
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }
