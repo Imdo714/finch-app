@@ -46,10 +46,11 @@ public class BlockTicker extends BaseCreateEntity {
     private Integer startOffset;
 
     @Builder
-    public BlockTicker(Block block, Ticker ticker, Long userId, Integer sequence, Integer startOffset) {
+    public BlockTicker(Block block, Ticker ticker, Long userId, TagSourceType fieldType, Integer sequence, Integer startOffset) {
         this.block = block;
         this.ticker = ticker;
         this.userId = userId;
+        this.fieldType = fieldType;
         this.sequence = sequence;
         this.startOffset = startOffset;
     }

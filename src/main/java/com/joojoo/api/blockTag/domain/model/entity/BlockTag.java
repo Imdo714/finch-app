@@ -10,9 +10,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -49,11 +46,12 @@ public class BlockTag extends BaseCreateEntity {
     private Integer startOffset;
 
     @Builder
-    public BlockTag(Tag tag, Block block, TradeLog tradeLog, Long userId, Integer sequence, Integer startOffset) {
+    public BlockTag(Tag tag, Block block, TradeLog tradeLog, Long userId, TagSourceType fieldType, Integer sequence, Integer startOffset) {
         this.tag = tag;
         this.block = block;
         this.tradeLog = tradeLog;
         this.userId = userId;
+        this.fieldType = fieldType;
         this.sequence = sequence;
         this.startOffset = startOffset;
     }
