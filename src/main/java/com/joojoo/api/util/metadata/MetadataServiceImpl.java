@@ -10,6 +10,7 @@ import com.joojoo.api.tag.application.in.TagInService;
 import com.joojoo.api.tag.domain.model.entity.Tag;
 import com.joojoo.api.ticker.application.in.TickerInService;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
+import com.joojoo.global.common.enums.TagSourceType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -53,12 +54,12 @@ public class MetadataServiceImpl implements MetadataService {
                 if (match.isTicker()) {
                     Ticker ticker = context.getTicker(match.name());
                     if (ticker != null) {
-                        bTickers.add(BlockTicker.create(block, ticker, userId, match.start(), tSeq++));
+                        bTickers.add(BlockTicker.create(block, ticker, userId, match.start(), tSeq++, TagSourceType.BLOCK_CONTENT));
                     }
                 } else {
                     Tag tag = context.getTag(match.name());
                     if (tag != null) {
-                        bTags.add(BlockTag.create(block, tag, userId, match.start(), tagSeq++));
+                        bTags.add(BlockTag.create(block, tag, userId, match.start(), tagSeq++, TagSourceType.BLOCK_CONTENT));
                     }
                 }
             }

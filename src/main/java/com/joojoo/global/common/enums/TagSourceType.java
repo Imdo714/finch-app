@@ -1,6 +1,5 @@
 package com.joojoo.global.common.enums;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter

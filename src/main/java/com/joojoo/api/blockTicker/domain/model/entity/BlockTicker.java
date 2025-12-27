@@ -55,13 +55,14 @@ public class BlockTicker extends BaseCreateEntity {
         this.startOffset = startOffset;
     }
 
-    public static BlockTicker create(Block block, Ticker ticker, Long userId, int start, int tSeq) {
+    public static BlockTicker create(Block block, Ticker ticker, Long userId, int start, int tSeq, TagSourceType fieldType) {
         return BlockTicker.builder()
                 .block(block)
                 .ticker(ticker)
                 .userId(userId)
                 .sequence(tSeq)
                 .startOffset(start)
+                .fieldType(fieldType)
                 .build();
     }
 }
