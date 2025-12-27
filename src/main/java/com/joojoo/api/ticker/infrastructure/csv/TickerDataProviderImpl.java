@@ -49,7 +49,7 @@ public class TickerDataProviderImpl implements TickerDataProvider {
     private TickerDataDto mapToDto(String[] row) {
         return new TickerDataDto(
                 row[1], // symbol
-                row[2], // name
+                row[3], // name
                 MarketType.fromString(row[6]),
                 LocalDate.parse(row[5], DateTimeFormatter.ISO_DATE)
         );
