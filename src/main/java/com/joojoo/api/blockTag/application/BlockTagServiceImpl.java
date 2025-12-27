@@ -14,6 +14,7 @@ import com.joojoo.api.blockTag.presentation.dto.response.all.TagDateResult;
 import com.joojoo.api.blockTag.presentation.dto.response.all.TradeLogResponseDto;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
+import com.joojoo.api.blockTag.presentation.dto.response.detail.TotalCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
 import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
@@ -42,29 +43,10 @@ public class BlockTagServiceImpl implements BlockTagService {
         return RecentTagsResponse.of(blockTagRepository.findRecentTags(userId));
     }
 
-//    @Override
-//    public BlockTagsResponse getUserTagIdsByTagId(Long userId, Long tagId, Long lastBlockId, int pageSize) {
-//        List<Block> blocksByTagIds = blockRepository.getBlocksByTagId(userId, tagId, lastBlockId, pageSize);
-//        if (blocksByTagIds.isEmpty()) {
-//            return BlockTagsResponse.of(Collections.emptyList(), false, null);
-//        }
-//
-//        boolean hasNext = isHasNext(blocksByTagIds, pageSize);
-//
-//        List<Long> blockIds = blockDtoAssembler.toIds(blocksByTagIds);
-//        List<BlockTag> tags = blockTagRepository.findAllBlockTags(blockIds);
-//        List<BlockTicker> tickers = blockTickerRepository.findAllBlockTickers(blockIds);
-//        Map<Long, Long> childCounts = blockRepository.getChildCounts(blockIds);
-//
-//        List<BlockDetailResponseDto> allDtos = blockDtoAssembler.assembleMainList(blocksByTagIds, tags, tickers, childCounts);
-//        Long nextLastBlockId = hasNext ? blocksByTagIds.get(blocksByTagIds.size() - 1).getId() : null;
-//
-//        return BlockTagsResponse.of(allDtos, hasNext, nextLastBlockId);
-//    }
-
     @Override
-    public BlockTagCountResponse getBlockCount(Long userId, Long tagId) {
-         return blockTagRepository.getBlockCount(userId, tagId);
+    public TotalCountResponse getBlockCount(Long userId, Long tagId) {
+        BlockTagCountResponse blockCount = blockTagRepository.getBlockCount(userId, tagId);
+        return new TotalCountResponse(blockCount.getName(), blockCount.getTotalCount());
     }
 
     private boolean isHasNext(List<Block> blocksByTagIds, int pageSize) {

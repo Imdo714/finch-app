@@ -3,6 +3,7 @@ package com.joojoo.api.blockTag.presentation.controller;
 import com.joojoo.api.blockTag.application.BlockTagService;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
+import com.joojoo.api.blockTag.presentation.dto.response.detail.TotalCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
 import com.joojoo.global.common.request.auth.CustomUserDetails;
 import com.joojoo.global.common.response.BaseResponse;
@@ -58,7 +59,7 @@ public class BlockTagController {
     }
 
     @GetMapping("/{tagId}/count")
-    public BaseResponse<BlockTagCountResponse> getBlockCount(
+    public BaseResponse<TotalCountResponse> getBlockCount(
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long tagId
     ){
