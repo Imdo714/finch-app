@@ -13,8 +13,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @Tag(name = "Tag API", description = "Tag 관련 API")
 @RestController
@@ -49,10 +52,9 @@ public class BlockTagController {
     public BaseResponse<BlockTagsResponse> getUserTagIdsByTagId(
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long tagId,
-            @RequestParam(required = false) Long lastBlockId,
-            @RequestParam(defaultValue = "5") int pageSize
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lastDate
     ){
-        return BaseResponse.ok(blockTagService.getUserTagIdsByTagId(user.getUserId(), tagId, lastBlockId, pageSize));
+        return BaseResponse.ok(blockTagService.getUserTagIdsByTagId(user.getUserId(), tagId, lastDate));
     }
 
     @GetMapping("/{tagId}/count")

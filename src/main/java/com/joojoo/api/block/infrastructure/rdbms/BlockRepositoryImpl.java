@@ -62,6 +62,11 @@ public class BlockRepositoryImpl implements BlockRepository {
     }
 
     @Override
+    public List<Block> getBlocksByTagId2(Long userId, Long tagId, LocalDate lastDate) {
+        return blockQueryDslRepository.getBlocksByTagId2(userId, tagId, lastDate);
+    }
+
+    @Override
     public Optional<Block> findById(Long blockId) {
         return blockJpaRepository.findById(blockId);
     }

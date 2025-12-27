@@ -1,11 +1,9 @@
-package com.joojoo.api.tradeLog.domain.repository;
+package com.joojoo.api.tradeLog.infrastructure.queryDsl;
 
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
 
 import java.util.List;
 
-public interface TradeLogRepository {
-    TradeLog save(TradeLog tradeLog);
-
+public interface tradeLogQueryDslRepository {
     List<TradeLog> findAllByIdIn(List<Long> blockIds);
 }

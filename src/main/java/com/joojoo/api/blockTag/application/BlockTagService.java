@@ -4,10 +4,12 @@ import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountRes
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
 
+import java.time.LocalDate;
+
 public interface BlockTagService {
     RecentTagsResponse getRecentTags(Long userId);
 
-    BlockTagsResponse getUserTagIdsByTagId(Long userId, Long tagId, Long lastBlockId, int pageSize);
+    BlockTagsResponse getUserTagIdsByTagId(Long userId, Long tagId, LocalDate lastDate);
 
     BlockTagCountResponse getBlockCount(Long userId, Long tagId);
 }

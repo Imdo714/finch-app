@@ -2,6 +2,7 @@ package com.joojoo.api.block.infrastructure.queryDsl;
 
 import com.joojoo.api.block.domain.model.entity.Block;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -13,4 +14,6 @@ public interface BlockQueryDslRepository {
     Map<Long, Long> getChildCounts(List<Long> rootIds);
 
     List<Block> getBlocksByTagId(Long userId, Long tagId, Long lastBlockId, int limit);
+
+    List<Block> getBlocksByTagId2(Long userId, Long tagId, LocalDate lastDate);
 }

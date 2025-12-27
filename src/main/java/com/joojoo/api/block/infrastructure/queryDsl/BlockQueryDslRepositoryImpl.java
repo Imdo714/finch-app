@@ -11,6 +11,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -89,6 +91,26 @@ public class BlockQueryDslRepositoryImpl implements BlockQueryDslRepository {
                 .limit(limit + 1)
                 .distinct()
                 .fetch();
+    }
+
+    @Override
+    public List<Block> getBlocksByTagId2(Long userId, Long tagId, LocalDate lastDate) {
+        return queryFactory
+                .selectFrom(block)
+                .join(block.blockTags, blockTag).fetchJoin()
+                .where(
+                        blockTag.tag.id.eq(tagId),
+                        block.user.id.eq(userId),
+                        // ID 기반이 아닌 생성일시(createdAt) 기반으로 조회
+                        loeLastDate(lastDate)
+                )
+                .orderBy(block.createdAt.desc(), block.id.desc()) // 최신 날짜순
+                .fetch();
+    }
+
+    private BooleanExpression loeLastDate(LocalDate lastDate) {
+        if (lastDate == null) return null;
+        return block.createdAt.lt(lastDate.plusDays(1).atStartOfDay());
     }
 
     private BooleanExpression ltBlockId(Long lastBlockId) {
