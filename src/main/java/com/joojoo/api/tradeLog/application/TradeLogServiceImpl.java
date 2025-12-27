@@ -1,6 +1,5 @@
 package com.joojoo.api.tradeLog.application;
 
-import com.joojoo.api.util.metadata.MetadataService;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.ticker.domain.repository.TickerRepository;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
@@ -8,6 +7,8 @@ import com.joojoo.api.tradeLog.domain.repository.TradeLogRepository;
 import com.joojoo.api.tradeLog.presentation.dto.request.TradeRequestDto;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;
+import com.joojoo.api.util.metadata.MetadataService;
+import com.joojoo.global.exception.handleException.tickers.TickerNotFoundException;
 import com.joojoo.global.exception.handleException.users.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ public class TradeLogServiceImpl implements TradeLogService {
                 .orElseThrow(UserNotFoundException::new);
 
         Ticker ticker = tickerRepository.findById(tradeRequestDto.getTickerId())
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(TickerNotFoundException::new);
 
         TradeLog tradeLog = TradeLog.create(user, ticker, tradeRequestDto);
 
