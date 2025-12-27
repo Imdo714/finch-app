@@ -4,7 +4,7 @@ import com.joojoo.global.exception.ServiceException;
 import com.joojoo.global.exception.enums.ErrorCode;
 
 public class TickerNotFoundException extends ServiceException {
-    private static final ErrorCode errorCode = ErrorCode.USER_NOT_FOUND;
+    private static final ErrorCode errorCode = ErrorCode.TICKER_NOT_FOUND;
 
     public TickerNotFoundException() {
         super(errorCode);
