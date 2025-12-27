@@ -4,6 +4,7 @@ import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
 import com.joojoo.global.common.entity.BaseCreateEntity;
+import com.joojoo.global.common.enums.TagSourceType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -28,8 +29,16 @@ public class BlockTicker extends BaseCreateEntity {
     @JoinColumn(name = "ticker_id", nullable = false)
     private Ticker ticker;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trade_log_id")
+    private TradeLog tradeLog;
+
     @Column(name = "user_id", nullable = false)
     private Long userId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "field_type")
+    private TagSourceType fieldType;
 
     private Integer sequence;
 

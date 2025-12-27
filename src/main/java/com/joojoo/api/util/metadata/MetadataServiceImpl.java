@@ -10,11 +10,6 @@ import com.joojoo.api.tag.application.in.TagInService;
 import com.joojoo.api.tag.domain.model.entity.Tag;
 import com.joojoo.api.ticker.application.in.TickerInService;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
-import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
-import com.joojoo.api.tradeLogTag.domain.entity.TradeLogTag;
-import com.joojoo.api.tradeLogTag.domain.repository.TradeLogTagRepository;
-import com.joojoo.api.tradeLogTicker.domain.entity.TradeLogTicker;
-import com.joojoo.api.tradeLogTicker.domain.repository.TradeLogTickerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +28,6 @@ public class MetadataServiceImpl implements MetadataService {
 
     private final BlockTickerRepository blockTickerRepository;
     private final BlockTagRepository blockTagRepository;
-    private final TradeLogTickerRepository tradeLogTickerRepository;
-    private final TradeLogTagRepository tradeLogTagRepository;
 
     @Override
     public void processMetadata(List<Block> blocks, Long userId) {
@@ -83,47 +76,47 @@ public class MetadataServiceImpl implements MetadataService {
         this.processMetadata(Collections.singletonList(targetBlock), userId);
     }
 
-    @Override
-    public void processTradeLogMetadata(TradeLog tradeLog, Long userId) {
-        MetadataContext context = new MetadataContext();
-
-        Map<String, String> sources = new LinkedHashMap<>();
-        sources.put("MEMO", tradeLog.getMemo());
-        sources.put("RISK", tradeLog.getRiskFactor());
-        sources.put("PLAN", tradeLog.getTradingPlan());
-
-        Map<String, List<MatchedMetadataDto>> analysisResults = new HashMap<>();
-        sources.forEach((field, content) -> {
-            if (content != null) {
-                analysisResults.put(field, scanContent(content, context));
-            }
-        });
-
-        context.loadEntities(tickerInService, tagInService);
-
-        List<TradeLogTicker> tlTickers = new ArrayList<>();
-        List<TradeLogTag> tlTags = new ArrayList<>();
-
-        analysisResults.forEach((field, matches) -> {
-            int tSeq = 0, tagSeq = 0;
-            for (MatchedMetadataDto match : matches) {
-                if (match.isTicker()) {
-                    Ticker ticker = context.getTicker(match.name());
-                    if (ticker != null) {
-                        tlTickers.add(TradeLogTicker.create(tradeLog, ticker, userId, field, match.start(), tSeq++));
-                    }
-                } else {
-                    Tag tag = context.getTag(match.name());
-                    if (tag != null) {
-                        tlTags.add(TradeLogTag.create(tradeLog, tag, userId, field, match.start(), tagSeq++));
-                    }
-                }
-            }
-        });
-
-        if (!tlTickers.isEmpty()) tradeLogTickerRepository.saveAll(tlTickers);
-        if (!tlTags.isEmpty()) tradeLogTagRepository.saveAll(tlTags);
-    }
+//    @Override
+//    public void processTradeLogMetadata(TradeLog tradeLog, Long userId) {
+//        MetadataContext context = new MetadataContext();
+//
+//        Map<String, String> sources = new LinkedHashMap<>();
+//        sources.put("MEMO", tradeLog.getMemo());
+//        sources.put("RISK", tradeLog.getRiskFactor());
+//        sources.put("PLAN", tradeLog.getTradingPlan());
+//
+//        Map<String, List<MatchedMetadataDto>> analysisResults = new HashMap<>();
+//        sources.forEach((field, content) -> {
+//            if (content != null) {
+//                analysisResults.put(field, scanContent(content, context));
+//            }
+//        });
+//
+//        context.loadEntities(tickerInService, tagInService);
+//
+//        List<TradeLogTicker> tlTickers = new ArrayList<>();
+//        List<TradeLogTag> tlTags = new ArrayList<>();
+//
+//        analysisResults.forEach((field, matches) -> {
+//            int tSeq = 0, tagSeq = 0;
+//            for (MatchedMetadataDto match : matches) {
+//                if (match.isTicker()) {
+//                    Ticker ticker = context.getTicker(match.name());
+//                    if (ticker != null) {
+//                        tlTickers.add(TradeLogTicker.create(tradeLog, ticker, userId, field, match.start(), tSeq++));
+//                    }
+//                } else {
+//                    Tag tag = context.getTag(match.name());
+//                    if (tag != null) {
+//                        tlTags.add(TradeLogTag.create(tradeLog, tag, userId, field, match.start(), tagSeq++));
+//                    }
+//                }
+//            }
+//        });
+//
+//        if (!tlTickers.isEmpty()) tradeLogTickerRepository.saveAll(tlTickers);
+//        if (!tlTags.isEmpty()) tradeLogTagRepository.saveAll(tlTags);
+//    }
 
     /** 텍스트에서 메타데이터 추출 및 컨텍스트에 이름 수집 */
     private List<MatchedMetadataDto> scanContent(String content, MetadataContext context) {

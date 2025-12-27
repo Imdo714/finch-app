@@ -28,13 +28,8 @@ public class BlockTagRepositoryImpl implements BlockTagRepository {
     }
 
     @Override
-    public List<RecentTagsResponse.RecentTagsDto> findBlockRecentTags(Long userId) {
-        return blockTagQueryDslRepository.findRecentTags(userId);
-    }
-
-    @Override
     public List<RecentTagsResponse.RecentTagsDto> findRecentTags(Long userId) {
-        return blockTagJpaRepository.findRecentTags(userId);
+        return blockTagQueryDslRepository.findRecentTags(userId);
     }
 
     @Override
