@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -29,5 +30,10 @@ public class TickerRepositoryImpl implements TickerRepository {
     @Override
     public List<Ticker> findAllByTickerNames(Set<String> tickerSymbols) {
         return tickerQueryDslRepository.findAllByTickerNames(tickerSymbols);
+    }
+
+    @Override
+    public Optional<Ticker> findById(Long tickerId) {
+        return tickerJpaRepository.findById(tickerId);
     }
 }

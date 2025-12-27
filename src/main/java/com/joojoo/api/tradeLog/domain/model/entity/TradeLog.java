@@ -1,6 +1,7 @@
 package com.joojoo.api.tradeLog.domain.model.entity;
 
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
+import com.joojoo.api.tradeLog.presentation.dto.request.TradeRequestDto;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.global.common.entity.BaseTimeEntity;
 import com.joojoo.global.common.enums.TradeType;
@@ -12,7 +13,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @Entity
 @Getter
@@ -48,13 +48,17 @@ public class TradeLog extends BaseTimeEntity {
     @Column(name = "executed_at", nullable = false)
     private LocalDateTime executedAt; // 실제 매매 일시
 
-    // JSON 처리 (Hibernate 6 기준)
-    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.JSON)
-    @Column(columnDefinition = "json", nullable = false)
-    private Map<String, Object> content;
+    private String memo;
+
+    @Column(name = "risk_factor")
+    private String riskFactor;
+
+    @Column(name = "trading_plan")
+    private String tradingPlan;
 
     @Builder
-    public TradeLog(User user, Ticker ticker, TradeType tradeType, BigDecimal price, BigDecimal amount, String currency, LocalDateTime executedAt, Map<String, Object> content) {
+    public TradeLog(User user, Ticker ticker, TradeType tradeType, BigDecimal price, BigDecimal amount, String currency, LocalDateTime executedAt,
+                    String memo, String riskFactor, String tradingPlan) {
         this.user = user;
         this.ticker = ticker;
         this.tradeType = tradeType;
@@ -62,6 +66,23 @@ public class TradeLog extends BaseTimeEntity {
         this.amount = amount;
         this.currency = currency;
         this.executedAt = executedAt;
-        this.content = content;
+        this.memo = memo;
+        this.riskFactor = riskFactor;
+        this.tradingPlan = tradingPlan;
+    }
+
+    public static TradeLog create(User user, Ticker ticker, TradeRequestDto tradeRequestDto){
+        return TradeLog.builder()
+                .user(user)
+                .ticker(ticker)
+                .tradeType(tradeRequestDto.getTradeType())
+                .price(tradeRequestDto.getPrice())
+                .amount(tradeRequestDto.getAmount())
+                .currency("KRW")
+                .executedAt(tradeRequestDto.getExecutedAt())
+                .memo(tradeRequestDto.getMemo())
+                .riskFactor(tradeRequestDto.getRiskFactor())
+                .tradingPlan(tradeRequestDto.getTradingPlan())
+                .build();
     }
 }

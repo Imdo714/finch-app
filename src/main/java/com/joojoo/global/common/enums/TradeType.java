@@ -1,5 +1,6 @@
 package com.joojoo.global.common.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -11,4 +12,14 @@ public enum TradeType {
     ;
 
     private final String text;
+
+    @JsonCreator
+    public static TradeType from(String value) {
+        for (TradeType type : TradeType.values()) {
+            if (type.name().equalsIgnoreCase(value)) {
+                return type;
+            }
+        }
+        return null;
+    }
 }
