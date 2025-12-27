@@ -66,4 +66,15 @@ public class BlockTag extends BaseCreateEntity {
                 .fieldType(fieldType)
                 .build();
     }
+
+    public static BlockTag create(TradeLog tradeLog, Tag tag, Long userId, TagSourceType fieldType, Integer startOffset, Integer sequence) {
+        return BlockTag.builder()
+                .tradeLog(tradeLog)
+                .tag(tag)
+                .userId(userId)
+                .fieldType(fieldType)
+                .startOffset(startOffset)
+                .sequence(sequence)
+                .build();
+    }
 }

@@ -46,9 +46,10 @@ public class BlockTicker extends BaseCreateEntity {
     private Integer startOffset;
 
     @Builder
-    public BlockTicker(Block block, Ticker ticker, Long userId, TagSourceType fieldType, Integer sequence, Integer startOffset) {
+    public BlockTicker(Block block, Ticker ticker, TradeLog tradeLog, Long userId, TagSourceType fieldType, Integer sequence, Integer startOffset) {
         this.block = block;
         this.ticker = ticker;
+        this.tradeLog = tradeLog;
         this.userId = userId;
         this.fieldType = fieldType;
         this.sequence = sequence;
@@ -63,6 +64,17 @@ public class BlockTicker extends BaseCreateEntity {
                 .sequence(tSeq)
                 .startOffset(start)
                 .fieldType(fieldType)
+                .build();
+    }
+
+    public static BlockTicker create(TradeLog tradeLog, Ticker ticker, Long userId, TagSourceType fieldType, Integer startOffset, Integer sequence) {
+        return BlockTicker.builder()
+                .tradeLog(tradeLog)
+                .ticker(ticker)
+                .userId(userId)
+                .fieldType(fieldType)
+                .startOffset(startOffset)
+                .sequence(sequence)
                 .build();
     }
 }
