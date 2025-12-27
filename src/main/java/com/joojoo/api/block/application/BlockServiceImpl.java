@@ -1,7 +1,7 @@
 package com.joojoo.api.block.application;
 
 import com.joojoo.api.block.application.detail.BlockDtoAssembler;
-import com.joojoo.api.block.application.metadata.MetadataService;
+import com.joojoo.api.util.metadata.MetadataService;
 import com.joojoo.api.block.application.validate.blockerTree.BlockTreeValidator;
 import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.block.domain.model.enums.DeleteMode;
@@ -19,7 +19,6 @@ import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;
 import com.joojoo.global.exception.handleException.block.BlockNotFoundException;
-import com.joojoo.global.exception.handleException.block.BlockOwnerMismatchException;
 import com.joojoo.global.exception.handleException.users.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

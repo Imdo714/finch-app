@@ -1,6 +1,7 @@
 package com.joojoo.api.tradeLog.domain.model.entity;
 
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
+import com.joojoo.api.tradeLog.presentation.dto.request.TradeRequestDto;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.global.common.entity.BaseTimeEntity;
 import com.joojoo.global.common.enums.TradeType;
@@ -12,7 +13,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @Entity
 @Getter
@@ -71,4 +71,18 @@ public class TradeLog extends BaseTimeEntity {
         this.tradingPlan = tradingPlan;
     }
 
+    public static TradeLog create(User user, Ticker ticker, TradeRequestDto tradeRequestDto){
+        return TradeLog.builder()
+                .user(user)
+                .ticker(ticker)
+                .tradeType(tradeRequestDto.getTradeType())
+                .price(tradeRequestDto.getPrice())
+                .amount(tradeRequestDto.getAmount())
+                .currency("KRW")
+                .executedAt(tradeRequestDto.getExecutedAt())
+                .memo(tradeRequestDto.getMemo())
+                .riskFactor(tradeRequestDto.getRiskFactor())
+                .tradingPlan(tradeRequestDto.getTradingPlan())
+                .build();
+    }
 }

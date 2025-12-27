@@ -4,6 +4,7 @@ import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -35,4 +36,25 @@ public class TradeLogTicker {
 
     @Column(name = "start_offset")
     private Integer startOffset;
+
+    @Builder
+    public TradeLogTicker(TradeLog tradeLog, Ticker ticker, Long userId, String fieldType, Integer sequence, Integer startOffset) {
+        this.tradeLog = tradeLog;
+        this.ticker = ticker;
+        this.userId = userId;
+        this.fieldType = fieldType;
+        this.sequence = sequence;
+        this.startOffset = startOffset;
+    }
+
+    public static TradeLogTicker create(TradeLog tradeLog, Ticker ticker, Long userId, String fieldType, int start, int sequence) {
+        return TradeLogTicker.builder()
+                .tradeLog(tradeLog)
+                .ticker(ticker)
+                .userId(userId)
+                .fieldType(fieldType)
+                .startOffset(start)
+                .sequence(sequence)
+                .build();
+    }
 }

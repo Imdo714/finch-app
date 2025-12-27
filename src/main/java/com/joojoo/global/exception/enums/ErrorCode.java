@@ -17,6 +17,7 @@ public enum ErrorCode {
     EXPIRED_ACCESS_TOKEN(401, "EXPIRED_ACCESS_TOKEN", "Access 토큰이 만료되었습니다."),
     EXPIRED_REFRESH_TOKEN(401, "EXPIRED_REFRESH_TOKEN", "Refresh 토큰이 만료되었습니다."),
     REDIS_CONNECTION_FAIL(401, "REDIS_CONNECTION_FAIL", "Redis 연결에 실패하였습니다."),
+    INVALID_INPUT_VALUE(401, "INVALID_INPUT_VALUE", "DTO값을 잘못 입력 하였습니다."),
 
     // ───────────────────────────── 회원(users) ─────────────────────────────
     USER_NOT_FOUND(404, "USER_NOT_FOUND", "회원을 찾을 수 없습니다."),
