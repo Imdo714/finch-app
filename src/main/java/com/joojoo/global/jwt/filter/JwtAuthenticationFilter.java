@@ -43,13 +43,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.tokenBlacklistRepository = tokenBlacklistRepository;
     }
 
-    // shouldNotFilter 메서드가 true를 반환하면 doFilterInternal메서드는 실행되지 않음
-//    @Override
-//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-//        String path = request.getRequestURI();
-//        return excludedUrls.stream()
-//                .anyMatch(pattern -> pathMatcher.match(pattern, path));
-//    }
+//     shouldNotFilter 메서드가 true를 반환하면 doFilterInternal메서드는 실행되지 않음
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return excludedUrls.stream()
+                .anyMatch(pattern -> pathMatcher.match(pattern, path));
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
