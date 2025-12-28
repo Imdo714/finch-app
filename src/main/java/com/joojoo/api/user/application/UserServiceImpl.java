@@ -60,6 +60,14 @@ public class UserServiceImpl implements UserService {
         return UserInfoResponse.of(user, fileService.getFullUrl(user.getProfileImageUrl()));
     }
 
+    @Override
+    public UserInfoResponse getUserInfo(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        return UserInfoResponse.of(user);
+    }
+
     private void validateAndUpdateName(User user, String newName) {
         if (newName != null && !newName.isBlank()) {
             if (!newName.equals(user.getName())) {

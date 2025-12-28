@@ -74,9 +74,10 @@ public class User extends BaseTimeEntity {
             .build();
     }
 
-    public static User createAppleUserBuilder(String providerId, String email, String appleRefreshToken) {
+    public static User createAppleUserBuilder(String providerId, String email, String appleRefreshToken, String name) {
         return User.builder()
                 .email(email)
+                .name(name)
                 .provider(Provider.APPLE)
                 .providerId(providerId)
                 .socialRefresh(appleRefreshToken)

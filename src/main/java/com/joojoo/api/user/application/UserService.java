@@ -11,4 +11,6 @@ public interface UserService {
     DefaultProfileImageResponse getDefaultProfileImages();
 
     UserInfoResponse updateProfile(Long userId, UpdateProfileDto updateProfileDto);
+
+    UserInfoResponse getUserInfo(Long userId);
 }
