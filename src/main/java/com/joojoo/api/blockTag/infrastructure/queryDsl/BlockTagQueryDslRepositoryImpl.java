@@ -10,6 +10,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -61,5 +62,15 @@ public class BlockTagQueryDslRepositoryImpl implements BlockTagQueryDslRepositor
                 )
                 .groupBy(tag.id)
                 .fetchOne();
+    }
+
+    @Override
+    public List<BlockTag> findAllTagsByTradeLogIds(List<Long> tradeLogIds) {
+        if (tradeLogIds.isEmpty()) return Collections.emptyList();
+        return queryFactory
+                .selectFrom(blockTag)
+                .join(blockTag.tag).fetchJoin()
+                .where(blockTag.tradeLog.id.in(tradeLogIds))
+                .fetch();
     }
 }

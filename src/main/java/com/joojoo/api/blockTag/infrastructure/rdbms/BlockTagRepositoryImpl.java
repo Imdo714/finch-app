@@ -50,4 +50,9 @@ public class BlockTagRepositoryImpl implements BlockTagRepository {
     public TagDateResult findAllByTagAndDate(Long userId, Long tagId, LocalDate targetDate) {
         return blockTagDateQueryDslRepository.findAllByTagAndDate(userId, tagId, targetDate);
     }
+
+    @Override
+    public List<BlockTag> findAllTagsByTradeLogIds(List<Long> tradeLogIds) {
+        return blockTagQueryDslRepository.findAllTagsByTradeLogIds(tradeLogIds);
+    }
 }

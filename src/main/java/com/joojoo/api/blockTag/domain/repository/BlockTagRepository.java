@@ -6,6 +6,7 @@ import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountRes
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 public interface BlockTagRepository {
@@ -22,4 +23,7 @@ public interface BlockTagRepository {
     
     /** 2일치 날짜 조회해서 사용한 태그들 조회 */
     TagDateResult findAllByTagAndDate(Long userId, Long tagId, LocalDate targetDate);
+
+    /** TradeLog에서 사용한 태그들 조회 */
+    List<BlockTag> findAllTagsByTradeLogIds(List<Long> tradeLogIds);
 }

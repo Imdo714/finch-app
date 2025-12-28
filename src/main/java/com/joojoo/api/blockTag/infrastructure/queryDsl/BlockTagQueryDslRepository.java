@@ -12,4 +12,6 @@ public interface BlockTagQueryDslRepository {
     List<RecentTagsResponse.RecentTagsDto> findRecentTags(Long userId);
 
     BlockTagCountResponse getBlockCount(Long userId, Long tagId);
+
+    List<BlockTag> findAllTagsByTradeLogIds(List<Long> tradeLogIds);
 }

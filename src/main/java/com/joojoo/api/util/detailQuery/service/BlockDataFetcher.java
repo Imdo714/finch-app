@@ -29,7 +29,7 @@ public class BlockDataFetcher {
 
                 blockRepository.getChildCounts(blockIds),
 
-                queryDsl.findAllByTradeLogIds(tradeLogIds).stream()
+                blockTagRepository.findAllTagsByTradeLogIds(tradeLogIds).stream()
                         .collect(Collectors.groupingBy(bt -> bt.getTradeLog().getId())),
 
                 queryDsl.findAllTickersByTradeLogIds(tradeLogIds).stream()
