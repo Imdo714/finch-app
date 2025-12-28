@@ -1,9 +1,11 @@
 package com.joojoo.api.blockTag.domain.repository;
 
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
+import com.joojoo.api.blockTag.presentation.dto.response.all.TagDateResult;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface BlockTagRepository {
@@ -17,4 +19,7 @@ public interface BlockTagRepository {
     BlockTagCountResponse getBlockCount(Long userId, Long tagId);
 
     void deleteByBlockIds(Long id);
+    
+    /** 2일치 날짜 조회해서 사용한 태그들 조회 */
+    TagDateResult findAllByTagAndDate(Long userId, Long tagId, LocalDate targetDate);
 }

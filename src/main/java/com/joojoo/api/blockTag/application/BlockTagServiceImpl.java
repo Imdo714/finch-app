@@ -31,8 +31,6 @@ public class BlockTagServiceImpl implements BlockTagService {
     private final BlockTreeValidator blockTreeValidator;
     private final BlockTradeLogQueryService blockTradeLogQueryService;
 
-    private final QueryDsl queryDsl;
-
     @Override
     public RecentTagsResponse getRecentTags(Long userId) {
         return RecentTagsResponse.of(blockTagRepository.findRecentTags(userId));
@@ -47,7 +45,7 @@ public class BlockTagServiceImpl implements BlockTagService {
     @Override
     public BlockTagsResponse getUserTagIdsByTagId(Long userId, Long tagId, LocalDate lastDate) {
         LocalDate targetDate = blockTreeValidator.validateAndGetTargetDate(lastDate);
-        TagDateResult result = queryDsl.findAllByTagAndDate(userId, tagId, targetDate);
+        TagDateResult result = blockTagRepository.findAllByTagAndDate(userId, tagId, targetDate);
 
         if (result.getContent().isEmpty()) {
             return BlockTagsResponse.of(Collections.emptyList(), false, null);
