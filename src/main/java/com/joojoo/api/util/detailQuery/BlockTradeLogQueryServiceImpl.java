@@ -6,8 +6,8 @@ import com.joojoo.api.blockTag.presentation.dto.response.all.DailyGroupResponseD
 import com.joojoo.api.blockTag.presentation.dto.response.all.TradeLogResponseDto;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
-import com.joojoo.api.util.detailQuery.service.BlockDataFetcher;
 import com.joojoo.api.util.detailQuery.dto.BlockRelatedDataBundle;
+import com.joojoo.api.util.detailQuery.service.BlockDataFetcher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
