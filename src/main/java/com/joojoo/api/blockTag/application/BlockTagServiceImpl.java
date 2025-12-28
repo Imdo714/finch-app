@@ -2,7 +2,6 @@ package com.joojoo.api.blockTag.application;
 
 import com.joojoo.api.block.application.validate.blockerTree.BlockTreeValidator;
 import com.joojoo.api.block.domain.model.entity.Block;
-import com.joojoo.api.blockTag.application.test.QueryDsl;
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
 import com.joojoo.api.blockTag.presentation.dto.response.all.TagDateResult;

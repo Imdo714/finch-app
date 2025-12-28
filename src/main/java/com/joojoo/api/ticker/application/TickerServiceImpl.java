@@ -2,7 +2,6 @@ package com.joojoo.api.ticker.application;
 
 import com.joojoo.api.block.application.validate.blockerTree.BlockTreeValidator;
 import com.joojoo.api.block.domain.model.entity.Block;
-import com.joojoo.api.blockTag.application.test.QueryDsl;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
 import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
@@ -46,9 +45,7 @@ public class TickerServiceImpl implements TickerService {
     private final UserRepository userRepository;
     private final BlockTradeLogQueryService blockTradeLogQueryService;
     private final BlockTreeValidator blockTreeValidator;
-
     private final BlockTickerRepository blockTickerRepository;
-    private final QueryDsl queryDsl;
 
     @Override
     public void addStockToRedis(String name, String ticker) {
