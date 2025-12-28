@@ -23,4 +23,13 @@ public class UserInfoResponse {
                 .currency(user.getCurrency())
                 .build();
     }
+
+    public static UserInfoResponse of(User user){
+        return UserInfoResponse.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .profileUrl(null)
+                .currency(user.getCurrency())
+                .build();
+    }
 }

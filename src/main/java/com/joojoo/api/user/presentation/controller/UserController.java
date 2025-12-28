@@ -129,4 +129,20 @@ public class UserController {
         return BaseResponse.ok(userService.updateProfile(user.getUserId(), updateProfileDto));
     }
 
+    @Operation(summary = "마이페이지 조회 API", description = "마이페이지에 이름 조회하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "404", description = "회원을 찾을 수 없습니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    @GetMapping
+    public BaseResponse<UserInfoResponse> getUserInfo(
+            @AuthenticationPrincipal CustomUserDetails user
+    ){
+        return BaseResponse.ok(userService.getUserInfo(user.getUserId()));
+    }
+
 }
