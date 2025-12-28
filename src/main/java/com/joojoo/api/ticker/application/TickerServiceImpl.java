@@ -1,13 +1,21 @@
 package com.joojoo.api.ticker.application;
 
+import com.joojoo.api.block.application.validate.blockerTree.BlockTreeValidator;
+import com.joojoo.api.block.domain.model.entity.Block;
+import com.joojoo.api.blockTag.application.test.QueryDsl;
+import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
+import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
+import com.joojoo.api.blockTicker.presentation.dto.request.TickerDateResult;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.ticker.domain.provider.TickerDataProvider;
 import com.joojoo.api.ticker.domain.repository.TickerRedisRepository;
 import com.joojoo.api.ticker.domain.repository.TickerRepository;
 import com.joojoo.api.ticker.presentation.dto.request.TickerDataDto;
 import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
+import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;
+import com.joojoo.api.util.detailQuery.BlockTradeLogQueryService;
 import com.joojoo.global.exception.handleException.tickers.InvalidTickerOrNameException;
 import com.joojoo.global.exception.handleException.users.UserNotFoundException;
 import com.joojoo.global.util.HangulUtils;
@@ -19,6 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -33,6 +43,9 @@ public class TickerServiceImpl implements TickerService {
     private final TickerRepository tickerRepository;
     private final TickerDataProvider tickerDataProvider;
     private final UserRepository userRepository;
+    private final BlockTradeLogQueryService blockTradeLogQueryService;
+    private final BlockTreeValidator blockTreeValidator;
+    private final QueryDsl queryDsl;
 
     @Override
     public void addStockToRedis(String name, String ticker) {
@@ -98,6 +111,39 @@ public class TickerServiceImpl implements TickerService {
             tickerRedisRepository.addStocksToRedis(tickers);
         }
         log.info("티커 Cache 업데이트 완료: {}건 처리됨", tickers.size());
+    }
+
+    @Override
+    public BlockTagsResponse getTickerList(Long userId, Long tickerId, LocalDate lastDate) {
+        LocalDate targetDate = blockTreeValidator.validateAndGetTargetDate(lastDate);
+        TickerDateResult result = queryDsl.findAllByTickerAndDate(userId, tickerId, targetDate);
+
+        if (result.getContent().isEmpty()) {
+            return BlockTagsResponse.of(Collections.emptyList(), false, null);
+        }
+
+        List<LocalDate> displayDates = result.getTargetDates().stream().limit(2).toList();
+
+        // 필터링된 Block과 TradeLog 추출
+        List<Block> blocks = result.getContent().stream()
+                .filter(bt -> displayDates.contains(getCreatedAt(bt).toLocalDate()))
+                .map(BlockTicker::getBlock)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+
+        List<TradeLog> tradeLogs = result.getContent().stream()
+                .filter(bt -> displayDates.contains(getCreatedAt(bt).toLocalDate()))
+                .map(BlockTicker::getTradeLog)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+
+        return blockTradeLogQueryService.assembleBlockTagsResponse(result.getTargetDates(), blocks, tradeLogs);
+    }
+
+    private LocalDateTime getCreatedAt(BlockTicker bt) {
+        return (bt.getBlock() != null) ? bt.getBlock().getCreatedAt() : bt.getTradeLog().getCreatedAt();
     }
 
     private Stream<String> generateSearchKeywords(Ticker stock) {

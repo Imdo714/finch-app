@@ -37,7 +37,7 @@ public class TradeLogServiceImpl implements TradeLogService {
         TradeLog tradeLog = TradeLog.create(user, ticker, tradeRequestDto);
 
         TradeLog save = tradeLogRepository.save(tradeLog);
-        metadataService.processTradeLogMetadata(save, userId);
+        metadataService.processTradeLogMetadata(save, userId, ticker);
     }
 
 }
