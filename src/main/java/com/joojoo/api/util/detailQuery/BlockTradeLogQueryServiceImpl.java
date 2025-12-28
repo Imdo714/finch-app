@@ -1,17 +1,13 @@
 package com.joojoo.api.util.detailQuery;
 
 import com.joojoo.api.block.domain.model.entity.Block;
-import com.joojoo.api.block.domain.repository.BlockRepository;
-import com.joojoo.api.blockTag.application.test.QueryDsl;
-import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
-import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
 import com.joojoo.api.blockTag.presentation.dto.response.all.BlockDetailMode;
 import com.joojoo.api.blockTag.presentation.dto.response.all.DailyGroupResponseDto;
 import com.joojoo.api.blockTag.presentation.dto.response.all.TradeLogResponseDto;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
-import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
-import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
+import com.joojoo.api.util.detailQuery.dto.BlockRelatedDataBundle;
+import com.joojoo.api.util.detailQuery.service.BlockDataFetcher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,61 +21,51 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BlockTradeLogQueryServiceImpl implements BlockTradeLogQueryService {
 
-    private final BlockTagRepository blockTagRepository;
-    private final BlockTickerRepository blockTickerRepository;
-    private final BlockRepository blockRepository;
-    private final QueryDsl queryDsl;
+    private final BlockDataFetcher blockDataFetcher;
 
     @Override
     public BlockTagsResponse assembleBlockTagsResponse(List<LocalDate> targetDates, List<Block> allBlocks, List<TradeLog> allTradeLogs) {
-        /** 조회할 Block, TradeLog ID들 추출 */
+        /** ID 추출 */
         List<Long> blockIds = allBlocks.stream().map(Block::getId).toList();
         List<Long> tradeLogIds = allTradeLogs.stream().map(TradeLog::getId).toList();
 
-        // 연관 데이터 일괄 조회
-        /** blockId 로 연관퇸 블럭 태그들 조회 */
-        Map<Long, List<BlockTag>> tagsByBlockId = blockTagRepository.findAllBlockTags(blockIds).stream()
-                .collect(Collectors.groupingBy(bt -> bt.getBlock().getId()));
+        /** 연관 데이터 일괄 조회 */
+        BlockRelatedDataBundle bundle = blockDataFetcher.fetchRelatedData(blockIds, tradeLogIds);
 
-        /** blockId 로 연관퇸 블럭 티커들 조회 */
-        Map<Long, List<BlockTicker>> tickersByBlockId = blockTickerRepository.findAllBlockTickers(blockIds).stream()
-                .collect(Collectors.groupingBy(bt -> bt.getBlock().getId()));
+        /** 날짜별 그룹화 DTO만들기 */
+        Map<LocalDate, List<BlockDetailMode>> groupedBlocks = groupBlocksByDate(allBlocks, bundle);
+        Map<LocalDate, List<TradeLogResponseDto>> groupedTradeLogs = groupTradeLogsByDate(allTradeLogs, bundle);
 
-        /** 조회한 블럭의 자식 갯수 */
-        Map<Long, Long> childCounts = blockRepository.getChildCounts(blockIds);
-
-        /** tradeLogId 로 연관퇸 템플릿 태그들 조회 */
-        Map<Long, List<BlockTag>> tagsByTradeLogId = queryDsl.findAllByTradeLogIds(tradeLogIds).stream()
-                .collect(Collectors.groupingBy(bt -> bt.getTradeLog().getId()));
-
-        /** tradeLogId 로 연관퇸 템플릿 티커들 조회 */
-        Map<Long, List<BlockTicker>> tickerByTradeLogId = queryDsl.findAllTickersByTradeLogIds(tradeLogIds).stream()
-                .collect(Collectors.groupingBy(bt -> bt.getTradeLog().getId()));
-
-        /** 날짜별 그룹화하여 블럭 모음 */
-        Map<LocalDate, List<BlockDetailMode>> groupedBlocks = allBlocks.stream()
-                .map(b -> BlockDetailMode.from(b,
-                        tagsByBlockId.getOrDefault(b.getId(), Collections.emptyList()),
-                        tickersByBlockId.getOrDefault(b.getId(), Collections.emptyList()),
-                        childCounts.getOrDefault(b.getId(), 0L)))
-                .collect(Collectors.groupingBy(dto -> dto.getCreatedAt().toLocalDate()));
-
-        /** 날짜별 그룹화하여 TradeLog 모음 */
-        Map<LocalDate, List<TradeLogResponseDto>> groupedTradeLogs = allTradeLogs.stream()
-                .map(log -> TradeLogResponseDto.from(log,
-                        tagsByTradeLogId.getOrDefault(log.getId(), Collections.emptyList()),
-                        tickerByTradeLogId.getOrDefault(log.getId(), Collections.emptyList())
-                ))
-                .collect(Collectors.groupingBy(dto -> dto.getCreatedAt().toLocalDate()));
-
+        /** DailyGroup 날짜, block, TradeLog DTO 변환 */
         List<DailyGroupResponseDto> dailyGroups = targetDates.stream()
                 .limit(2)
                 .map(date -> DailyGroupResponseDto.of(date, groupedBlocks, groupedTradeLogs))
                 .toList();
 
+        return buildBlockTagsResponse(targetDates, dailyGroups);
+    }
+
+    private Map<LocalDate, List<BlockDetailMode>> groupBlocksByDate(List<Block> blocks, BlockRelatedDataBundle bundle) {
+        return blocks.stream()
+                .map(b -> BlockDetailMode.from(b,
+                        bundle.getTagsByBlockId().getOrDefault(b.getId(), Collections.emptyList()),
+                        bundle.getTickersByBlockId().getOrDefault(b.getId(), Collections.emptyList()),
+                        bundle.getChildCounts().getOrDefault(b.getId(), 0L)))
+                .collect(Collectors.groupingBy(dto -> dto.getCreatedAt().toLocalDate()));
+    }
+
+    private Map<LocalDate, List<TradeLogResponseDto>> groupTradeLogsByDate(List<TradeLog> logs, BlockRelatedDataBundle bundle) {
+        return logs.stream()
+                .map(log -> TradeLogResponseDto.from(log,
+                        bundle.getTagsByTradeLogId().getOrDefault(log.getId(), Collections.emptyList()),
+                        bundle.getTickerByTradeLogId().getOrDefault(log.getId(), Collections.emptyList())
+                ))
+                .collect(Collectors.groupingBy(dto -> dto.getCreatedAt().toLocalDate()));
+    }
+
+    private BlockTagsResponse buildBlockTagsResponse(List<LocalDate> targetDates, List<DailyGroupResponseDto> dailyGroups) {
         boolean hasNext = targetDates.size() > 2;
         LocalDate nextDate = hasNext ? targetDates.get(2) : null;
-
         return BlockTagsResponse.of(dailyGroups, hasNext, nextDate);
     }
 }

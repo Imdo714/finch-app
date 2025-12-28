@@ -2,9 +2,9 @@ package com.joojoo.api.ticker.application;
 
 import com.joojoo.api.block.application.validate.blockerTree.BlockTreeValidator;
 import com.joojoo.api.block.domain.model.entity.Block;
-import com.joojoo.api.blockTag.application.test.QueryDsl;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
+import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
 import com.joojoo.api.blockTicker.presentation.dto.request.TickerDateResult;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.ticker.domain.provider.TickerDataProvider;
@@ -45,7 +45,7 @@ public class TickerServiceImpl implements TickerService {
     private final UserRepository userRepository;
     private final BlockTradeLogQueryService blockTradeLogQueryService;
     private final BlockTreeValidator blockTreeValidator;
-    private final QueryDsl queryDsl;
+    private final BlockTickerRepository blockTickerRepository;
 
     @Override
     public void addStockToRedis(String name, String ticker) {
@@ -116,7 +116,7 @@ public class TickerServiceImpl implements TickerService {
     @Override
     public BlockTagsResponse getTickerList(Long userId, Long tickerId, LocalDate lastDate) {
         LocalDate targetDate = blockTreeValidator.validateAndGetTargetDate(lastDate);
-        TickerDateResult result = queryDsl.findAllByTickerAndDate(userId, tickerId, targetDate);
+        TickerDateResult result = blockTickerRepository.findAllByTickerAndDate(userId, tickerId, targetDate);
 
         if (result.getContent().isEmpty()) {
             return BlockTagsResponse.of(Collections.emptyList(), false, null);
