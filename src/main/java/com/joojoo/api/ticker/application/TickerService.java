@@ -1,6 +1,9 @@
 package com.joojoo.api.ticker.application;
 
+import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
 import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
+
+import java.time.LocalDate;
 
 public interface TickerService {
     void addStockToRedis(String name, String ticker);
@@ -12,4 +15,6 @@ public interface TickerService {
 
     // 운영 DB에 있는 주식을 Redis에 저장
     void loadTickersToCache(Long userId);
+
+    BlockTagsResponse getTickerList(Long userId, Long tickerId, LocalDate lastDate);
 }

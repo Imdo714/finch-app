@@ -79,7 +79,7 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     @Override
-    public void processTradeLogMetadata(TradeLog tradeLog, Long userId) {
+    public void processTradeLogMetadata(TradeLog tradeLog, Long userId, Ticker mainTicker) {
         MetadataContext context = new MetadataContext();
 
         // 1. 소스 필드와 Enum 매핑
@@ -100,6 +100,15 @@ public class MetadataServiceImpl implements MetadataService {
 
         List<BlockTicker> tlTickers = new ArrayList<>();
         List<BlockTag> tlTags = new ArrayList<>();
+
+        tlTickers.add(BlockTicker.create(
+                tradeLog,
+                mainTicker,
+                userId,
+                TagSourceType.TRADE_HEADER,
+                -1, // 본문 내 위치가 아님을 표시
+                0
+        ));
 
         // 3. 엔티티 생성
         analysisResults.forEach((type, matches) -> {

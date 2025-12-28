@@ -1,31 +1,23 @@
 package com.joojoo.api.blockTag.application.test;
 
-import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.block.domain.model.entity.QBlock;
-import com.joojoo.api.block.presentation.dto.response.detail.BlockDetailResponseDto;
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.domain.model.entity.QBlockTag;
-import com.joojoo.api.blockTag.presentation.dto.response.all.BlockDetailMode;
 import com.joojoo.api.blockTag.presentation.dto.response.all.TagDateResult;
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
 import com.joojoo.api.blockTicker.domain.model.entity.QBlockTicker;
-import com.joojoo.api.tag.domain.model.entity.QTag;
+import com.joojoo.api.blockTicker.presentation.dto.request.TickerDateResult;
 import com.joojoo.api.ticker.domain.model.entity.QTicker;
 import com.joojoo.api.tradeLog.domain.model.entity.QTradeLog;
-import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
-import com.joojoo.api.user.domain.model.entity.QUser;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
@@ -106,5 +98,54 @@ public class QueryDsl {
                 .join(blockTicker.ticker, ticker).fetchJoin()
                 .where(blockTicker.tradeLog.id.in(tradeLogIds))
                 .fetch();
+    }
+
+    public TickerDateResult findAllByTickerAndDate(Long userId, Long tickerId, LocalDate targetDate) {
+        int dateCount = 3;
+        List<LocalDate> targetDates = getTargetTickerDates(userId, tickerId, targetDate, dateCount);
+
+        if (targetDates.isEmpty()) return new TickerDateResult(Collections.emptyList(), targetDates);
+
+        // 조회된 날짜에서 가장 과거 날짜
+        LocalDate minDate = targetDates.get(targetDates.size() - 1);
+
+        // 실제 데이터 조회
+        List<BlockTicker> content = queryFactory
+                .selectFrom(blockTicker)
+                .leftJoin(blockTicker.block, block).fetchJoin()
+                .leftJoin(blockTicker.tradeLog, tradeLog).fetchJoin()
+                .where(
+                        blockTicker.ticker.id.eq(tickerId),
+                        blockTicker.userId.eq(userId),
+                        blockTicker.createdAt.goe(minDate.atStartOfDay()),
+                        leLastTickerDate(targetDate)
+                )
+                .orderBy(blockTicker.createdAt.desc())
+                .fetch();
+
+        return new TickerDateResult(content, targetDates);
+    }
+
+    private List<LocalDate> getTargetTickerDates(Long userId, Long tickerId, LocalDate lastDate, int dateCount) {
+        return queryFactory
+                .select(blockTicker.createdAt)
+                .from(blockTicker)
+                .where(
+                        blockTicker.ticker.id.eq(tickerId),
+                        blockTicker.userId.eq(userId),
+                        leLastTickerDate(lastDate)
+                )
+                .orderBy(blockTicker.createdAt.desc())
+                .fetch()
+                .stream()
+                .map(LocalDateTime::toLocalDate)
+                .distinct()
+                .limit(dateCount)
+                .toList();
+    }
+
+    private BooleanExpression leLastTickerDate(LocalDate lastDate) {
+        if (lastDate == null) return null;
+        return blockTicker.createdAt.lt(lastDate.plusDays(1).atStartOfDay());
     }
 }

@@ -1,5 +1,6 @@
 package com.joojoo.api.ticker.presentation.controller;
 
+import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
 import com.joojoo.api.ticker.application.TickerService;
 import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
 import com.joojoo.global.common.request.auth.CustomUserDetails;
@@ -13,8 +14,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Ticker API", description = "주식 티커 관련 API")
 public class TickerController {
     private final TickerService tickerService;
-
 
     @Operation(summary = "주식 티커 추가 (검색 확인용)", description = "Redis에 새로운 주식 이름과 티커 심볼을 저장합니다.")
     @ApiResponses(value = {
@@ -56,5 +59,18 @@ public class TickerController {
     @PostMapping("/load-Cache")
     public void dbToRedis(@AuthenticationPrincipal CustomUserDetails user){
         tickerService.loadTickersToCache(user.getUserId());
+    }
+
+    @Operation(summary = "티커 상세 API", description = "특정 티커를 조회하여 Block, TradeLog에 작성한 티커를 가져옵니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공")
+    })
+    @GetMapping("/{tickerId}")
+    public BaseResponse<BlockTagsResponse> getTickerList(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @PathVariable Long tickerId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lastDate
+    ){
+        return BaseResponse.ok(tickerService.getTickerList(user.getUserId(), tickerId, lastDate));
     }
 }
