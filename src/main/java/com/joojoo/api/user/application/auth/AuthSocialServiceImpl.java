@@ -12,6 +12,7 @@ import com.joojoo.api.user.presentation.dto.request.apple.AppleUserInfo;
 import com.joojoo.api.user.presentation.dto.request.kakao.AccessTokenDto;
 import com.joojoo.api.user.presentation.dto.request.kakao.KakaoUserDto;
 import com.joojoo.api.user.presentation.dto.response.LoginResponse;
+import com.joojoo.api.util.random.GeneratorRandom;
 import com.joojoo.global.exception.handleException.users.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class AuthSocialServiceImpl implements AuthSocialService {
     private final KakaoClientSecret kakaoClientSecret;
     private final AppleClientSecret appleClientSecret;
     private final Map<String, SocialUnlink> socialUnlink;
+    private final GeneratorRandom generatorRandom;
 
     @Override
     @Transactional
@@ -114,7 +116,7 @@ public class AuthSocialServiceImpl implements AuthSocialService {
                     return user;
                 })
                 .orElseGet(() -> {
-                    User newUser = User.createAppleUserBuilder(providerId, email, appleRefreshToken);
+                    User newUser = User.createAppleUserBuilder(providerId, email, appleRefreshToken, generatorRandom.getRandomName());
                     return userRepository.save(newUser);
                 });
     }
