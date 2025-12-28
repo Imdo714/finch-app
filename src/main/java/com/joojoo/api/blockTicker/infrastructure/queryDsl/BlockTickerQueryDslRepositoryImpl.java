@@ -7,6 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -23,6 +24,17 @@ public class BlockTickerQueryDslRepositoryImpl implements BlockTickerQueryDslRep
                 .selectFrom(blockTicker)
                 .join(blockTicker.ticker, ticker).fetchJoin()
                 .where(blockTicker.block.id.in(blockIds))
+                .fetch();
+    }
+
+    @Override
+    public List<BlockTicker> findAllTickersByTradeLogIds(List<Long> tradeLogIds) {
+        if (tradeLogIds.isEmpty()) return Collections.emptyList();
+
+        return queryFactory
+                .selectFrom(blockTicker)
+                .join(blockTicker.ticker, ticker).fetchJoin()
+                .where(blockTicker.tradeLog.id.in(tradeLogIds))
                 .fetch();
     }
 }

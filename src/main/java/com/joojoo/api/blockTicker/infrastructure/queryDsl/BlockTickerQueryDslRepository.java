@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface BlockTickerQueryDslRepository {
     List<BlockTicker> findAllBlockTickers(List<Long> blockIds);
+
+    List<BlockTicker> findAllTickersByTradeLogIds(List<Long> tradeLogIds);
 }

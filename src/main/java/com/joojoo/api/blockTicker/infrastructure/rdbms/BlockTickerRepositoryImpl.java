@@ -38,4 +38,9 @@ public class BlockTickerRepositoryImpl implements BlockTickerRepository {
     public TickerDateResult findAllByTickerAndDate(Long userId, Long tickerId, LocalDate targetDate) {
         return blockTickerDateQueryDslRepository.findAllByTickerAndDate(userId, tickerId, targetDate);
     }
+
+    @Override
+    public List<BlockTicker> findAllTickersByTradeLogIds(List<Long> tradeLogIds) {
+        return blockTickerQueryDslRepository.findAllTickersByTradeLogIds(tradeLogIds);
+    }
 }
