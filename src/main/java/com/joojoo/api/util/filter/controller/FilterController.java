@@ -3,17 +3,16 @@ package com.joojoo.api.util.filter.controller;
 import com.joojoo.api.blockTag.presentation.dto.request.TagListDto;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
 import com.joojoo.api.util.filter.application.FilterService;
+import com.joojoo.api.util.filter.dto.request.TickerAndTagIdDto;
 import com.joojoo.api.util.filter.dto.response.FilterCountResponse;
+import com.joojoo.api.util.filter.dto.response.RelatedKeywordsResponse;
 import com.joojoo.global.common.request.auth.CustomUserDetails;
 import com.joojoo.global.common.response.BaseResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
@@ -38,6 +37,14 @@ public class FilterController {
             @Valid @RequestBody TagListDto tagListDto
     ){
         return BaseResponse.ok(filterService.getFilterCategoryCount(user.getUserId(), tagListDto));
+    }
+
+    @PostMapping("/filter/relation")
+    public BaseResponse<RelatedKeywordsResponse> getFilterRelation(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @RequestBody TickerAndTagIdDto tickerAndTagIdDto
+    ){
+        return BaseResponse.ok(filterService.getFilterRelation(user.getUserId(), tickerAndTagIdDto));
     }
 
 }

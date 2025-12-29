@@ -7,7 +7,10 @@ import com.joojoo.api.blockTag.presentation.dto.request.TagListDto;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
 import com.joojoo.api.util.detailQuery.BlockTradeLogQueryService;
+import com.joojoo.api.util.filter.dto.request.TickerAndTagIdDto;
 import com.joojoo.api.util.filter.dto.response.FilterCountResponse;
+import com.joojoo.api.util.filter.dto.request.RelatedKeywordsDto;
+import com.joojoo.api.util.filter.dto.response.RelatedKeywordsResponse;
 import com.joojoo.global.common.enums.FilterCategory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,8 +53,10 @@ public class FilterServiceImpl implements FilterService {
             tradeLogs = filterQuery.searchTradeLogsWithAllKeywords(tagListDto.getTagIds(), tagListDto.getTickerIds(), userId, displayDates, category);
         }
 
-        return blockTradeLogQueryService.assembleBlockTagsResponse(displayDates, blocks, tradeLogs);
+        return blockTradeLogQueryService.assembleBlockTagsResponse(targetDates, blocks, tradeLogs);
     }
+
+    // TODO : DTO 예외 잡아줘야 함 티커, 태그 각각 1개씩 또는 티커, 태그 둘중에 하나만
 
     @Override
     public FilterCountResponse getFilterCategoryCount(Long userId, TagListDto tagListDto) {
@@ -71,6 +76,17 @@ public class FilterServiceImpl implements FilterService {
         }
 
         return new FilterCountResponse(blocks.size() + tradeLogs.size());
+    }
+
+    @Override
+    public RelatedKeywordsResponse getFilterRelation(Long userId, TickerAndTagIdDto dto) {
+        dto.validate();
+
+        RelatedKeywordsDto data = dto.isTagSearch()
+                ? filterQuery.findRelatedKeywordsByTag(userId, dto.getTagId())
+                : filterQuery.findRelatedKeywordsByTicker(userId, dto.getTickerId());
+
+        return RelatedKeywordsResponse.of(data.getRelatedTags(), data.getRelatedTickers());
     }
 
 }
