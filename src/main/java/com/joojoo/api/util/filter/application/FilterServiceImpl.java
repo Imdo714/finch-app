@@ -3,7 +3,7 @@ package com.joojoo.api.util.filter.application;
 import com.joojoo.api.block.application.validate.blockerTree.BlockTreeValidator;
 import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.blockTag.application.test.FilterQuery;
-import com.joojoo.api.blockTag.presentation.dto.request.TagListDto;
+import com.joojoo.api.util.filter.dto.request.TagListDto;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
 import com.joojoo.api.util.detailQuery.BlockTradeLogQueryService;
@@ -32,6 +32,8 @@ public class FilterServiceImpl implements FilterService {
 
     @Override
     public BlockTagsResponse getFilterCategory(Long userId, TagListDto tagListDto, LocalDate lastDate) {
+        tagListDto.validateHasKeywords();
+
         LocalDate targetDate = blockTreeValidator.validateAndGetTargetDate(lastDate);
         FilterCategory category = tagListDto.getCategory();
 
@@ -56,10 +58,10 @@ public class FilterServiceImpl implements FilterService {
         return blockTradeLogQueryService.assembleBlockTagsResponse(targetDates, blocks, tradeLogs);
     }
 
-    // TODO : DTO 예외 잡아줘야 함 티커, 태그 각각 1개씩 또는 티커, 태그 둘중에 하나만
-
     @Override
     public FilterCountResponse getFilterCategoryCount(Long userId, TagListDto tagListDto) {
+        tagListDto.validateHasKeywords();
+
         FilterCategory category = tagListDto.getCategory();
         List<Long> tagIds = tagListDto.getTagIds();
         List<Long> tickerIds = tagListDto.getTickerIds();
