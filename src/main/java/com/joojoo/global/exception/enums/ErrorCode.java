@@ -53,6 +53,11 @@ public enum ErrorCode {
     BLOCK_NOT_FOUND(404, "BLOCK_NOT_FOUND", "해당 블록을 찾을 수 없습니다."),
     BLOCK_FORBIDDEN_ACCESS(403, "BLOCK_FORBIDDEN_ACCESS", "해당 블록에 대한 권한이 없습니다."),
     BLOCK_PROMOTION_LIMIT_EXCEEDED(401, "BLOCK_PROMOTION_LIMIT_EXCEEDED", "승격될 자식 블록이 한도(3개)를 초과합니다."),
+
+    //---------------------------- 필터 (filter) ----------------------------
+    INVALID_FILTER_INPUT(400, "INVALID_FILTER_INPUT", "태그 ID 또는 티커 ID 중 하나는 반드시 입력해야 합니다."),
+    DUPLICATE_FILTER_INPUT(400, "DUPLICATE_FILTER_INPUT", "태그 ID와 티커 ID는 동시에 입력할 수 없습니다."),
+
     ;
 
     private final int httpStatus;
