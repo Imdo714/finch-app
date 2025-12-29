@@ -3,6 +3,7 @@ package com.joojoo.api.util.filter.controller;
 import com.joojoo.api.blockTag.presentation.dto.request.TagListDto;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
 import com.joojoo.api.util.filter.application.FilterService;
+import com.joojoo.api.util.filter.dto.response.FilterCountResponse;
 import com.joojoo.global.common.request.auth.CustomUserDetails;
 import com.joojoo.global.common.response.BaseResponse;
 import jakarta.validation.Valid;
@@ -30,4 +31,13 @@ public class FilterController {
     ){
         return BaseResponse.ok(filterService.getFilterCategory(user.getUserId(), tagListDto, lastDate));
     }
+
+    @PostMapping("/filter/count")
+    public BaseResponse<FilterCountResponse> getFilterCategoryCount(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @Valid @RequestBody TagListDto tagListDto
+    ){
+        return BaseResponse.ok(filterService.getFilterCategoryCount(user.getUserId(), tagListDto));
+    }
+
 }

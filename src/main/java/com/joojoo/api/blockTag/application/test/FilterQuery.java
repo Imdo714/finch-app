@@ -36,82 +36,6 @@ public class FilterQuery {
     private final QBlock block = QBlock.block;
     private final QTradeLog tradeLog = QTradeLog.tradeLog;
 
-
-//    public List<Block> searchBlocksWithAllKeywords(List<Long> tagIds, List<Long> tickerIds, Long userId, List<LocalDate> targetDates) {
-//        if ((tickerIds == null || tickerIds.isEmpty()) && (tagIds == null || tagIds.isEmpty())) {
-//            return Collections.emptyList();
-//        }
-//
-//        JPQLQuery<Block> query = queryFactory.selectFrom(block);
-//
-//        // 1. 모든 티커가 포함되어야 함 (AND)
-//        if (tickerIds != null && !tickerIds.isEmpty()) {
-//            query.where(block.id.in(
-//                    JPAExpressions.select(blockTicker.block.id)
-//                            .from(blockTicker)
-//                            .where(
-//                                    blockTicker.userId.eq(userId),
-//                                    blockTicker.ticker.id.in(tickerIds)
-//                            )
-//                            .groupBy(blockTicker.block.id)
-//                            .having(blockTicker.ticker.id.countDistinct().eq((long) tickerIds.size()))
-//            ));
-//        }
-//
-//        // 2. 모든 태그가 포함되어야 함 (AND)
-//        if (tagIds != null && !tagIds.isEmpty()) {
-//            query.where(block.id.in(
-//                    JPAExpressions.select(blockTag.block.id)
-//                            .from(blockTag)
-//                            .where(
-//                                    blockTag.userId.eq(userId),
-//                                    blockTag.tag.id.in(tagIds)
-//                            )
-//                            .groupBy(blockTag.block.id)
-//                            .having(blockTag.tag.id.countDistinct().eq((long) tagIds.size()))
-//            ));
-//        }
-//
-//        // 최종 결과 반환 (최신순)
-//        return query.orderBy(block.createdAt.desc()).fetch();
-//    }
-//
-//    // TradeLog용 쿼리 (Block 쿼리와 거의 동일)
-//    public List<TradeLog> searchTradeLogsWithAllKeywords(List<Long> tagIds, List<Long> tickerIds, Long userId, List<LocalDate> targetDates) {
-//        if (targetDates.isEmpty()) return Collections.emptyList();
-//
-//        JPQLQuery<TradeLog> query = queryFactory.selectFrom(tradeLog);
-//
-//        if (tickerIds != null && !tickerIds.isEmpty()) {
-//            query.where(tradeLog.id.in(
-//                    JPAExpressions.select(blockTicker.tradeLog.id) // 여기만 tradeLog로 변경
-//                            .from(blockTicker)
-//                            .where(
-//                                    blockTicker.userId.eq(userId),
-//                                    blockTicker.ticker.id.in(tickerIds)
-//                            )
-//                            .groupBy(blockTicker.tradeLog.id)
-//                            .having(blockTicker.ticker.id.countDistinct().eq((long) tickerIds.size()))
-//            ));
-//        }
-//
-//        if (tagIds != null && !tagIds.isEmpty()) {
-//            query.where(tradeLog.id.in(
-//                    JPAExpressions.select(blockTag.tradeLog.id) // 여기만 tradeLog로 변경
-//                            .from(blockTag)
-//                            .where(
-//                                    blockTag.userId.eq(userId),
-//                                    blockTag.tag.id.in(tagIds)
-//                            )
-//                            .groupBy(blockTag.tradeLog.id)
-//                            .having(blockTag.tag.id.countDistinct().eq((long) tagIds.size()))
-//            ));
-//        }
-//        return query.orderBy(tradeLog.createdAt.desc()).fetch();
-//    }
-
-
-
     /** Block 전용 쿼리 */
     public List<Block> searchBlocksWithAllKeywords(List<Long> tagIds, List<Long> tickerIds, Long userId, List<LocalDate> targetDates) {
         if ((tickerIds == null || tickerIds.isEmpty()) && (tagIds == null || tagIds.isEmpty())) {
@@ -294,4 +218,161 @@ public class FilterQuery {
         );
     }
 
+
+
+
+
+
+
+//    public List<Block> searchBlocksWithAllKeywordsCount(List<Long> tagIds, List<Long> tickerIds, Long userId, List<LocalDate> targetDates) {
+//        if ((tickerIds == null || tickerIds.isEmpty()) && (tagIds == null || tagIds.isEmpty())) {
+//            return Collections.emptyList();
+//        }
+//
+//        JPQLQuery<Block> query = queryFactory.selectFrom(block);
+//
+//        // 1. 모든 티커가 포함되어야 함 (AND)
+//        if (tickerIds != null && !tickerIds.isEmpty()) {
+//            query.where(block.id.in(
+//                    JPAExpressions.select(blockTicker.block.id)
+//                            .from(blockTicker)
+//                            .where(
+//                                    blockTicker.userId.eq(userId),
+//                                    blockTicker.ticker.id.in(tickerIds)
+//                            )
+//                            .groupBy(blockTicker.block.id)
+//                            .having(blockTicker.ticker.id.countDistinct().eq((long) tickerIds.size()))
+//            ));
+//        }
+//
+//        // 2. 모든 태그가 포함되어야 함 (AND)
+//        if (tagIds != null && !tagIds.isEmpty()) {
+//            query.where(block.id.in(
+//                    JPAExpressions.select(blockTag.block.id)
+//                            .from(blockTag)
+//                            .where(
+//                                    blockTag.userId.eq(userId),
+//                                    blockTag.tag.id.in(tagIds)
+//                            )
+//                            .groupBy(blockTag.block.id)
+//                            .having(blockTag.tag.id.countDistinct().eq((long) tagIds.size()))
+//            ));
+//        }
+//
+//        // 최종 결과 반환 (최신순)
+//        return query.orderBy(block.createdAt.desc()).fetch();
+//    }
+//
+//    // TradeLog용 쿼리 (Block 쿼리와 거의 동일)
+//    public List<TradeLog> searchTradeLogsWithAllKeywordsCount(List<Long> tagIds, List<Long> tickerIds, Long userId, List<LocalDate> targetDates) {
+//        if (targetDates.isEmpty()) return Collections.emptyList();
+//
+//        JPQLQuery<TradeLog> query = queryFactory.selectFrom(tradeLog);
+//
+//        if (tickerIds != null && !tickerIds.isEmpty()) {
+//            query.where(tradeLog.id.in(
+//                    JPAExpressions.select(blockTicker.tradeLog.id) // 여기만 tradeLog로 변경
+//                            .from(blockTicker)
+//                            .where(
+//                                    blockTicker.userId.eq(userId),
+//                                    blockTicker.ticker.id.in(tickerIds)
+//                            )
+//                            .groupBy(blockTicker.tradeLog.id)
+//                            .having(blockTicker.ticker.id.countDistinct().eq((long) tickerIds.size()))
+//            ));
+//        }
+//
+//        if (tagIds != null && !tagIds.isEmpty()) {
+//            query.where(tradeLog.id.in(
+//                    JPAExpressions.select(blockTag.tradeLog.id) // 여기만 tradeLog로 변경
+//                            .from(blockTag)
+//                            .where(
+//                                    blockTag.userId.eq(userId),
+//                                    blockTag.tag.id.in(tagIds)
+//                            )
+//                            .groupBy(blockTag.tradeLog.id)
+//                            .having(blockTag.tag.id.countDistinct().eq((long) tagIds.size()))
+//            ));
+//        }
+//        return query.orderBy(tradeLog.createdAt.desc()).fetch();
+//    }
+
+
+    public List<Block> searchBlocksWithAllKeywordsCount(List<Long> tagIds, List<Long> tickerIds, Long userId) {
+        if ((tickerIds == null || tickerIds.isEmpty()) && (tagIds == null || tagIds.isEmpty())) {
+            return Collections.emptyList();
+        }
+
+        JPQLQuery<Block> query = queryFactory.selectFrom(block);
+
+        // 1. 모든 티커가 포함되어야 함 (AND)
+        if (tickerIds != null && !tickerIds.isEmpty()) {
+            query.where(block.id.in(
+                    JPAExpressions.select(blockTicker.block.id)
+                            .from(blockTicker)
+                            .where(
+                                    blockTicker.userId.eq(userId),
+                                    blockTicker.ticker.id.in(tickerIds)
+                            )
+                            .groupBy(blockTicker.block.id)
+                            .having(blockTicker.ticker.id.countDistinct().eq((long) tickerIds.size()))
+            ));
+        }
+
+        // 2. 모든 태그가 포함되어야 함 (AND)
+        if (tagIds != null && !tagIds.isEmpty()) {
+            query.where(block.id.in(
+                    JPAExpressions.select(blockTag.block.id)
+                            .from(blockTag)
+                            .where(
+                                    blockTag.userId.eq(userId),
+                                    blockTag.tag.id.in(tagIds)
+                            )
+                            .groupBy(blockTag.block.id)
+                            .having(blockTag.tag.id.countDistinct().eq((long) tagIds.size()))
+            ));
+        }
+
+        // 최종 결과 반환 (최신순)
+        return query.orderBy(block.createdAt.desc()).fetch();
+    }
+
+    // TradeLog용 쿼리 (Block 쿼리와 거의 동일)
+    public List<TradeLog> searchTradeLogsWithAllKeywordsCount(List<Long> tagIds, List<Long> tickerIds, Long userId, FilterCategory category) {
+        if ((tickerIds == null || tickerIds.isEmpty()) && (tagIds == null || tagIds.isEmpty())) {
+            return Collections.emptyList();
+        }
+
+        JPQLQuery<TradeLog> query = queryFactory.selectFrom(tradeLog)
+                .where(
+                        filterByTradeType(category)
+                );
+
+        if (tickerIds != null && !tickerIds.isEmpty()) {
+            query.where(tradeLog.id.in(
+                    JPAExpressions.select(blockTicker.tradeLog.id) // 여기만 tradeLog로 변경
+                            .from(blockTicker)
+                            .where(
+                                    blockTicker.userId.eq(userId),
+                                    blockTicker.ticker.id.in(tickerIds)
+                            )
+                            .groupBy(blockTicker.tradeLog.id)
+                            .having(blockTicker.ticker.id.countDistinct().eq((long) tickerIds.size()))
+            ));
+        }
+
+        if (tagIds != null && !tagIds.isEmpty()) {
+            query.where(tradeLog.id.in(
+                    JPAExpressions.select(blockTag.tradeLog.id) // 여기만 tradeLog로 변경
+                            .from(blockTag)
+                            .where(
+                                    blockTag.userId.eq(userId),
+                                    blockTag.tag.id.in(tagIds)
+                            )
+                            .groupBy(blockTag.tradeLog.id)
+                            .having(blockTag.tag.id.countDistinct().eq((long) tagIds.size()))
+            ));
+        }
+        return query.orderBy(tradeLog.createdAt.desc()).fetch();
+    }
 }
