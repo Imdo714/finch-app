@@ -1,26 +1,40 @@
 package com.joojoo.api.blockTag.infrastructure.redis;
 
 import com.joojoo.global.exception.handleException.redis.RedisConnectionFailException;
+import jakarta.persistence.QueryTimeoutException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Range;
+import org.springframework.data.redis.RedisConnectionFailureException;
+import org.springframework.data.redis.connection.Limit;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.Set;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class BlockTagRedisRepositoryImpl implements BlockTagRedisRepository {
 
     private final StringRedisTemplate redisTemplate;
-    private static final String AUTOCOMPLETE_KEY = "autocomplete:tags";
+    private static final String AUTOCOMPLETE_LEX_KEY = "autocomplete:tags:lex";
+    private static final String AUTOCOMPLETE_SCORE_KEY = "autocomplete:tags:score";
 
     /** 태그 추가 (Score +1) */
     @Override
-    public void addTagsToRedis(Set<String> values) {
+    public void addTagsToRedis(Long userId, Set<String> lexEntries, Set<Long> tagIds) {
         try {
-            for (String value : values) {
-                // 기존 0.0으로 덮어쓰는 add 대신 incrementScore 사용
-                redisTemplate.opsForZSet().incrementScore(AUTOCOMPLETE_KEY, value, 1.0);
+            // 1. 검색용 키 저장
+            for (String entry : lexEntries) {
+                redisTemplate.opsForZSet().add(AUTOCOMPLETE_LEX_KEY, entry, 0);
+            }
+
+            // 2. 점수용 키 점수 관리
+            for (Long tagId : tagIds) {
+                String scoreKey = userId + ":" + tagId;
+                redisTemplate.opsForZSet().incrementScore(AUTOCOMPLETE_SCORE_KEY, scoreKey, 1.0);
             }
         } catch (Exception e) {
             throw new RedisConnectionFailException();
@@ -29,18 +43,44 @@ public class BlockTagRedisRepositoryImpl implements BlockTagRedisRepository {
 
     /** 태그 삭제 (Score -1, 0이 되면 삭제) */
     @Override
-    public void removeTagsFromRedis(Set<String> values) {
+    public void removeTagsFromRedis(Long userId, Long tagId, Set<String> lexEntries, int countToRemove) {
         try {
-            for (String value : values) {
-                Double score = redisTemplate.opsForZSet().incrementScore(AUTOCOMPLETE_KEY, value, -1.0);
+            String member = userId + ":" + tagId;
 
-                // 점수가 0 이하라면 검색 리스트에서 제거
-                if (score != null && score <= 0) {
-                    redisTemplate.opsForZSet().remove(AUTOCOMPLETE_KEY, value);
+            // 점수를 차감 (음수를 더함)
+            Double remainingScore = redisTemplate.opsForZSet()
+                    .incrementScore(AUTOCOMPLETE_SCORE_KEY, member, (double) -countToRemove);
+
+            // 점수가 없거나 0 이하면 관련 데이터 모두 삭제
+            if (remainingScore == null || remainingScore <= 0) {
+                // 검색용 LEX 데이터 삭제
+                for (String entry : lexEntries) {
+                    redisTemplate.opsForZSet().remove(AUTOCOMPLETE_LEX_KEY, entry);
                 }
+                // 점수 용 SCORE 멤버:태그 삭제
+                redisTemplate.opsForZSet().remove(AUTOCOMPLETE_SCORE_KEY, member);
             }
         } catch (Exception e) {
+            log.error("Redis 삭제 실패 - 태그ID: {}, 에러: {}", tagId, e.getMessage());
             throw new RedisConnectionFailException();
+        }
+    }
+
+    @Override
+    public Set<String> searchTagQuery(String prefix) {
+        try {
+            Range<String> range = Range.from(Range.Bound.inclusive(prefix))
+                    .to(Range.Bound.inclusive(prefix + "\uffff"));
+
+            return redisTemplate.opsForZSet()
+                    .rangeByLex(AUTOCOMPLETE_LEX_KEY, range, Limit.limit().count(10));
+
+        } catch (RedisConnectionFailureException | QueryTimeoutException e) {
+            log.error("Redis 연결 실패 또는 타임아웃 발생: {}", e.getMessage());
+            return Collections.emptySet();
+        } catch (Exception e) {
+            log.error("Redis 알 수 없는 에러: {}", e.getMessage());
+            return Collections.emptySet();
         }
     }
 }

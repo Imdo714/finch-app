@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -91,17 +92,20 @@ public class MetadataServiceImpl implements MetadataService {
 
     // TODO: 리팩토링 잊으면 안됨!
     private void processRedisTagRemoval(Long userId, List<BlockTag> tagsToRemove) {
-        Set<String> redisEntries = new HashSet<>();
-        for (BlockTag bt : tagsToRemove) {
-            Tag tag = bt.getTag();
+        Map<Long, List<BlockTag>> groupedTags = tagsToRemove.stream()
+                .collect(Collectors.groupingBy(bt -> bt.getTag().getId()));
+
+        groupedTags.forEach((tagId, tags) -> {
+            Tag tag = tags.get(0).getTag();
             String name = tag.getName();
-            Long tagId = tag.getId();
+            int countToRemove = tags.size();
 
-            redisEntries.add(userId + ":" + HangulUtils.splitToJaso(name) + "*" + name + "*" + tagId);
-            redisEntries.add(userId + ":" + HangulUtils.getChosung(name) + "*" + name + "*" + tagId);
-        }
+            Set<String> lexEntries = new HashSet<>();
+            lexEntries.add(userId + ":" + HangulUtils.splitToJaso(name) + "*" + name + "*" + tagId);
+            lexEntries.add(userId + ":" + HangulUtils.getChosung(name) + "*" + name + "*" + tagId);
 
-        blockTagRepository.removeTagsFromRedis(redisEntries);
+            blockTagRepository.removeTagsFromRedis(userId, tagId, lexEntries, countToRemove);
+        });
     }
 
     @Override
@@ -187,18 +191,20 @@ public class MetadataServiceImpl implements MetadataService {
 
     /** 여러 개의 태그를 한 번에 Redis 포맷으로 변환하여 저장 */
     private void saveUserTagsToRedis(Long userId, Map<String, Tag> tagMap) {
-        Set<String> redisEntries = new HashSet<>();
+        Set<String> lexEntries = new HashSet<>();
+        Set<Long> tagIds = new HashSet<>();
 
         tagMap.forEach((name, tag) -> {
             Long tagId = tag.getId();
 
-            String base = userId + ":" + HangulUtils.splitToJaso(name) + "*" + name + "*" + tagId;
-            String chosung = userId + ":" + HangulUtils.getChosung(name) + "*" + name + "*" + tagId;
+            // 검색용 문자열들 (자소, 초성)
+            lexEntries.add(userId + ":" + HangulUtils.splitToJaso(name) + "*" + name + "*" + tagId);
+            lexEntries.add(userId + ":" + HangulUtils.getChosung(name) + "*" + name + "*" + tagId);
 
-            redisEntries.add(base);
-            redisEntries.add(chosung);
+            // 점수 관리용 ID들
+            tagIds.add(tagId);
         });
 
-        blockTagRepository.addTagsToRedis(redisEntries);
+        blockTagRepository.addTagsToRedis(userId, lexEntries, tagIds);
     }
 }

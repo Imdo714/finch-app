@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -132,16 +133,21 @@ public class BlockServiceImpl implements BlockService {
 
     /** Redis에 있는 태그 -1 또는 삭제 */
     private void processRedisTagRemoval(Long userId, List<BlockTag> tagsToRemove) {
-        Set<String> redisEntries = new HashSet<>();
-        for (BlockTag bt : tagsToRemove) {
-            Tag tag = bt.getTag();
-            String name = tag.getName();
-            Long tagId = tag.getId();
+        Map<Long, List<BlockTag>> groupedTags = tagsToRemove.stream()
+                .collect(Collectors.groupingBy(bt -> bt.getTag().getId()));
 
-            redisEntries.add(userId + ":" + HangulUtils.splitToJaso(name) + "*" + name + "*" + tagId);
-            redisEntries.add(userId + ":" + HangulUtils.getChosung(name) + "*" + name + "*" + tagId);
-        }
-        blockTagRepository.removeTagsFromRedis(redisEntries);
+        groupedTags.forEach((tagId, tags) -> {
+            Tag tag = tags.get(0).getTag();
+            String name = tag.getName();
+            int countToRemove = tags.size();
+
+            Set<String> lexEntries = new HashSet<>();
+            lexEntries.add(userId + ":" + HangulUtils.splitToJaso(name) + "*" + name + "*" + tagId);
+            lexEntries.add(userId + ":" + HangulUtils.getChosung(name) + "*" + name + "*" + tagId);
+
+            // Repository 호출 (태그 하나당 한 번씩 호출하거나, Map 자체를 넘기도록 수정)
+            blockTagRepository.removeTagsFromRedis(userId, tagId, lexEntries, countToRemove);
+        });
     }
 
     /** 자식들 시퀀스 앞으로 댕기고 삭제 */

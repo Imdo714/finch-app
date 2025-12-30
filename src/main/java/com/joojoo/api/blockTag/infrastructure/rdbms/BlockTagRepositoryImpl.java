@@ -9,6 +9,8 @@ import com.joojoo.api.blockTag.presentation.dto.response.all.TagDateResult;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Range;
+import org.springframework.data.redis.connection.Limit;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -60,17 +62,23 @@ public class BlockTagRepositoryImpl implements BlockTagRepository {
     }
 
     @Override
-    public void addTagsToRedis(Set<String> values) {
-        blockTagRedisRepository.addTagsToRedis(values);
+    public void addTagsToRedis(Long userId, Set<String> lexEntries, Set<Long> tagIds) {
+        blockTagRedisRepository.addTagsToRedis(userId, lexEntries, tagIds);
     }
 
     @Override
-    public void removeTagsFromRedis(Set<String> values) {
-        blockTagRedisRepository.removeTagsFromRedis(values);
+    public void removeTagsFromRedis(Long userId, Long tagId, Set<String> lexEntries, int countToRemove) {
+        blockTagRedisRepository.removeTagsFromRedis(userId, tagId, lexEntries, countToRemove);
     }
 
     @Override
     public List<BlockTag> findAllByBlockIdIn(List<Long> blockIds) {
         return blockTagQueryDslRepository.findAllByBlockIdIn(blockIds);
     }
+
+    @Override
+    public Set<String> searchTagQuery(String prefix) {
+        return blockTagRedisRepository.searchTagQuery(prefix);
+    }
+
 }
