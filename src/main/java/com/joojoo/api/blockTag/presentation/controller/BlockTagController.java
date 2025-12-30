@@ -44,7 +44,7 @@ public class BlockTagController {
     @Operation(summary = "Tag 상세 페이지 API", description = "내가 사용한 TagId로 블럭(노트) 리스트 조회 API")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공",
-                    content = @Content(schema = @Schema(implementation = RecentTagsResponse.class)
+                    content = @Content(schema = @Schema(implementation = BlockTagsResponse.class)
                     )
             )
     })
@@ -57,6 +57,13 @@ public class BlockTagController {
         return BaseResponse.ok(blockTagService.getUserTagIdsByTagId(user.getUserId(), tagId, lastDate));
     }
 
+    @Operation(summary = "Tag 상세 페이지 블럭 개수 API", description = "태그 상세 페이지 위에 태그 이름 하고 블럭 수량을 조회하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공",
+                    content = @Content(schema = @Schema(implementation = TotalCountResponse.class)
+                    )
+            )
+    })
     @GetMapping("/{tagId}/count")
     public BaseResponse<TotalCountResponse> getBlockCount(
             @AuthenticationPrincipal CustomUserDetails user,
