@@ -39,7 +39,7 @@ public class FilterController {
             @ApiResponse(
                     responseCode = "200",
                     description = "조회 성공",
-                    content = @Content(schema = @Schema(implementation = BlockResponse.class))
+                    content = @Content(schema = @Schema(implementation = BlockTagsResponse.class))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -61,7 +61,7 @@ public class FilterController {
             @ApiResponse(
                     responseCode = "200",
                     description = "조회 성공",
-                    content = @Content(schema = @Schema(implementation = BlockResponse.class))
+                    content = @Content(schema = @Schema(implementation = FilterCountResponse.class))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -82,7 +82,7 @@ public class FilterController {
             @ApiResponse(
                     responseCode = "200",
                     description = "조회 성공",
-                    content = @Content(schema = @Schema(implementation = BlockResponse.class))
+                    content = @Content(schema = @Schema(implementation = RelatedKeywordsResponse.class))
             ),
             @ApiResponse(
                     responseCode = "400",

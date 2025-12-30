@@ -1,6 +1,7 @@
 package com.joojoo.api.block.application;
 
 import com.joojoo.api.block.application.detail.BlockDtoAssembler;
+import com.joojoo.api.tag.domain.model.entity.Tag;
 import com.joojoo.api.util.metadata.MetadataService;
 import com.joojoo.api.block.application.validate.blockerTree.BlockTreeValidator;
 import com.joojoo.api.block.domain.model.entity.Block;
@@ -20,16 +21,15 @@ import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;
 import com.joojoo.global.exception.handleException.block.BlockNotFoundException;
 import com.joojoo.global.exception.handleException.users.UserNotFoundException;
+import com.joojoo.global.util.HangulUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -99,10 +99,24 @@ public class BlockServiceImpl implements BlockService {
 
         blockTreeValidator.validateOwner(targetBlock, userId);
 
+        /** 삭제할 블럭 ID의 태그를 미리 수집 */
+        List<Long> idsToDelete = new ArrayList<>();
         if (mode == DeleteMode.ALL) {
-            handleRecursiveDelete(targetBlock);
+            targetBlock.collectAllIds(idsToDelete);
+        } else {
+            idsToDelete.add(targetBlock.getId());
+        }
+
+        List<BlockTag> tagsToRemove = blockTagRepository.findAllByBlockIdIn(idsToDelete);
+
+        if (mode == DeleteMode.ALL) {
+            handleRecursiveDelete(targetBlock, idsToDelete);
         } else {
             handleSingleDeleteWithPromotion(targetBlock);
+        }
+
+        if (!tagsToRemove.isEmpty()) {
+            processRedisTagRemoval(userId, tagsToRemove);
         }
     }
 
@@ -117,14 +131,28 @@ public class BlockServiceImpl implements BlockService {
         metadataService.processMetadata(targetBlock, userId);
     }
 
-    /** 자식들 시퀀스 앞으로 댕기고 삭제 */
-    private void handleRecursiveDelete(Block targetBlock) {
-        // 형제들 시퀀스 앞으로 한 칸씩 당기기
-        shiftSiblings(targetBlock, -1);
+    /** Redis에 있는 태그 -1 또는 삭제 */
+    private void processRedisTagRemoval(Long userId, List<BlockTag> tagsToRemove) {
+        Map<Long, List<BlockTag>> groupedTags = tagsToRemove.stream()
+                .collect(Collectors.groupingBy(bt -> bt.getTag().getId()));
 
-        // 삭제할 모든 ID 수집 후 일괄 삭제
-        List<Long> idsToDelete = new ArrayList<>();
-        targetBlock.collectAllIds(idsToDelete);
+        groupedTags.forEach((tagId, tags) -> {
+            Tag tag = tags.get(0).getTag();
+            String name = tag.getName();
+            int countToRemove = tags.size();
+
+            Set<String> lexEntries = new HashSet<>();
+            lexEntries.add(userId + ":" + HangulUtils.splitToJaso(name) + "*" + name + "*" + tagId);
+            lexEntries.add(userId + ":" + HangulUtils.getChosung(name) + "*" + name + "*" + tagId);
+
+            // Repository 호출 (태그 하나당 한 번씩 호출하거나, Map 자체를 넘기도록 수정)
+            blockTagRepository.removeTagsFromRedis(userId, tagId, lexEntries, countToRemove);
+        });
+    }
+
+    /** 자식들 시퀀스 앞으로 댕기고 삭제 */
+    private void handleRecursiveDelete(Block targetBlock, List<Long> idsToDelete) {
+        shiftSiblings(targetBlock, -1);
         blockRepository.deleteAllByIdInBatch(idsToDelete);
     }
 

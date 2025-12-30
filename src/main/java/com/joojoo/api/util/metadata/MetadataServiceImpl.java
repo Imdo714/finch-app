@@ -12,12 +12,14 @@ import com.joojoo.api.ticker.application.in.TickerInService;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
 import com.joojoo.global.common.enums.TagSourceType;
+import com.joojoo.global.util.HangulUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -68,14 +70,42 @@ public class MetadataServiceImpl implements MetadataService {
 
         if (!bTickers.isEmpty()) blockTickerRepository.saveAll(bTickers);
         if (!bTags.isEmpty()) blockTagRepository.saveAll(bTags);
+
+        if (!context.getTagNames().isEmpty()) {
+            saveUserTagsToRedis(userId, context.getTagMap());
+        }
     }
 
     /** 단일 블록 업데이트용 */
     @Override
     public void processMetadata(Block targetBlock, Long userId) {
+        List<BlockTag> oldTags = blockTagRepository.findAllByBlockIdIn(Collections.singletonList(targetBlock.getId()));
+
         blockTickerRepository.deleteByBlockIds(targetBlock.getId());
         blockTagRepository.deleteByBlockIds(targetBlock.getId());
+
+        if (!oldTags.isEmpty()) {
+            processRedisTagRemoval(userId, oldTags);
+        }
         this.processMetadata(Collections.singletonList(targetBlock), userId);
+    }
+
+    // TODO: 리팩토링 잊으면 안됨!
+    private void processRedisTagRemoval(Long userId, List<BlockTag> tagsToRemove) {
+        Map<Long, List<BlockTag>> groupedTags = tagsToRemove.stream()
+                .collect(Collectors.groupingBy(bt -> bt.getTag().getId()));
+
+        groupedTags.forEach((tagId, tags) -> {
+            Tag tag = tags.get(0).getTag();
+            String name = tag.getName();
+            int countToRemove = tags.size();
+
+            Set<String> lexEntries = new HashSet<>();
+            lexEntries.add(userId + ":" + HangulUtils.splitToJaso(name) + "*" + name + "*" + tagId);
+            lexEntries.add(userId + ":" + HangulUtils.getChosung(name) + "*" + name + "*" + tagId);
+
+            blockTagRepository.removeTagsFromRedis(userId, tagId, lexEntries, countToRemove);
+        });
     }
 
     @Override
@@ -131,6 +161,10 @@ public class MetadataServiceImpl implements MetadataService {
 
         if (!tlTickers.isEmpty()) blockTickerRepository.saveAll(tlTickers);
         if (!tlTags.isEmpty()) blockTagRepository.saveAll(tlTags);
+
+        if (!context.getTagNames().isEmpty()) {
+            saveUserTagsToRedis(userId, context.getTagMap());
+        }
     }
 
     /** 텍스트에서 메타데이터 추출 및 컨텍스트에 이름 수집 */
@@ -153,5 +187,24 @@ public class MetadataServiceImpl implements MetadataService {
             }
         }
         return matches;
+    }
+
+    /** 여러 개의 태그를 한 번에 Redis 포맷으로 변환하여 저장 */
+    private void saveUserTagsToRedis(Long userId, Map<String, Tag> tagMap) {
+        Set<String> lexEntries = new HashSet<>();
+        Set<Long> tagIds = new HashSet<>();
+
+        tagMap.forEach((name, tag) -> {
+            Long tagId = tag.getId();
+
+            // 검색용 문자열들 (자소, 초성)
+            lexEntries.add(userId + ":" + HangulUtils.splitToJaso(name) + "*" + name + "*" + tagId);
+            lexEntries.add(userId + ":" + HangulUtils.getChosung(name) + "*" + name + "*" + tagId);
+
+            // 점수 관리용 ID들
+            tagIds.add(tagId);
+        });
+
+        blockTagRepository.addTagsToRedis(userId, lexEntries, tagIds);
     }
 }

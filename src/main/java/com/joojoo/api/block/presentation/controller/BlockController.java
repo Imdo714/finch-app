@@ -91,7 +91,7 @@ public class BlockController {
             @ApiResponse(
                     responseCode = "200",
                     description = "삭제 성공",
-                    content = @Content(schema = @Schema(implementation = BlockDetailResponseDto.class))
+                    content = @Content(schema = @Schema(implementation = String.class))
             ),
             @ApiResponse(
                     responseCode = "401",
@@ -124,7 +124,7 @@ public class BlockController {
             @ApiResponse(
                     responseCode = "200",
                     description = "수정 성공",
-                    content = @Content(schema = @Schema(implementation = BlockDetailResponseDto.class))
+                    content = @Content(schema = @Schema(implementation = String.class))
             ),
             @ApiResponse(
                     responseCode = "403",

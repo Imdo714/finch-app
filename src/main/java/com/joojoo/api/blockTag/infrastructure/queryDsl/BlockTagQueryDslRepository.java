@@ -14,4 +14,6 @@ public interface BlockTagQueryDslRepository {
     BlockTagCountResponse getBlockCount(Long userId, Long tagId);
 
     List<BlockTag> findAllTagsByTradeLogIds(List<Long> tradeLogIds);
+
+    List<BlockTag> findAllByBlockIdIn(List<Long> blockIds);
 }

@@ -62,8 +62,11 @@ public class TickerController {
     }
 
     @Operation(summary = "티커 상세 API", description = "특정 티커를 조회하여 Block, TradeLog에 작성한 티커를 가져옵니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "조회 성공")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공",
+                    content = @Content(schema = @Schema(implementation = BlockTagsResponse.class)
+                    )
+            )
     })
     @GetMapping("/{tickerId}")
     public BaseResponse<BlockTagsResponse> getTickerList(

@@ -4,10 +4,13 @@ import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.presentation.dto.response.all.TagDateResult;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
+import org.springframework.data.domain.Range;
+import org.springframework.data.redis.connection.Limit;
 
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public interface BlockTagRepository {
     List<BlockTag> saveAll(List<BlockTag> blockTags);
@@ -26,4 +29,17 @@ public interface BlockTagRepository {
 
     /** TradeLog에서 사용한 태그들 조회 */
     List<BlockTag> findAllTagsByTradeLogIds(List<Long> tradeLogIds);
+
+    /** 사용자가 사용한 태그를 Redis에 저장 */
+    void addTagsToRedis(Long userId, Set<String> lexEntries, Set<Long> tagIds);
+
+    /** 사용자가 삭제한 태그를 Redis에 삭제 */
+    void removeTagsFromRedis(Long userId, Long tagId, Set<String> lexEntries, int countToRemove);
+
+    /** 삭제할 블럭아이디의 연관된 태그들 조회 */
+    List<BlockTag> findAllByBlockIdIn(List<Long> blockIds);
+
+    /** 내가 사용하고있는 태그들 검색 */
+    Set<String> searchTagQuery(String prefix);
+
 }
