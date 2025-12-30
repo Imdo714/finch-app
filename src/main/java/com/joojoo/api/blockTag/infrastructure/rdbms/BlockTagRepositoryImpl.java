@@ -68,4 +68,9 @@ public class BlockTagRepositoryImpl implements BlockTagRepository {
     public void removeTagsFromRedis(Set<String> values) {
         blockTagRedisRepository.removeTagsFromRedis(values);
     }
+
+    @Override
+    public List<BlockTag> findAllByBlockIdIn(List<Long> blockIds) {
+        return blockTagQueryDslRepository.findAllByBlockIdIn(blockIds);
+    }
 }

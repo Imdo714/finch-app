@@ -33,4 +33,7 @@ public interface BlockTagRepository {
 
     /** 사용자가 삭제한 태그를 Redis에 삭제 */
     void removeTagsFromRedis(Set<String> values);
+
+    /** 삭제할 블럭아이디의 연관된 태그들 조회 */
+    List<BlockTag> findAllByBlockIdIn(List<Long> blockIds);
 }

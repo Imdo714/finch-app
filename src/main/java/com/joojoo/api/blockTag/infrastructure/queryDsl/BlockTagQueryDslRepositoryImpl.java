@@ -73,4 +73,17 @@ public class BlockTagQueryDslRepositoryImpl implements BlockTagQueryDslRepositor
                 .where(blockTag.tradeLog.id.in(tradeLogIds))
                 .fetch();
     }
+
+    @Override
+    public List<BlockTag> findAllByBlockIdIn(List<Long> blockIds) {
+        if (blockIds == null || blockIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return queryFactory
+                .selectFrom(blockTag)
+                .join(blockTag.tag, tag).fetchJoin()
+                .where(blockTag.block.id.in(blockIds))
+                .fetch();
+    }
 }
