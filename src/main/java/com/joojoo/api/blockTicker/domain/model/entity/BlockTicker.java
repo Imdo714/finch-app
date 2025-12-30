@@ -3,7 +3,6 @@ package com.joojoo.api.blockTicker.domain.model.entity;
 import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
-import com.joojoo.global.common.entity.BaseCreateEntity;
 import com.joojoo.global.common.enums.TagSourceType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -11,11 +10,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "block_tickers")
-public class BlockTicker extends BaseCreateEntity {
+public class BlockTicker {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,8 +46,11 @@ public class BlockTicker extends BaseCreateEntity {
     @Column(name = "start_offset")
     private Integer startOffset;
 
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
     @Builder
-    public BlockTicker(Block block, Ticker ticker, TradeLog tradeLog, Long userId, TagSourceType fieldType, Integer sequence, Integer startOffset) {
+    public BlockTicker(Block block, Ticker ticker, TradeLog tradeLog, Long userId, TagSourceType fieldType, Integer sequence, Integer startOffset, LocalDateTime createdAt) {
         this.block = block;
         this.ticker = ticker;
         this.tradeLog = tradeLog;
@@ -54,6 +58,7 @@ public class BlockTicker extends BaseCreateEntity {
         this.fieldType = fieldType;
         this.sequence = sequence;
         this.startOffset = startOffset;
+        this.createdAt = createdAt;
     }
 
     public static BlockTicker create(Block block, Ticker ticker, Long userId, int start, int tSeq, TagSourceType fieldType) {
@@ -64,6 +69,7 @@ public class BlockTicker extends BaseCreateEntity {
                 .sequence(tSeq)
                 .startOffset(start)
                 .fieldType(fieldType)
+                .createdAt(block.getCreatedAt())
                 .build();
     }
 
@@ -75,6 +81,7 @@ public class BlockTicker extends BaseCreateEntity {
                 .fieldType(fieldType)
                 .startOffset(startOffset)
                 .sequence(sequence)
+                .createdAt(tradeLog.getCreatedAt())
                 .build();
     }
 }
