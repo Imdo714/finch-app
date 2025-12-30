@@ -78,9 +78,30 @@ public class MetadataServiceImpl implements MetadataService {
     /** 단일 블록 업데이트용 */
     @Override
     public void processMetadata(Block targetBlock, Long userId) {
+        List<BlockTag> oldTags = blockTagRepository.findAllByBlockIdIn(Collections.singletonList(targetBlock.getId()));
+
         blockTickerRepository.deleteByBlockIds(targetBlock.getId());
         blockTagRepository.deleteByBlockIds(targetBlock.getId());
+
+        if (!oldTags.isEmpty()) {
+            processRedisTagRemoval(userId, oldTags);
+        }
         this.processMetadata(Collections.singletonList(targetBlock), userId);
+    }
+
+    // TODO: 리팩토링 잊으면 안됨!
+    private void processRedisTagRemoval(Long userId, List<BlockTag> tagsToRemove) {
+        Set<String> redisEntries = new HashSet<>();
+        for (BlockTag bt : tagsToRemove) {
+            Tag tag = bt.getTag();
+            String name = tag.getName();
+            Long tagId = tag.getId();
+
+            redisEntries.add(userId + ":" + HangulUtils.splitToJaso(name) + "*" + name + "*" + tagId);
+            redisEntries.add(userId + ":" + HangulUtils.getChosung(name) + "*" + name + "*" + tagId);
+        }
+
+        blockTagRepository.removeTagsFromRedis(redisEntries);
     }
 
     @Override
