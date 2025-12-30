@@ -12,6 +12,7 @@ import com.joojoo.api.ticker.application.in.TickerInService;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
 import com.joojoo.global.common.enums.TagSourceType;
+import com.joojoo.global.util.HangulUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -68,6 +69,10 @@ public class MetadataServiceImpl implements MetadataService {
 
         if (!bTickers.isEmpty()) blockTickerRepository.saveAll(bTickers);
         if (!bTags.isEmpty()) blockTagRepository.saveAll(bTags);
+
+        if (!context.getTagNames().isEmpty()) {
+            saveUserTagsToRedis(userId, context.getTagMap());
+        }
     }
 
     /** 단일 블록 업데이트용 */
@@ -131,6 +136,10 @@ public class MetadataServiceImpl implements MetadataService {
 
         if (!tlTickers.isEmpty()) blockTickerRepository.saveAll(tlTickers);
         if (!tlTags.isEmpty()) blockTagRepository.saveAll(tlTags);
+
+        if (!context.getTagNames().isEmpty()) {
+            saveUserTagsToRedis(userId, context.getTagMap());
+        }
     }
 
     /** 텍스트에서 메타데이터 추출 및 컨텍스트에 이름 수집 */
@@ -153,5 +162,22 @@ public class MetadataServiceImpl implements MetadataService {
             }
         }
         return matches;
+    }
+
+    /** 여러 개의 태그를 한 번에 Redis 포맷으로 변환하여 저장 */
+    private void saveUserTagsToRedis(Long userId, Map<String, Tag> tagMap) {
+        Set<String> redisEntries = new HashSet<>();
+
+        tagMap.forEach((name, tag) -> {
+            Long tagId = tag.getId();
+
+            String base = userId + ":" + HangulUtils.splitToJaso(name) + "*" + name + "*" + tagId;
+            String chosung = userId + ":" + HangulUtils.getChosung(name) + "*" + name + "*" + tagId;
+
+            redisEntries.add(base);
+            redisEntries.add(chosung);
+        });
+
+        blockTagRepository.addTagsToRedis(redisEntries);
     }
 }

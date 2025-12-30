@@ -4,6 +4,7 @@ import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
 import com.joojoo.api.blockTag.infrastructure.queryDsl.BlockTagQueryDslRepository;
 import com.joojoo.api.blockTag.infrastructure.queryDsl.date.BlockTagDateQueryDslRepository;
+import com.joojoo.api.blockTag.infrastructure.redis.BlockTagRedisRepository;
 import com.joojoo.api.blockTag.presentation.dto.response.all.TagDateResult;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class BlockTagRepositoryImpl implements BlockTagRepository {
     private final BlockTagJpaRepository blockTagJpaRepository;
     private final BlockTagQueryDslRepository blockTagQueryDslRepository;
     private final BlockTagDateQueryDslRepository blockTagDateQueryDslRepository;
+    private final BlockTagRedisRepository blockTagRedisRepository;
 
     @Override
     public List<BlockTag> saveAll(List<BlockTag> blockTags) {
@@ -54,5 +57,15 @@ public class BlockTagRepositoryImpl implements BlockTagRepository {
     @Override
     public List<BlockTag> findAllTagsByTradeLogIds(List<Long> tradeLogIds) {
         return blockTagQueryDslRepository.findAllTagsByTradeLogIds(tradeLogIds);
+    }
+
+    @Override
+    public void addTagsToRedis(Set<String> values) {
+        blockTagRedisRepository.addTagsToRedis(values);
+    }
+
+    @Override
+    public void removeTagsFromRedis(Set<String> values) {
+        blockTagRedisRepository.removeTagsFromRedis(values);
     }
 }

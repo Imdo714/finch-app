@@ -8,6 +8,7 @@ import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsRespon
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public interface BlockTagRepository {
     List<BlockTag> saveAll(List<BlockTag> blockTags);
@@ -26,4 +27,10 @@ public interface BlockTagRepository {
 
     /** TradeLog에서 사용한 태그들 조회 */
     List<BlockTag> findAllTagsByTradeLogIds(List<Long> tradeLogIds);
+
+    /** 사용자가 사용한 태그를 Redis에 저장 */
+    void addTagsToRedis(Set<String> redisEntries);
+
+    /** 사용자가 삭제한 태그를 Redis에 삭제 */
+    void removeTagsFromRedis(Set<String> values);
 }
