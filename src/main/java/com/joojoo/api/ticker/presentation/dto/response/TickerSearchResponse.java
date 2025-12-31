@@ -19,6 +19,7 @@ public class TickerSearchResponse {
     @Getter
     @AllArgsConstructor
     public static class TickerSearchList {
+        private Long tickerId;
         private String name;
         private String ticker;
     }
@@ -42,8 +43,17 @@ public class TickerSearchResponse {
 
     private static TickerSearchList parseRedisData(String value) {
         String[] parts = value.split("\\*");
-        if (parts.length < 3) return null; // 잘못 된 형식은 패스
-        return new TickerSearchList(parts[1], parts[2]);
+        if (parts.length < 4) return null; // 잘못 된 형식은 패스
+
+        try {
+            String name = parts[1];
+            String symbol = parts[2];
+            Long tickerId = Long.valueOf(parts[3]);
+
+            return new TickerSearchList(tickerId, name, symbol);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
 }
