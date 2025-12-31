@@ -101,5 +101,10 @@ public class BlockRepositoryImpl implements BlockRepository {
         return blockJpaRepository.findByIdWithChildren(blockId);
     }
 
+    @Override
+    public void withdrawByUserId(Long userId) {
+        blockQueryDslRepository.withdrawByUserId(userId);
+    }
+
 
 }

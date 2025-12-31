@@ -3,6 +3,7 @@ package com.joojoo.api.block.infrastructure.queryDsl;
 import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.block.domain.model.entity.QBlock;
 import com.joojoo.api.blockTag.domain.model.entity.QBlockTag;
+import com.joojoo.api.blockTicker.domain.model.entity.QBlockTicker;
 import com.joojoo.api.tag.domain.model.entity.QTag;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -25,6 +26,7 @@ public class BlockQueryDslRepositoryImpl implements BlockQueryDslRepository {
     private final JPAQueryFactory queryFactory;
     private final QBlock block = QBlock.block;
     private final QBlockTag blockTag = QBlockTag.blockTag;
+    private final QBlockTicker blockTicker = QBlockTicker.blockTicker;
     private final QTag tag = QTag.tag;
 
     @Override
@@ -106,6 +108,22 @@ public class BlockQueryDslRepositoryImpl implements BlockQueryDslRepository {
                 )
                 .orderBy(block.createdAt.desc(), block.id.desc()) // 최신 날짜순
                 .fetch();
+    }
+
+    @Override
+    public void withdrawByUserId(Long userId) {
+        queryFactory.delete(blockTag)
+                .where(blockTag.userId.eq(userId))
+                .execute();
+
+        queryFactory.delete(blockTicker)
+                .where(blockTicker.userId.eq(userId))
+                .execute();
+
+        queryFactory
+                .delete(block)
+                .where(block.user.id.eq(userId))
+                .execute();
     }
 
     private BooleanExpression loeLastDate(LocalDate lastDate) {

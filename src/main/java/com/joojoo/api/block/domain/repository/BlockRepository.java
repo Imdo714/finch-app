@@ -39,4 +39,6 @@ public interface BlockRepository {
     void updateSequenceRoot(User user, int seq, int offset);
 
     Optional<Block> findByIdWithChildren(Long blockId);
+
+    void withdrawByUserId(Long userId);
 }

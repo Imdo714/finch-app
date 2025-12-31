@@ -1,6 +1,8 @@
 package com.joojoo.api.user.application.auth;
 
+import com.joojoo.api.block.domain.repository.BlockRepository;
 import com.joojoo.api.jwt.application.JwtTokenUseCase;
+import com.joojoo.api.tradeLog.domain.repository.TradeLogRepository;
 import com.joojoo.api.user.application.auth.withdraw.out.SocialUnlink;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;
@@ -33,6 +35,8 @@ public class AuthSocialServiceImpl implements AuthSocialService {
     private final AppleClientSecret appleClientSecret;
     private final Map<String, SocialUnlink> socialUnlink;
     private final GeneratorRandom generatorRandom;
+    private final BlockRepository blockRepository;
+    private final TradeLogRepository tradeLogRepository;
 
     @Override
     @Transactional
@@ -70,10 +74,12 @@ public class AuthSocialServiceImpl implements AuthSocialService {
                 .orElseThrow(UserNotFoundException::new);
 
         unSocialWithdraw(user); // 소셜 계정 탈퇴
+        blockRepository.withdrawByUserId(userId); // 블럭(노트) 연관관계 정리
+        tradeLogRepository.withdrawByUserId(userId); // 템플릿 정리
         jwtTokenUseCase.clearUserTokens(userId, request); // 토큰 정리
         user.withdraw(); // 회원 DB 정리
 
-        // TODO : 추후에 다른 테이블도 삭제 해야 함 !!
+        // TODO : 추후에 고도화 이미지 삭제 해야 함 !!
     }
 
     private void unSocialWithdraw(User user) {

@@ -24,4 +24,9 @@ public class TradeLogRepositoryImpl implements TradeLogRepository {
     public List<TradeLog> findAllByIdIn(List<Long> blockIds) {
         return tradeLogQueryDslRepository.findAllByIdIn(blockIds);
     }
+
+    @Override
+    public void withdrawByUserId(Long userId) {
+        tradeLogQueryDslRepository.withdrawByUserId(userId);
+    }
 }

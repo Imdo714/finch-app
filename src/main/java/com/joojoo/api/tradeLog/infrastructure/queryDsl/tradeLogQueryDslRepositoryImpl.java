@@ -37,4 +37,12 @@ public class tradeLogQueryDslRepositoryImpl implements tradeLogQueryDslRepositor
                 .orderBy(tradeLog.executedAt.desc(), tradeLog.id.desc())
                 .fetch();
     }
+
+    @Override
+    public void withdrawByUserId(Long userId) {
+        queryFactory
+                .delete(tradeLog)
+                .where(tradeLog.user.id.eq(userId))
+                .execute();
+    }
 }

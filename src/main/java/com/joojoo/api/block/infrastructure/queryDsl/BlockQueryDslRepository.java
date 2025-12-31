@@ -16,4 +16,6 @@ public interface BlockQueryDslRepository {
     List<Block> getBlocksByTagId(Long userId, Long tagId, Long lastBlockId, int limit);
 
     List<Block> getBlocksByTagId2(Long userId, Long tagId, LocalDate lastDate);
+
+    void withdrawByUserId(Long userId);
 }
