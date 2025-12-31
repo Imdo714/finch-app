@@ -37,11 +37,6 @@ public class BlockRepositoryImpl implements BlockRepository {
     }
 
     @Override
-    public List<Block> findRootBlocks(Long userId, Long lastId, int size) {
-        return blockQueryDslRepository.findRootBlocks(userId, lastId, size);
-    }
-
-    @Override
     public Map<Long, Long> getChildCounts(List<Long> rootIds) {
         return blockQueryDslRepository.getChildCounts(rootIds);
     }
@@ -54,16 +49,6 @@ public class BlockRepositoryImpl implements BlockRepository {
     @Override
     public LocalDate findNextAvailableDate(Long userId, LocalDate oldestDateInResult) {
         return blockQueryDslDateRepository.findNextAvailableDate(userId, oldestDateInResult);
-    }
-
-    @Override
-    public List<Block> getBlocksByTagId(Long userId, Long tagId, Long lastBlockId, int limit) {
-        return blockQueryDslRepository.getBlocksByTagId(userId, tagId, lastBlockId, limit);
-    }
-
-    @Override
-    public List<Block> getBlocksByTagId2(Long userId, Long tagId, LocalDate lastDate) {
-        return blockQueryDslRepository.getBlocksByTagId2(userId, tagId, lastDate);
     }
 
     @Override
