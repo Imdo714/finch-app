@@ -6,8 +6,6 @@ import com.joojoo.api.tradeLog.infrastructure.queryDsl.tradeLogQueryDslRepositor
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 @RequiredArgsConstructor
 public class TradeLogRepositoryImpl implements TradeLogRepository {
@@ -21,7 +19,7 @@ public class TradeLogRepositoryImpl implements TradeLogRepository {
     }
 
     @Override
-    public List<TradeLog> findAllByIdIn(List<Long> blockIds) {
-        return tradeLogQueryDslRepository.findAllByIdIn(blockIds);
+    public void withdrawByUserId(Long userId) {
+        tradeLogQueryDslRepository.withdrawByUserId(userId);
     }
 }

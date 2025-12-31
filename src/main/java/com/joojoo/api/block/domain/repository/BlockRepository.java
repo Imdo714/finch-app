@@ -15,16 +15,11 @@ public interface BlockRepository {
 
     List<Block> findAllChildrenByRootId(Long blockId);
 
-    List<Block> findRootBlocks(Long userId, Long lastId, int size);
-
     Map<Long, Long> getChildCounts(List<Long> rootIds);
 
     List<Block> findBlocksByLatestDates(Long userId, LocalDate lastDate, int dateCount);
 
     LocalDate findNextAvailableDate(Long userId, LocalDate oldestDateInResult);
-
-    List<Block> getBlocksByTagId(Long userId, Long tagId, Long lastBlockId, int limit);
-    List<Block> getBlocksByTagId2(Long userId, Long tagId, LocalDate lastDate);
 
     Optional<Block> findById(Long blockId);
 
@@ -39,4 +34,6 @@ public interface BlockRepository {
     void updateSequenceRoot(User user, int seq, int offset);
 
     Optional<Block> findByIdWithChildren(Long blockId);
+
+    void withdrawByUserId(Long userId);
 }
