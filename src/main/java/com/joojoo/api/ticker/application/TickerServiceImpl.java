@@ -149,10 +149,11 @@ public class TickerServiceImpl implements TickerService {
     private Stream<String> generateSearchKeywords(Ticker stock) {
         String name = stock.getName();
         String symbol = stock.getSymbol();
+        Long tickerId = stock.getId();
 
         return Stream.of(
-                HangulUtils.splitToJaso(name) + "*" + name + "*" + symbol,
-                HangulUtils.getChosung(name) + "*" + name + "*" + symbol
+                HangulUtils.splitToJaso(name) + "*" + name + "*" + symbol + "*" + tickerId,
+                HangulUtils.getChosung(name) + "*" + name + "*" + symbol + "*" + tickerId
         );
     }
 
