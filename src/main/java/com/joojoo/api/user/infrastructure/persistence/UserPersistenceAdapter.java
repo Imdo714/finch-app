@@ -1,7 +1,8 @@
-package com.joojoo.api.user.infrastructure.rdbms;
+package com.joojoo.api.user.infrastructure.persistence;
 
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;
+import com.joojoo.api.user.infrastructure.rdbms.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -9,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class UserRepositoryImpl implements UserRepository {
+public class UserPersistenceAdapter implements UserRepository {
 
     private final UserJpaRepository userJpaRepository;
 

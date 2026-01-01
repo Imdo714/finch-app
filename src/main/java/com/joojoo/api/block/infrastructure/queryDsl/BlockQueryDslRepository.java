@@ -10,5 +10,5 @@ public interface BlockQueryDslRepository {
 
     Map<Long, Long> getChildCounts(List<Long> rootIds);
 
-    void withdrawByUserId(Long userId);
+    void deleteAllBlockMappings(Long userId);
 }

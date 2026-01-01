@@ -1,9 +1,6 @@
 package com.joojoo.api.user.application.auth;
 
-import com.joojoo.api.block.domain.repository.BlockRepository;
 import com.joojoo.api.jwt.application.JwtTokenUseCase;
-import com.joojoo.api.tradeLog.domain.repository.TradeLogRepository;
-import com.joojoo.api.user.application.auth.withdraw.out.SocialUnlink;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;
 import com.joojoo.api.user.domain.service.auth.AppleClientSecret;
@@ -15,8 +12,6 @@ import com.joojoo.api.user.presentation.dto.request.kakao.AccessTokenDto;
 import com.joojoo.api.user.presentation.dto.request.kakao.KakaoUserDto;
 import com.joojoo.api.user.presentation.dto.response.LoginResponse;
 import com.joojoo.api.util.random.GeneratorRandom;
-import com.joojoo.global.exception.handleException.users.UserNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,10 +28,7 @@ public class AuthSocialServiceImpl implements AuthSocialService {
     private final JwtTokenUseCase jwtTokenUseCase;
     private final KakaoClientSecret kakaoClientSecret;
     private final AppleClientSecret appleClientSecret;
-    private final Map<String, SocialUnlink> socialUnlink;
     private final GeneratorRandom generatorRandom;
-    private final BlockRepository blockRepository;
-    private final TradeLogRepository tradeLogRepository;
 
     @Override
     @Transactional
@@ -65,28 +57,6 @@ public class AuthSocialServiceImpl implements AuthSocialService {
 
         User user = registerOrLogin(appleUser.getProviderId(), appleTokenResponse.getRefreshToken(), appleUser.getEmail());
         return generateLoginResponse(user);
-    }
-
-    @Override
-    @Transactional
-    public void withdraw(Long userId, HttpServletRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
-
-        unSocialWithdraw(user); // 소셜 계정 탈퇴
-        blockRepository.withdrawByUserId(userId); // 블럭(노트) 연관관계 정리
-        tradeLogRepository.withdrawByUserId(userId); // 템플릿 정리
-        jwtTokenUseCase.clearUserTokens(userId, request); // 토큰 정리
-        user.withdraw(); // 회원 DB 정리
-
-        // TODO : 추후에 고도화 이미지 삭제 해야 함 !!
-    }
-
-    private void unSocialWithdraw(User user) {
-        SocialUnlink strategy = socialUnlink.get(user.getProvider().name());
-        if (strategy != null) {
-            strategy.unlink(user);
-        }
     }
 
     private LoginResponse generateLoginResponse(User user){

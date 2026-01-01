@@ -35,5 +35,5 @@ public interface BlockRepository {
 
     Optional<Block> findByIdWithChildren(Long blockId);
 
-    void withdrawByUserId(Long userId);
+    void deleteAllBlockMappings(Long userId);
 }

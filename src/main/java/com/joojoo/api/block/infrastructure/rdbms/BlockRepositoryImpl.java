@@ -87,8 +87,8 @@ public class BlockRepositoryImpl implements BlockRepository {
     }
 
     @Override
-    public void withdrawByUserId(Long userId) {
-        blockQueryDslRepository.withdrawByUserId(userId);
+    public void deleteAllBlockMappings(Long userId) {
+        blockQueryDslRepository.deleteAllBlockMappings(userId);
     }
 
 

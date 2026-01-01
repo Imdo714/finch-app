@@ -59,7 +59,7 @@ public class BlockQueryDslRepositoryImpl implements BlockQueryDslRepository {
     }
 
     @Override
-    public void withdrawByUserId(Long userId) {
+    public void deleteAllBlockMappings(Long userId) {
         queryFactory.delete(blockTag)
                 .where(blockTag.userId.eq(userId))
                 .execute();
