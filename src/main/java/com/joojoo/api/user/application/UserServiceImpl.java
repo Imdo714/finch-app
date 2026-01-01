@@ -1,6 +1,7 @@
 package com.joojoo.api.user.application;
 
 import com.joojoo.api.jwt.application.JwtTokenUseCase;
+import com.joojoo.api.user.application.port.in.GetUserUseCase;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.model.enums.DefaultProfileImage;
 import com.joojoo.api.user.domain.provider.fileService;

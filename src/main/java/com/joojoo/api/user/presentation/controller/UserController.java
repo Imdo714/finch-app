@@ -2,6 +2,7 @@ package com.joojoo.api.user.presentation.controller;
 
 import com.joojoo.api.user.application.UserService;
 import com.joojoo.api.user.application.auth.AuthSocialService;
+import com.joojoo.api.user.application.port.in.WithdrawUserUseCase;
 import com.joojoo.api.user.presentation.dto.request.AuthCodeDto;
 import com.joojoo.api.user.presentation.dto.request.AuthTokenDto;
 import com.joojoo.api.user.presentation.dto.request.UpdateProfileDto;
@@ -30,6 +31,8 @@ public class UserController {
 
     private final AuthSocialService authSocialService;
     private final UserService userService;
+
+    private final WithdrawUserUseCase withdrawUserUseCase;
 
     @Operation(summary = "카카오 로그인", description = "카카오 인가 코드를 전달받아 소셜 로그인을 진행합니다.")
     @ApiResponses({
@@ -80,7 +83,7 @@ public class UserController {
     })
     @PostMapping("/withdraw")
     public BaseResponse<String> withdraw(@AuthenticationPrincipal CustomUserDetails user, HttpServletRequest request) {
-        authSocialService.withdraw(user.getUserId(), request);
+        withdrawUserUseCase.withdraw(user.getUserId(), request);
         return BaseResponse.ok("회원 탈퇴가 완료되었습니다.");
     }
 
