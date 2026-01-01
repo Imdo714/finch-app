@@ -2,6 +2,7 @@ package com.joojoo.api.search.presentation.controller;
 
 import com.joojoo.api.block.presentation.dto.response.blockDetail.BlockResponse;
 import com.joojoo.api.search.application.SearchService;
+import com.joojoo.api.search.presentation.dto.request.SearchRequestDto;
 import com.joojoo.api.search.presentation.dto.response.TagHistoryResponseDto;
 import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
 import com.joojoo.global.common.request.auth.CustomUserDetails;
@@ -14,12 +15,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "SEARCH API", description = "검색 관련 API")
 @RestController
@@ -46,6 +45,28 @@ public class SearchController {
             @RequestParam String query
     ) {
         return BaseResponse.ok(searchService.searchTags(user.getUserId(), query));
+    }
+
+    @Operation(summary = "최근 검색 저장 API", description = "검색한 ID를 최근 검색어에 저장하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "최근 검색어 저장 성공!",
+                    content = @Content(schema = @Schema(implementation = String.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "회원, 티커, 태그를 찾을 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    @PostMapping("/record")
+    public BaseResponse<String> recordSearch(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @Valid @RequestBody SearchRequestDto requestDto
+    ) {
+        searchService.recordSearch(user.getUserId(), requestDto);
+        return BaseResponse.ok("최근 검색어 저장 성공!");
     }
 
 }
