@@ -2,7 +2,9 @@ package com.joojoo.api.ticker.application;
 
 import com.joojoo.api.block.application.validate.blockerTree.BlockTreeValidator;
 import com.joojoo.api.block.domain.model.entity.Block;
+import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
+import com.joojoo.api.blockTag.presentation.dto.response.detail.TotalCountResponse;
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
 import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
 import com.joojoo.api.blockTicker.presentation.dto.request.TickerDateResult;
@@ -17,6 +19,7 @@ import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;
 import com.joojoo.api.util.detailQuery.BlockTradeLogQueryService;
 import com.joojoo.global.exception.handleException.tickers.InvalidTickerOrNameException;
+import com.joojoo.global.exception.handleException.tickers.TickerNotFoundException;
 import com.joojoo.global.exception.handleException.users.UserNotFoundException;
 import com.joojoo.global.util.HangulUtils;
 import lombok.RequiredArgsConstructor;
@@ -140,6 +143,15 @@ public class TickerServiceImpl implements TickerService {
                 .toList();
 
         return blockTradeLogQueryService.assembleBlockTagsResponse(result.getTargetDates(), blocks, tradeLogs);
+    }
+
+    @Override
+    public TotalCountResponse getTickerDetailCount(Long userId, Long tickerId) {
+        Ticker ticker = tickerRepository.findById(tickerId)
+                .orElseThrow(TickerNotFoundException::new);
+
+        BlockTagCountResponse tickerDetailCount = tickerRepository.getTickerDetailCount(userId, tickerId);
+        return new TotalCountResponse(tickerDetailCount.getName(), tickerDetailCount.getTotalCount());
     }
 
     private LocalDateTime getCreatedAt(BlockTicker bt) {

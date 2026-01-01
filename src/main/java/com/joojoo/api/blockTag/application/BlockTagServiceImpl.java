@@ -9,8 +9,11 @@ import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountRes
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.TotalCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
+import com.joojoo.api.tag.domain.model.entity.Tag;
+import com.joojoo.api.tag.domain.repository.TagRepository;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
 import com.joojoo.api.util.detailQuery.BlockTradeLogQueryService;
+import com.joojoo.global.exception.handleException.tags.TagNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,7 @@ public class BlockTagServiceImpl implements BlockTagService {
     private final BlockTagRepository blockTagRepository;
     private final BlockTreeValidator blockTreeValidator;
     private final BlockTradeLogQueryService blockTradeLogQueryService;
+    private final TagRepository tagRepository;
 
     @Override
     public RecentTagsResponse getRecentTags(Long userId) {
@@ -37,6 +41,9 @@ public class BlockTagServiceImpl implements BlockTagService {
 
     @Override
     public TotalCountResponse getBlockCount(Long userId, Long tagId) {
+        Tag tag = tagRepository.findById(userId)
+                .orElseThrow(TagNotFoundException::new);
+
         BlockTagCountResponse blockCount = blockTagRepository.getBlockCount(userId, tagId);
         return new TotalCountResponse(blockCount.getName(), blockCount.getTotalCount());
     }

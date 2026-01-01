@@ -1,6 +1,7 @@
 package com.joojoo.api.ticker.presentation.controller;
 
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
+import com.joojoo.api.blockTag.presentation.dto.response.detail.TotalCountResponse;
 import com.joojoo.api.ticker.application.TickerService;
 import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
 import com.joojoo.global.common.request.auth.CustomUserDetails;
@@ -75,5 +76,25 @@ public class TickerController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lastDate
     ){
         return BaseResponse.ok(tickerService.getTickerList(user.getUserId(), tickerId, lastDate));
+    }
+
+    @Operation(summary = "Tag 상세 페이지 블럭 개수 API", description = "태그 상세 페이지 위에 태그 이름 하고 블럭 수량을 조회하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공",
+                    content = @Content(schema = @Schema(implementation = TotalCountResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "티커를 찾을 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    @GetMapping("/{tickerId}/count")
+    public BaseResponse<TotalCountResponse> getTickerDetailCount(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @PathVariable Long tickerId
+    ){
+        return BaseResponse.ok(tickerService.getTickerDetailCount(user.getUserId(), tickerId));
     }
 }

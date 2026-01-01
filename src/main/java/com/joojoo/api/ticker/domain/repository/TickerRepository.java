@@ -1,5 +1,6 @@
 package com.joojoo.api.ticker.domain.repository;
 
+import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 
 import java.util.List;
@@ -14,4 +15,6 @@ public interface TickerRepository {
     List<Ticker> findAllByTickerNames(Set<String> tickerSymbols);
 
     Optional<Ticker> findById(Long tickerId);
+
+    BlockTagCountResponse getTickerDetailCount(Long userId, Long tickerId);
 }

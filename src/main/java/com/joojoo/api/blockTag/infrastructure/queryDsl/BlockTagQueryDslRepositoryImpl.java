@@ -60,7 +60,6 @@ public class BlockTagQueryDslRepositoryImpl implements BlockTagQueryDslRepositor
                         tag.id.eq(tagId),
                         blockTag.userId.eq(userId)
                 )
-                .groupBy(tag.id)
                 .fetchOne();
     }
 

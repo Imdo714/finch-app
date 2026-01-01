@@ -6,6 +6,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class TotalCountResponse {
-    private String tagName;
-    private Long blockCount;
+    private String name;
+    private Long count;
 }

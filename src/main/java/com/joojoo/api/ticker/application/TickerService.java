@@ -1,6 +1,7 @@
 package com.joojoo.api.ticker.application;
 
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
+import com.joojoo.api.blockTag.presentation.dto.response.detail.TotalCountResponse;
 import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
 
 import java.time.LocalDate;
@@ -17,4 +18,7 @@ public interface TickerService {
     void loadTickersToCache(Long userId);
 
     BlockTagsResponse getTickerList(Long userId, Long tickerId, LocalDate lastDate);
+
+    /** 티커 상세페이지 총 개수 */
+    TotalCountResponse getTickerDetailCount(Long userId, Long tickerId);
 }
