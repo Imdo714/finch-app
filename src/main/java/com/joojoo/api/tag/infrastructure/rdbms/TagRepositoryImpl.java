@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -24,5 +25,15 @@ public class TagRepositoryImpl implements TagRepository {
     @Override
     public List<Tag> saveAll(List<Tag> newTags) {
          return tagJpaRepository.saveAll(newTags);
+    }
+
+    @Override
+    public Tag save(Tag tag) {
+        return tagJpaRepository.save(tag);
+    }
+
+    @Override
+    public Optional<Tag> findById(Long tagId) {
+        return tagJpaRepository.findById(tagId);
     }
 }
