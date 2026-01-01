@@ -9,6 +9,8 @@ import com.joojoo.global.common.enums.SearchTarget;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class SearchRepositoryImpl implements SearchRepository {
@@ -24,5 +26,10 @@ public class SearchRepositoryImpl implements SearchRepository {
     @Override
     public void save(SearchHistory history) {
         searchJpaRepository.save(history);
+    }
+
+    @Override
+    public List<SearchHistory> findRecentByTargetType(Long userId, SearchTarget type, int limitSize) {
+        return searchQueryDslRepository.findRecentByTargetType(userId, type, limitSize);
     }
 }

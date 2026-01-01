@@ -3,7 +3,9 @@ package com.joojoo.api.search.application;
 import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
 import com.joojoo.api.search.domain.entity.SearchHistory;
 import com.joojoo.api.search.domain.repository.SearchRepository;
+import com.joojoo.api.search.presentation.dto.request.RecentSearchDto;
 import com.joojoo.api.search.presentation.dto.request.SearchRequestDto;
+import com.joojoo.api.search.presentation.dto.response.RecentSearchListResponse;
 import com.joojoo.api.search.presentation.dto.response.TagHistoryResponseDto;
 import com.joojoo.api.tag.domain.model.entity.Tag;
 import com.joojoo.api.tag.domain.repository.TagRepository;
@@ -24,7 +26,9 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -72,6 +76,27 @@ public class SearchServiceImpl implements SearchService {
                             () -> { throw new TagNotFoundException(); }
                     );
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public RecentSearchListResponse recordSearchList(Long userId) {
+        List<RecentSearchDto> tickerList = searchRepository
+                .findRecentByTargetType(userId, SearchTarget.TICKER, 10)
+                .stream()
+                .map(RecentSearchDto::of)
+                .collect(Collectors.toList());
+
+        List<RecentSearchDto> tagList = searchRepository
+                .findRecentByTargetType(userId, SearchTarget.TAG, 10)
+                .stream()
+                .map(RecentSearchDto::of)
+                .collect(Collectors.toList());
+
+        return RecentSearchListResponse.builder()
+                .tickers(tickerList)
+                .tags(tagList)
+                .build();
     }
 
     private void saveHistory(User user, SearchTarget type, Tag tag, Ticker ticker) {
