@@ -2,6 +2,7 @@ package com.joojoo.api.user.presentation.controller;
 
 import com.joojoo.api.user.application.UserService;
 import com.joojoo.api.user.application.auth.AuthSocialService;
+import com.joojoo.api.user.application.port.in.GetUserUseCase;
 import com.joojoo.api.user.application.port.in.LogoutUseCase;
 import com.joojoo.api.user.application.port.in.WithdrawUserUseCase;
 import com.joojoo.api.user.presentation.dto.request.AuthCodeDto;
@@ -33,6 +34,7 @@ public class UserController {
     private final AuthSocialService authSocialService;
     private final UserService userService;
 
+    private final GetUserUseCase getUserUseCase;
     private final WithdrawUserUseCase withdrawUserUseCase;
     private final LogoutUseCase logoutUseCase;
 
@@ -110,7 +112,8 @@ public class UserController {
     })
     @GetMapping("/profile-images/default")
     public BaseResponse<DefaultProfileImageResponse> getDefaultProfileImages(){
-        return BaseResponse.ok(userService.getDefaultProfileImages());
+//        return BaseResponse.ok(userService.getDefaultProfileImages());
+        return BaseResponse.ok(getUserUseCase.getDefaultProfileImages());
     }
 
     @Operation(summary = "프로필 업데이트 API", description = "기본 프로필 이미지 또는 이름을 변경합니다.")
@@ -147,7 +150,7 @@ public class UserController {
     public BaseResponse<UserInfoResponse> getUserInfo(
             @AuthenticationPrincipal CustomUserDetails user
     ){
-        return BaseResponse.ok(userService.getUserInfo(user.getUserId()));
+        return BaseResponse.ok(getUserUseCase.getUserInfo(user.getUserId()));
     }
 
 }

@@ -1,11 +1,10 @@
 package com.joojoo.api.user.application;
 
+import com.joojoo.api.user.application.port.out.FilePort;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.model.enums.DefaultProfileImage;
-import com.joojoo.api.user.domain.provider.fileService;
 import com.joojoo.api.user.domain.repository.UserRepository;
 import com.joojoo.api.user.presentation.dto.request.UpdateProfileDto;
-import com.joojoo.api.user.presentation.dto.response.DefaultProfileImageResponse;
 import com.joojoo.api.user.presentation.dto.response.UserInfoResponse;
 import com.joojoo.global.exception.handleException.users.UserNameDuplicatedException;
 import com.joojoo.global.exception.handleException.users.UserNameRequiredException;
@@ -14,27 +13,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final fileService fileService;
-
-    @Override
-    public DefaultProfileImageResponse getDefaultProfileImages() {
-        return DefaultProfileImageResponse.of(Arrays.stream(DefaultProfileImage.values())
-                .map(img -> new DefaultProfileImageResponse.ProfileImage(
-                        img.name(),
-                        fileService.getFullUrl(img.getFileName()),
-                        img.getDescription()
-                ))
-                .collect(Collectors.toList())
-        );
-    }
+    private final FilePort filePort;
 
     @Override
     @Transactional
@@ -45,15 +29,7 @@ public class UserServiceImpl implements UserService {
         validateAndUpdateName(user, dto.getName()); // 이름 검증 및 업데이트
         updateOrInitProfileImage(user, dto.getProfile()); // 프로필 이미지 업데이트
 
-        return UserInfoResponse.of(user, fileService.getFullUrl(user.getProfileImageUrl()));
-    }
-
-    @Override
-    public UserInfoResponse getUserInfo(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
-
-        return UserInfoResponse.of(user);
+        return UserInfoResponse.of(user, filePort.getFullUrl(user.getProfileImageUrl()));
     }
 
     private void validateAndUpdateName(User user, String newName) {
