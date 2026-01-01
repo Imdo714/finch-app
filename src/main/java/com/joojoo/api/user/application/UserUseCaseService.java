@@ -7,6 +7,7 @@ import com.joojoo.api.tradeLog.application.port.in.DeleteTradeLogUseCase;
 import com.joojoo.api.tradeLog.domain.repository.TradeLogRepository;
 import com.joojoo.api.user.application.auth.withdraw.out.SocialUnlink;
 import com.joojoo.api.user.application.port.in.GetUserUseCase;
+import com.joojoo.api.user.application.port.in.LogoutUseCase;
 import com.joojoo.api.user.application.port.in.WithdrawUserUseCase;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;
@@ -24,7 +25,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UserUseCaseService implements GetUserUseCase, WithdrawUserUseCase {
+public class UserUseCaseService implements GetUserUseCase, WithdrawUserUseCase, LogoutUseCase {
 
     private final UserRepository userRepository;
     private final JwtTokenUseCase jwtTokenUseCase;
@@ -57,5 +58,11 @@ public class UserUseCaseService implements GetUserUseCase, WithdrawUserUseCase {
         if (strategy != null) {
             strategy.unlink(user);
         }
+    }
+
+    @Override
+    public void logout(Long userId, HttpServletRequest request) {
+        User user = this.getUser(userId);
+        jwtTokenUseCase.clearUserTokens(userId, request);
     }
 }
