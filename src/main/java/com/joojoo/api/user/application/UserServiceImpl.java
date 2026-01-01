@@ -1,7 +1,5 @@
 package com.joojoo.api.user.application;
 
-import com.joojoo.api.jwt.application.JwtTokenUseCase;
-import com.joojoo.api.user.application.port.in.GetUserUseCase;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.model.enums.DefaultProfileImage;
 import com.joojoo.api.user.domain.provider.fileService;
@@ -12,7 +10,6 @@ import com.joojoo.api.user.presentation.dto.response.UserInfoResponse;
 import com.joojoo.global.exception.handleException.users.UserNameDuplicatedException;
 import com.joojoo.global.exception.handleException.users.UserNameRequiredException;
 import com.joojoo.global.exception.handleException.users.UserNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,17 +22,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final JwtTokenUseCase jwtTokenUseCase;
     private final fileService fileService;
-
-    @Override
-    public void logout(Long userId, HttpServletRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
-
-        // 토큰 정리
-        jwtTokenUseCase.clearUserTokens(userId, request);
-    }
 
     @Override
     public DefaultProfileImageResponse getDefaultProfileImages() {
