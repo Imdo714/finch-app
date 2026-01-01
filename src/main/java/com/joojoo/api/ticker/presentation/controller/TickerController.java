@@ -78,7 +78,7 @@ public class TickerController {
         return BaseResponse.ok(tickerService.getTickerList(user.getUserId(), tickerId, lastDate));
     }
 
-    @Operation(summary = "Tag 상세 페이지 블럭 개수 API", description = "태그 상세 페이지 위에 태그 이름 하고 블럭 수량을 조회하는 API입니다.")
+    @Operation(summary = "Ticker 상세 페이지 블럭 개수 API", description = "티커 상세 페이지 위에 티커 이름 하고 수량을 조회하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공",
                     content = @Content(schema = @Schema(implementation = TotalCountResponse.class)
