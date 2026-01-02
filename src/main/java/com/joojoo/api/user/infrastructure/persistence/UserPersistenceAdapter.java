@@ -3,6 +3,7 @@ package com.joojoo.api.user.infrastructure.persistence;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;
 import com.joojoo.api.user.infrastructure.rdbms.UserJpaRepository;
+import com.joojoo.global.exception.handleException.users.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -30,11 +31,6 @@ public class UserPersistenceAdapter implements UserRepository {
     }
 
     @Override
-    public Optional<User> findById(Long userId) {
-        return userJpaRepository.findById(userId);
-    }
-
-    @Override
     public void delete(User user) {
         userJpaRepository.delete(user);
     }
@@ -47,5 +43,16 @@ public class UserPersistenceAdapter implements UserRepository {
     @Override
     public User getReferenceById(Long userId) {
         return userJpaRepository.getReferenceById(userId);
+    }
+
+    @Override
+    public Optional<User> findById(Long userId) {
+        return userJpaRepository.findById(userId);
+    }
+
+    @Override
+    public User getUserById(Long userId) {
+        return userJpaRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
     }
 }

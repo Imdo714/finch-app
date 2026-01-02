@@ -1,4 +1,4 @@
-package com.joojoo.api.user.application;
+package com.joojoo.api.user.application.service.command;
 
 import com.joojoo.api.jwt.application.JwtTokenUseCase;
 import com.joojoo.api.user.application.port.in.SocialLoginUseCase;
