@@ -8,7 +8,7 @@ import com.joojoo.api.user.application.port.in.GetUserUseCase;
 import com.joojoo.api.user.application.port.in.LogoutUseCase;
 import com.joojoo.api.user.application.port.in.UpdateUserUseCase;
 import com.joojoo.api.user.application.port.in.WithdrawUserUseCase;
-import com.joojoo.api.user.application.port.out.FilePort;
+import com.joojoo.api.user.application.port.out.file.FilePort;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.model.enums.DefaultProfileImage;
 import com.joojoo.api.user.domain.repository.UserRepository;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UserUseCaseService implements GetUserUseCase, WithdrawUserUseCase, LogoutUseCase, UpdateUserUseCase {
+public class UserService implements GetUserUseCase, WithdrawUserUseCase, LogoutUseCase, UpdateUserUseCase {
 
     private final UserRepository userRepository;
     private final JwtTokenUseCase jwtTokenUseCase;

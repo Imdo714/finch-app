@@ -1,6 +1,7 @@
-package com.joojoo.api.user.domain.service.auth;
+package com.joojoo.api.user.application.port.out.social;
 
 import com.joojoo.api.user.presentation.dto.request.apple.AppleTokenResponse;
+import com.joojoo.api.user.presentation.dto.request.apple.AppleUserInfo;
 
 import java.util.Map;
 
@@ -13,4 +14,7 @@ public interface AppleClientSecret {
     Map<String, Object> getAppleUserIdFromIdToken(String idToken);
     // 애플 서버에 계정 탈퇴 요청
     void sendRevokeRequest(String clientSecret, String socialRefreshToken);
+
+    /** idToken으로 사용자 정보 추출하는 메서드 */
+    AppleUserInfo getAppleUserInfo(String idToken);
 }

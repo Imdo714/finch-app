@@ -2,7 +2,7 @@ package com.joojoo.api.user.application.auth.withdraw.out;
 
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.model.enums.Provider;
-import com.joojoo.api.user.domain.service.auth.KakaoClientSecret;
+import com.joojoo.api.user.application.port.out.social.KakaoClientSecret;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
