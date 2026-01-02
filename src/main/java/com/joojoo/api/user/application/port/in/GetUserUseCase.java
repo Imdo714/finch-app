@@ -9,6 +9,7 @@ public interface GetUserUseCase {
     /** 회원 조회 */
     User getUser(Long userId);
 
+    /** 회원 프록시 객체 */
     User getUserReference(Long userId);
 
     /** 마이페이지 회원 정보 조회 */

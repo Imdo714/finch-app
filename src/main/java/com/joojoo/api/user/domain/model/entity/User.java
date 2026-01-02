@@ -1,11 +1,13 @@
 package com.joojoo.api.user.domain.model.entity;
 
 import com.joojoo.api.user.domain.model.enums.Currency;
+import com.joojoo.api.user.domain.model.enums.DefaultProfileImage;
 import com.joojoo.api.user.domain.model.enums.Provider;
 import com.joojoo.api.user.domain.model.enums.Role;
 import com.joojoo.api.user.presentation.dto.request.kakao.KakaoUserDto;
 import com.joojoo.global.common.entity.BaseTimeEntity;
 import com.joojoo.global.exception.handleException.users.AdminOnlyAccessException;
+import com.joojoo.global.exception.handleException.users.UserNameRequiredException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -107,11 +109,19 @@ public class User extends BaseTimeEntity {
         }
     }
 
-    public void updateName(String newName) {
-        this.name = newName;
-    }
+    public void updateProfile(String name, String profileImageUrl) {
+        /** 이름 업데이트 */
+        if (name != null && !name.isBlank()) {
+            this.name = name;
+        } else if (this.name == null) {
+            throw new UserNameRequiredException();
+        }
 
-    public void updateProfileImage(String fileName) {
-        this.profileImageUrl = fileName;
+        /** 프로필 업데이트 */
+        if (profileImageUrl != null) {
+            this.profileImageUrl = profileImageUrl;
+        } else if (this.profileImageUrl == null) {
+            this.profileImageUrl = DefaultProfileImage.PROFILE_1.getFileName();
+        }
     }
 }

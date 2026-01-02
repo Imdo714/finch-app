@@ -6,11 +6,14 @@ import com.joojoo.api.tradeLog.application.port.in.DeleteTradeLogUseCase;
 import com.joojoo.api.user.application.auth.withdraw.out.SocialUnlink;
 import com.joojoo.api.user.application.port.in.GetUserUseCase;
 import com.joojoo.api.user.application.port.in.LogoutUseCase;
+import com.joojoo.api.user.application.port.in.UpdateUserUseCase;
 import com.joojoo.api.user.application.port.in.WithdrawUserUseCase;
 import com.joojoo.api.user.application.port.out.FilePort;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.model.enums.DefaultProfileImage;
 import com.joojoo.api.user.domain.repository.UserRepository;
+import com.joojoo.api.user.domain.service.UserValidator;
+import com.joojoo.api.user.presentation.dto.request.UpdateProfileDto;
 import com.joojoo.api.user.presentation.dto.response.DefaultProfileImageResponse;
 import com.joojoo.api.user.presentation.dto.response.UserInfoResponse;
 import com.joojoo.global.exception.handleException.users.UserNotFoundException;
@@ -27,12 +30,13 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UserUseCaseService implements GetUserUseCase, WithdrawUserUseCase, LogoutUseCase {
+public class UserUseCaseService implements GetUserUseCase, WithdrawUserUseCase, LogoutUseCase, UpdateUserUseCase {
 
     private final UserRepository userRepository;
     private final JwtTokenUseCase jwtTokenUseCase;
     private final DeleteBlockUseCase deleteBlockUseCase;
     private final DeleteTradeLogUseCase deleteTradeLogUseCase;
+    private final UserValidator userValidator;
     private final Map<String, SocialUnlink> socialUnlink;
     private final FilePort filePort;
 
@@ -95,4 +99,18 @@ public class UserUseCaseService implements GetUserUseCase, WithdrawUserUseCase, 
         User user = this.getUser(userId);
         jwtTokenUseCase.clearUserTokens(userId, request);
     }
+
+    @Override
+    @Transactional
+    public UserInfoResponse updateProfile(Long userId, UpdateProfileDto dto) {
+        User user = this.getUser(userId);
+
+        userValidator.validateNicknameUpdate(user, dto.getName());
+
+        String profileUrl = (dto.getProfile() != null) ? dto.getProfile().getFileName() : null;
+        user.updateProfile(dto.getName(), profileUrl);
+
+        return UserInfoResponse.of(user, filePort.getFullUrl(user.getProfileImageUrl()));
+    }
+
 }
