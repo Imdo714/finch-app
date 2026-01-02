@@ -1,6 +1,6 @@
-package com.joojoo.api.user.infrastructure.image;
+package com.joojoo.api.user.infrastructure.file;
 
-import com.joojoo.api.user.application.port.out.FilePort;
+import com.joojoo.api.user.application.port.out.file.FilePort;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 

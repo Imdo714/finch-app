@@ -1,7 +1,7 @@
 package com.joojoo.api.user.application.auth.withdraw.out;
 
 import com.joojoo.api.user.domain.model.entity.User;
-import com.joojoo.api.user.domain.service.auth.AppleClientSecret;
+import com.joojoo.api.user.application.port.out.social.AppleClientSecret;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

@@ -1,7 +1,8 @@
-package com.joojoo.api.user.infrastructure.auth;
+package com.joojoo.api.user.infrastructure.social;
 
-import com.joojoo.api.user.domain.service.auth.AppleClientSecret;
+import com.joojoo.api.user.application.port.out.social.AppleClientSecret;
 import com.joojoo.api.user.presentation.dto.request.apple.AppleTokenResponse;
+import com.joojoo.api.user.presentation.dto.request.apple.AppleUserInfo;
 import com.joojoo.global.exception.handleException.auth.InvalidAuthorizationException;
 import com.joojoo.global.exception.handleException.auth.apple.AppleInvalidTokenResponseException;
 import com.joojoo.global.exception.handleException.auth.apple.AppleTokenIssueFailedException;
@@ -134,6 +135,12 @@ public class AppleClientSecretImpl implements AppleClientSecret {
                     log.error("애플 연결 해제 실패 (5xx) - 애플 서버 오류. 로컬 탈퇴 진행함. 상태: {}", response.getStatusCode());
                 })
                 .toBodilessEntity();
+    }
+
+    @Override
+    public AppleUserInfo getAppleUserInfo(String idToken) {
+        Map<String, Object> claims = this.getAppleUserIdFromIdToken(idToken);
+        return AppleUserInfo.from(claims);
     }
 
     // PrivateKey 객체 생성 헬퍼 (BouncyCastle 라이브러리 필요할 수 있음)

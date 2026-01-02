@@ -1,6 +1,6 @@
-package com.joojoo.api.user.infrastructure.auth;
+package com.joojoo.api.user.infrastructure.social;
 
-import com.joojoo.api.user.domain.service.auth.KakaoClientSecret;
+import com.joojoo.api.user.application.port.out.social.KakaoClientSecret;
 import com.joojoo.api.user.presentation.dto.request.kakao.AccessTokenDto;
 import com.joojoo.api.user.presentation.dto.request.kakao.KakaoUserDto;
 import com.joojoo.api.user.presentation.dto.request.kakao.KakaoUserResponse;

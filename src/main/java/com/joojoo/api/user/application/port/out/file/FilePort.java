@@ -1,4 +1,4 @@
-package com.joojoo.api.user.application.port.out;
+package com.joojoo.api.user.application.port.out.file;
 
 public interface FilePort {
 

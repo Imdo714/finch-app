@@ -1,10 +1,6 @@
 package com.joojoo.api.user.presentation.controller;
 
-import com.joojoo.api.user.application.auth.AuthSocialService;
-import com.joojoo.api.user.application.port.in.GetUserUseCase;
-import com.joojoo.api.user.application.port.in.LogoutUseCase;
-import com.joojoo.api.user.application.port.in.UpdateUserUseCase;
-import com.joojoo.api.user.application.port.in.WithdrawUserUseCase;
+import com.joojoo.api.user.application.port.in.*;
 import com.joojoo.api.user.presentation.dto.request.AuthCodeDto;
 import com.joojoo.api.user.presentation.dto.request.AuthTokenDto;
 import com.joojoo.api.user.presentation.dto.request.UpdateProfileDto;
@@ -31,8 +27,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
 
-    private final AuthSocialService authSocialService;
-
+    private final SocialLoginUseCase socialLoginUseCase;
     private final GetUserUseCase getUserUseCase;
     private final WithdrawUserUseCase withdrawUserUseCase;
     private final LogoutUseCase logoutUseCase;
@@ -54,7 +49,7 @@ public class UserController {
     })
     @PostMapping("/kakao/login")
     public BaseResponse<LoginResponse> kakaoAppLogin(@RequestBody AuthTokenDto authTokenDto) {
-        return BaseResponse.ok(authSocialService.kakaoAppSocialLogin(authTokenDto));
+        return BaseResponse.ok(socialLoginUseCase.kakaoAppSocialLogin(authTokenDto));
     }
 
     @Operation(summary = "애플 로그인", description = "애플 인가 코드를 전달받아 소셜 로그인을 진행합니다.")
@@ -73,7 +68,7 @@ public class UserController {
     })
     @PostMapping("/apple/login")
     public BaseResponse<LoginResponse> appleLogin(@RequestBody AuthCodeDto payload) {
-        return BaseResponse.ok(authSocialService.appleSocialLogin(payload.getCode()));
+        return BaseResponse.ok(socialLoginUseCase.appleSocialLogin(payload.getCode()));
     }
 
     @Operation(summary = "회원 탈퇴", description = "현재 로그인된 사용자를 탈퇴 처리합니다.")
