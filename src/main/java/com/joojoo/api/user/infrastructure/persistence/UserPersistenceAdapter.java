@@ -43,4 +43,9 @@ public class UserPersistenceAdapter implements UserRepository {
     public boolean existsByName(String nickname) {
         return userJpaRepository.existsUserByName(nickname);
     }
+
+    @Override
+    public User getReferenceById(Long userId) {
+        return userJpaRepository.getReferenceById(userId);
+    }
 }

@@ -1,8 +1,9 @@
 package com.joojoo.api.user.presentation.controller;
 
-import com.joojoo.api.user.application.UserService;
 import com.joojoo.api.user.application.auth.AuthSocialService;
+import com.joojoo.api.user.application.port.in.GetUserUseCase;
 import com.joojoo.api.user.application.port.in.LogoutUseCase;
+import com.joojoo.api.user.application.port.in.UpdateUserUseCase;
 import com.joojoo.api.user.application.port.in.WithdrawUserUseCase;
 import com.joojoo.api.user.presentation.dto.request.AuthCodeDto;
 import com.joojoo.api.user.presentation.dto.request.AuthTokenDto;
@@ -31,10 +32,11 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final AuthSocialService authSocialService;
-    private final UserService userService;
 
+    private final GetUserUseCase getUserUseCase;
     private final WithdrawUserUseCase withdrawUserUseCase;
     private final LogoutUseCase logoutUseCase;
+    private final UpdateUserUseCase updateUserUseCase;
 
     @Operation(summary = "카카오 로그인", description = "카카오 인가 코드를 전달받아 소셜 로그인을 진행합니다.")
     @ApiResponses({
@@ -110,7 +112,7 @@ public class UserController {
     })
     @GetMapping("/profile-images/default")
     public BaseResponse<DefaultProfileImageResponse> getDefaultProfileImages(){
-        return BaseResponse.ok(userService.getDefaultProfileImages());
+        return BaseResponse.ok(getUserUseCase.getDefaultProfileImages());
     }
 
     @Operation(summary = "프로필 업데이트 API", description = "기본 프로필 이미지 또는 이름을 변경합니다.")
@@ -131,7 +133,7 @@ public class UserController {
     public BaseResponse<UserInfoResponse> updateProfile(@AuthenticationPrincipal CustomUserDetails user,
                                                         @RequestBody UpdateProfileDto updateProfileDto
     ){
-        return BaseResponse.ok(userService.updateProfile(user.getUserId(), updateProfileDto));
+        return BaseResponse.ok(updateUserUseCase.updateProfile(user.getUserId(), updateProfileDto));
     }
 
     @Operation(summary = "마이페이지 조회 API", description = "마이페이지에 이름 조회하는 API입니다.")
@@ -147,7 +149,7 @@ public class UserController {
     public BaseResponse<UserInfoResponse> getUserInfo(
             @AuthenticationPrincipal CustomUserDetails user
     ){
-        return BaseResponse.ok(userService.getUserInfo(user.getUserId()));
+        return BaseResponse.ok(getUserUseCase.getUserInfo(user.getUserId()));
     }
 
 }
