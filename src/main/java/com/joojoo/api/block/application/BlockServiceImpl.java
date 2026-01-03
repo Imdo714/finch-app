@@ -4,7 +4,6 @@ import com.joojoo.api.block.application.validate.blockerTree.BlockTreeValidator;
 import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.block.domain.model.enums.DeleteMode;
 import com.joojoo.api.block.domain.repository.BlockRepository;
-import com.joojoo.api.block.presentation.dto.request.updateBlock.BlockUpdateDto;
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
 import com.joojoo.api.tag.domain.model.entity.Tag;
@@ -56,17 +55,6 @@ public class BlockServiceImpl implements BlockService {
         if (!tagsToRemove.isEmpty()) {
             processRedisTagRemoval(userId, tagsToRemove);
         }
-    }
-
-    @Override
-    @Transactional
-    public void updateBlock(Long userId, Long blockId, BlockUpdateDto blockUpdateDto) {
-        Block targetBlock = blockRepository.findByIdWithChildren(blockId)
-                .orElseThrow(BlockNotFoundException::new);
-        blockTreeValidator.validateOwner(targetBlock, userId);
-
-        targetBlock.updateContent(blockUpdateDto.getContent());
-        metadataService.processMetadata(targetBlock, userId);
     }
 
     /** Redis에 있는 태그 -1 또는 삭제 */

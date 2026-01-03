@@ -8,15 +8,16 @@ import com.joojoo.api.metadata.application.port.in.MetadataUseCase;
 import com.joojoo.api.metadata.application.port.out.MetadataPort;
 import com.joojoo.api.metadata.domain.service.MetadataAnalyzer;
 import com.joojoo.api.tag.application.in.TagInService;
+import com.joojoo.api.tag.domain.model.entity.Tag;
 import com.joojoo.api.ticker.application.in.TickerInService;
 import com.joojoo.api.util.metadata.MetadataContext;
+import com.joojoo.global.util.HangulUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,6 +56,20 @@ public class MetadataUseCaseService implements MetadataUseCase {
         if (!context.getTagNames().isEmpty()) {
             metadataPort.syncUserTagsToRedis(userId, context.getTagMap());
         }
+    }
+
+    @Override
+    @Transactional
+    public void processMetadata(Block targetBlock, Long userId) {
+        List<BlockTag> oldTags = metadataPort.findAllTagsByBlockId(targetBlock.getId()); // 메서드명 변경
+
+        // 연관된 티커 태그 삭제
+        metadataPort.deleteMetadataByBlockId(targetBlock.getId());
+
+        if (!oldTags.isEmpty()) {
+            metadataPort.processRedisTagRemoval(userId, oldTags);
+        }
+        this.processMetadata(Collections.singletonList(targetBlock), userId);
     }
 
 }

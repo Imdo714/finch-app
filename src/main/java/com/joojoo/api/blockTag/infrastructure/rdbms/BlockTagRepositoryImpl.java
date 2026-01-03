@@ -77,6 +77,11 @@ public class BlockTagRepositoryImpl implements BlockTagRepository {
     }
 
     @Override
+    public List<BlockTag> findAllTagsByBlockId(Long blockId) {
+        return blockTagQueryDslRepository.findAllTagsByBlockId(blockId);
+    }
+
+    @Override
     public Set<String> searchTagQuery(String prefix) {
         return blockTagRedisRepository.searchTagQuery(prefix);
     }

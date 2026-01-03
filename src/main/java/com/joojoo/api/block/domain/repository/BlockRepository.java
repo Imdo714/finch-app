@@ -22,7 +22,11 @@ public interface BlockRepository {
 
     LocalDate findNextAvailableDate(Long userId, LocalDate oldestDateInResult);
 
+    /** 블럭을 석택적으로 조회할 때 */
     Optional<Block> findById(Long blockId);
+
+    /** 블럭이 있을 시, 없으면 BlockNotFoundException 예외 */
+    Block getBlockById(Long blockId);
 
     void delete(Block targetBlock);
 
