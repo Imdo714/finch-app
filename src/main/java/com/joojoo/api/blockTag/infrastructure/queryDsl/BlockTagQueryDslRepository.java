@@ -16,4 +16,6 @@ public interface BlockTagQueryDslRepository {
     List<BlockTag> findAllTagsByTradeLogIds(List<Long> tradeLogIds);
 
     List<BlockTag> findAllByBlockIdIn(List<Long> blockIds);
+
+    List<BlockTag> findAllTagsByBlockId(Long blockId);
 }

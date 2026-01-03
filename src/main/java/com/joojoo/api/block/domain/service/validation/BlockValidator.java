@@ -1,8 +1,10 @@
 package com.joojoo.api.block.domain.service.validation;
 
+import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.block.presentation.dto.request.createBlock.BlockRequestDto;
 import com.joojoo.api.block.presentation.dto.request.createBlock.BlockSaveRequestDto;
 import com.joojoo.global.exception.enums.ErrorCode;
+import com.joojoo.global.exception.handleException.block.BlockOwnerMismatchException;
 import com.joojoo.global.exception.handleException.block.InvalidBlockStructureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -41,4 +43,10 @@ public class BlockValidator {
         }
     }
 
+    /** 현재 블럭의 작성자 여부 검증 */
+    public void validateOwner(Block targetBlock, Long userId) {
+        if (!targetBlock.getUser().getId().equals(userId)) {
+            throw new BlockOwnerMismatchException();
+        }
+    }
 }

@@ -2,6 +2,7 @@ package com.joojoo.api.metadata.infrastructure.persistence;
 
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
+import com.joojoo.api.blockTag.infrastructure.redis.BlockTagRedisRepository;
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
 import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
 import com.joojoo.api.metadata.application.port.out.MetadataPort;
@@ -10,10 +11,8 @@ import com.joojoo.global.util.HangulUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -41,6 +40,35 @@ public class MetadataPersistenceAdapter implements MetadataPort { // User 도메
         });
 
         blockTagRepository.addTagsToRedis(userId, lexEntries, tagIds);
+    }
+
+    @Override
+    public List<BlockTag> findAllTagsByBlockId(Long blockId) {
+        return blockTagRepository.findAllTagsByBlockId(blockId);
+    }
+
+    @Override
+    public void deleteMetadataByBlockId(Long blockId) {
+        blockTickerRepository.deleteByBlockIds(blockId);
+        blockTagRepository.deleteByBlockIds(blockId);
+    }
+
+    @Override
+    public void processRedisTagRemoval(Long userId, List<BlockTag> oldTags) {
+        Map<Long, List<BlockTag>> groupedTags = oldTags.stream()
+                .collect(Collectors.groupingBy(bt -> bt.getTag().getId()));
+
+        groupedTags.forEach((tagId, tags) -> {
+            Tag tag = tags.get(0).getTag();
+            String name = tag.getName();
+            int countToRemove = tags.size();
+
+            Set<String> lexEntries = new HashSet<>();
+            lexEntries.add(userId + ":" + HangulUtils.splitToJaso(name) + "*" + name + "*" + tagId);
+            lexEntries.add(userId + ":" + HangulUtils.getChosung(name) + "*" + name + "*" + tagId);
+
+            blockTagRepository.removeTagsFromRedis(userId, tagId, lexEntries, countToRemove);
+        });
     }
 
 }

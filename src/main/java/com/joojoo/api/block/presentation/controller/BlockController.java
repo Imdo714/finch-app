@@ -3,6 +3,7 @@ package com.joojoo.api.block.presentation.controller;
 import com.joojoo.api.block.application.BlockService;
 import com.joojoo.api.block.application.port.in.CreateBlockUseCase;
 import com.joojoo.api.block.application.port.in.GetBlockUseCase;
+import com.joojoo.api.block.application.port.in.UpdateBlockUseCase;
 import com.joojoo.api.block.domain.model.enums.DeleteMode;
 import com.joojoo.api.block.presentation.dto.request.createBlock.BlockSaveRequestDto;
 import com.joojoo.api.block.presentation.dto.request.updateBlock.BlockUpdateDto;
@@ -33,8 +34,9 @@ public class BlockController {
 
     private final BlockService blockService;
 
-    private final CreateBlockUseCase createBlockUseCase;
     private final GetBlockUseCase getBlockUseCase;
+    private final CreateBlockUseCase createBlockUseCase;
+    private final UpdateBlockUseCase updateBlockUseCase;
 
     @Operation(summary = "블럭(노트) 생성 API", description = "사용자가 작성한 블럭(노트) 트리 구조를 받아 저장합니다.")
     @ApiResponses({
@@ -72,7 +74,6 @@ public class BlockController {
     })
     @GetMapping("/detail/{blockId}")
     public BaseResponse<BlockDetailResponseDto> getBlockDetail(@PathVariable Long blockId) {
-//        return BaseResponse.ok(blockService.getBlockDetail(blockId));
         return BaseResponse.ok(getBlockUseCase.getBlockDetail(blockId));
     }
 
@@ -149,7 +150,7 @@ public class BlockController {
             @PathVariable Long blockId,
             @RequestBody BlockUpdateDto blockUpdateDto
     ) {
-        blockService.updateBlock(user.getUserId(), blockId, blockUpdateDto);
+        updateBlockUseCase.updateBlock(user.getUserId(), blockId, blockUpdateDto);
         return BaseResponse.ok("수정 성공!");
     }
 

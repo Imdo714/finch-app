@@ -6,6 +6,7 @@ import com.joojoo.api.block.infrastructure.queryDsl.BlockQueryDslRepository;
 import com.joojoo.api.block.infrastructure.queryDsl.date.blockQueryDslDateRepository;
 import com.joojoo.api.block.infrastructure.rdbms.BlockJpaRepository;
 import com.joojoo.api.user.domain.model.entity.User;
+import com.joojoo.global.exception.handleException.block.BlockNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -58,6 +59,12 @@ public class BlockRepositoryImpl implements BlockRepository {
     }
 
     @Override
+    public Block getBlockById(Long blockId) {
+        return blockJpaRepository.findById(blockId)
+                .orElseThrow(BlockNotFoundException::new);
+    }
+
+    @Override
     public void delete(Block targetBlock) {
         blockJpaRepository.delete(targetBlock);
     }
@@ -91,6 +98,5 @@ public class BlockRepositoryImpl implements BlockRepository {
     public void deleteAllBlockMappings(Long userId) {
         blockQueryDslRepository.deleteAllBlockMappings(userId);
     }
-
 
 }
