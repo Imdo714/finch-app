@@ -11,6 +11,7 @@ import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
 import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
+import com.joojoo.global.exception.handleException.block.BlockNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +57,18 @@ public class BlockQueryService implements GetBlockUseCase {
         LocalDate nextDate = blockRepository.findNextAvailableDate(userId, oldestDateInResult);
 
         return BlockMainViewResponse.of(allDtos, nextDate);
+    }
+
+    @Override
+    public BlockDetailResponseDto getBlockDetail(Long rootId) {
+        List<Block> blocks = blockRepository.findAllChildrenByRootId(rootId);
+        if (blocks.isEmpty()) throw new BlockNotFoundException();
+
+        List<Long> ids = blocks.stream().map(Block::getId).toList();
+        List<BlockTag> tags = blockTagRepository.findAllBlockTags(ids);
+        List<BlockTicker> tickers = blockTickerRepository.findAllBlockTickers(ids);
+
+        return blockTreeAssembler.assembleDetailTree(rootId, blocks, tags, tickers);
     }
 
 }

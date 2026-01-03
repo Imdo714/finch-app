@@ -99,4 +99,55 @@ public class BlockTreeAssembler {
                         )
                 ));
     }
+
+    /** 상세 페이지 용 리스트 조립 */
+    public BlockDetailResponseDto assembleDetailTree(Long rootId, List<Block> blocks, List<BlockTag> tags, List<BlockTicker> tickers) {
+        Map<Long, List<BlockDetailResponseDto.MetadataResponse>> tagMap = createTagMap(tags);
+        Map<Long, List<BlockDetailResponseDto.MetadataResponse>> tickerMap = createTickerMap(tickers);
+
+        Map<Long, Long> childCountMap = calculateChildCounts(blocks);
+        Map<Long, BlockDetailResponseDto> dtoMap = blocks.stream()
+                .collect(Collectors.toMap(
+                                Block::getId,
+                                block -> BlockDetailResponseDto.fromSummary
+                                        (
+                                                block,
+                                                tagMap.getOrDefault(block.getId(), new ArrayList<>()),
+                                                tickerMap.getOrDefault(block.getId(), new ArrayList<>()),
+                                                childCountMap.getOrDefault(block.getId(), 0L)
+                                        )
+                        )
+                );
+
+        return buildTreeAndGetRoot(rootId, blocks, dtoMap);
+    }
+
+    /** 자식 개수 계산 로직 분리 */
+    private Map<Long, Long> calculateChildCounts(List<Block> blocks) {
+        return blocks.stream()
+                .filter(b -> b.getParent() != null)
+                .collect(Collectors.groupingBy(
+                        b -> b.getParent().getId(),
+                        Collectors.counting()
+                ));
+    }
+
+    /** 트리 조립 로직 분리 */
+    private BlockDetailResponseDto buildTreeAndGetRoot(Long rootId, List<Block> blocks, Map<Long, BlockDetailResponseDto> dtoMap) {
+        BlockDetailResponseDto rootDto = null;
+
+        for (Block b : blocks) {
+            BlockDetailResponseDto currentDto = dtoMap.get(b.getId());
+
+            if (b.getId().equals(rootId)) {
+                rootDto = currentDto;
+            } else if (b.getParent() != null) {
+                BlockDetailResponseDto parentDto = dtoMap.get(b.getParent().getId());
+                if (parentDto != null) {
+                    parentDto.getChildren().add(currentDto);
+                }
+            }
+        }
+        return rootDto;
+    }
 }

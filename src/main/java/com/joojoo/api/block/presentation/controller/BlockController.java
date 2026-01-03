@@ -72,7 +72,8 @@ public class BlockController {
     })
     @GetMapping("/detail/{blockId}")
     public BaseResponse<BlockDetailResponseDto> getBlockDetail(@PathVariable Long blockId) {
-        return BaseResponse.ok(blockService.getBlockDetail(blockId));
+//        return BaseResponse.ok(blockService.getBlockDetail(blockId));
+        return BaseResponse.ok(getBlockUseCase.getBlockDetail(blockId));
     }
 
     @Operation(summary = "블럭(노트) 메인 페이지 API", description = "메인 페이지에 보여주는 부모 블럭 리스트 입니다.")
