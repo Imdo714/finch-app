@@ -15,13 +15,13 @@ public interface MetadataPort {
     /** 회원이 사용한 태그를 Redis에 저장 */
     void syncUserTagsToRedis(Long userId, Map<String, Tag> tagMap);
 
+    /** 회원이 블럭에서 사용한 태크들을 Redis에서 삭제 */
+    void processRedisTagRemoval(Long userId, List<BlockTag> oldTags);
+
     /** blockId와 연관된 태그들 조회 */
     List<BlockTag> findAllTagsByBlockId(Long blockId);
 
     /** BlockId 연관된 BlockTag, BlockTicker 삭제  */
     void deleteMetadataByBlockId(Long blockId);
-
-    /** 회원이 블럭에서 사용한 태크들을 Redis에서 삭제 */
-    void processRedisTagRemoval(Long userId, List<BlockTag> oldTags);
 
 }

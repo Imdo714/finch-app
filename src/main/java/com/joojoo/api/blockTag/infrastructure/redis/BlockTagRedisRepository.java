@@ -1,7 +1,5 @@
 package com.joojoo.api.blockTag.infrastructure.redis;
 
-import org.springframework.data.redis.connection.Limit;
-
 import java.util.Set;
 
 public interface BlockTagRedisRepository {

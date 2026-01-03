@@ -20,6 +20,7 @@ public class MetadataPersistenceAdapter implements MetadataPort { // User 도메
 
     private final BlockTickerRepository blockTickerRepository;
     private final BlockTagRepository blockTagRepository;
+    private final BlockTagRedisRepository blockTagRedisRepository;
 
     @Override
     public void saveTickersAndTags(List<BlockTicker> tickers, List<BlockTag> tags) {
@@ -33,13 +34,32 @@ public class MetadataPersistenceAdapter implements MetadataPort { // User 도메
         Set<Long> tagIds = new HashSet<>();
 
         tagMap.forEach((name, tag) -> {
-            Long tagId = tag.getId();
-            lexEntries.add(userId + ":" + HangulUtils.splitToJaso(name) + "*" + name + "*" + tagId);
-            lexEntries.add(userId + ":" + HangulUtils.getChosung(name) + "*" + name + "*" + tagId);
-            tagIds.add(tagId);
+            lexEntries.addAll(generateLexEntries(userId, name, tag.getId()));
+            tagIds.add(tag.getId());
         });
 
-        blockTagRepository.addTagsToRedis(userId, lexEntries, tagIds);
+        blockTagRedisRepository.addTagsToRedis(userId, lexEntries, tagIds);
+    }
+
+    @Override
+    public void processRedisTagRemoval(Long userId, List<BlockTag> oldTags) {
+        Map<Tag, Long> tagCounts = oldTags.stream()
+                .collect(Collectors.groupingBy(BlockTag::getTag, Collectors.counting()));
+
+        tagCounts.forEach((tag, count) -> {
+            Set<String> lexEntries = generateLexEntries(userId, tag.getName(), tag.getId());
+            blockTagRedisRepository.removeTagsFromRedis(userId, tag.getId(), lexEntries, count.intValue());
+        });
+    }
+
+    /** Redis Tag Key 생성 로직 */
+    private Set<String> generateLexEntries(Long userId, String name, Long tagId) {
+        String base = "*" + name + "*" + tagId;
+
+        return Set.of(
+                userId + ":" + HangulUtils.splitToJaso(name) + base,
+                userId + ":" + HangulUtils.getChosung(name) + base
+        );
     }
 
     @Override
@@ -51,24 +71,6 @@ public class MetadataPersistenceAdapter implements MetadataPort { // User 도메
     public void deleteMetadataByBlockId(Long blockId) {
         blockTickerRepository.deleteByBlockIds(blockId);
         blockTagRepository.deleteByBlockIds(blockId);
-    }
-
-    @Override
-    public void processRedisTagRemoval(Long userId, List<BlockTag> oldTags) {
-        Map<Long, List<BlockTag>> groupedTags = oldTags.stream()
-                .collect(Collectors.groupingBy(bt -> bt.getTag().getId()));
-
-        groupedTags.forEach((tagId, tags) -> {
-            Tag tag = tags.get(0).getTag();
-            String name = tag.getName();
-            int countToRemove = tags.size();
-
-            Set<String> lexEntries = new HashSet<>();
-            lexEntries.add(userId + ":" + HangulUtils.splitToJaso(name) + "*" + name + "*" + tagId);
-            lexEntries.add(userId + ":" + HangulUtils.getChosung(name) + "*" + name + "*" + tagId);
-
-            blockTagRepository.removeTagsFromRedis(userId, tagId, lexEntries, countToRemove);
-        });
     }
 
 }
