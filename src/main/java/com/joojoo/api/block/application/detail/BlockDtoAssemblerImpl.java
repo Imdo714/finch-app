@@ -41,21 +41,6 @@ public class BlockDtoAssemblerImpl implements BlockDtoAssembler {
         return buildTreeAndGetRoot(rootId, blocks, dtoMap);
     }
 
-    @Override
-    public List<BlockDetailResponseDto> assembleMainList(List<Block> blocks, List<BlockTag> tags, List<BlockTicker> tickers, Map<Long, Long> childCounts) {
-        Map<Long, List<BlockDetailResponseDto.MetadataResponse>> tagMap = createTagMap(tags);
-        Map<Long, List<BlockDetailResponseDto.MetadataResponse>> tickerMap = createTickerMap(tickers);
-
-        return blocks.stream()
-                .map(block -> BlockDetailResponseDto.fromSummary(
-                        block,
-                        tagMap.getOrDefault(block.getId(), new ArrayList<>()),
-                        tickerMap.getOrDefault(block.getId(), new ArrayList<>()),
-                        childCounts.getOrDefault(block.getId(), 0L)
-                ))
-                .toList();
-    }
-
     /** Tag 전용 맵 생성 */
     private Map<Long, List<BlockDetailResponseDto.MetadataResponse>> createTagMap(List<BlockTag> tags) {
         return createMetadataMap(tags, bt -> bt.getBlock().getId(),

@@ -2,6 +2,7 @@ package com.joojoo.api.block.presentation.controller;
 
 import com.joojoo.api.block.application.BlockService;
 import com.joojoo.api.block.application.port.in.CreateBlockUseCase;
+import com.joojoo.api.block.application.port.in.GetBlockUseCase;
 import com.joojoo.api.block.domain.model.enums.DeleteMode;
 import com.joojoo.api.block.presentation.dto.request.createBlock.BlockSaveRequestDto;
 import com.joojoo.api.block.presentation.dto.request.updateBlock.BlockUpdateDto;
@@ -33,6 +34,7 @@ public class BlockController {
     private final BlockService blockService;
 
     private final CreateBlockUseCase createBlockUseCase;
+    private final GetBlockUseCase getBlockUseCase;
 
     @Operation(summary = "블럭(노트) 생성 API", description = "사용자가 작성한 블럭(노트) 트리 구조를 받아 저장합니다.")
     @ApiResponses({
@@ -86,7 +88,7 @@ public class BlockController {
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lastDate
     ) {
-        return BaseResponse.ok(blockService.getBlockMainView(user.getUserId(), lastDate));
+        return BaseResponse.ok(getBlockUseCase.getBlockMainView(user.getUserId(), lastDate));
     }
 
     @Operation(summary = "블럭(노트) 삭제 API", description = "블럭 삭제 API입니다. 부모만 삭제하면 자식들이 한단계식 승급을하는 형식입니다.")

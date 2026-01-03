@@ -7,13 +7,11 @@ import com.joojoo.api.block.domain.model.enums.DeleteMode;
 import com.joojoo.api.block.domain.repository.BlockRepository;
 import com.joojoo.api.block.presentation.dto.request.updateBlock.BlockUpdateDto;
 import com.joojoo.api.block.presentation.dto.response.detail.BlockDetailResponseDto;
-import com.joojoo.api.block.presentation.dto.response.mainView.BlockMainViewResponse;
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
 import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
 import com.joojoo.api.tag.domain.model.entity.Tag;
-import com.joojoo.api.user.application.port.in.GetUserUseCase;
 import com.joojoo.api.util.metadata.MetadataService;
 import com.joojoo.global.exception.handleException.block.BlockNotFoundException;
 import com.joojoo.global.util.HangulUtils;
@@ -22,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,8 +27,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class BlockServiceImpl implements BlockService {
-
-    private final GetUserUseCase getUserUseCase;
 
     private final BlockRepository blockRepository;
     private final BlockTreeValidator blockTreeValidator;
@@ -52,28 +47,6 @@ public class BlockServiceImpl implements BlockService {
         List<BlockTicker> tickers = blockTickerRepository.findAllBlockTickers(ids);
 
         return blockDtoAssembler.assembleTree(rootId, blocks, tags, tickers);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public BlockMainViewResponse getBlockMainView(Long userId, LocalDate lastDate) {
-        LocalDate targetDate = blockTreeValidator.validateAndGetTargetDate(lastDate);
-
-        List<Block> rootBlocks = blockRepository.findBlocksByLatestDates(userId, targetDate, 2);
-        if (rootBlocks.isEmpty()) {
-            return new BlockMainViewResponse(Collections.emptyList(), null);
-        }
-
-        List<Long> rootIds = rootBlocks.stream().map(Block::getId).toList();
-        List<BlockTag> tags = blockTagRepository.findAllBlockTags(rootIds);
-        List<BlockTicker> tickers = blockTickerRepository.findAllBlockTickers(rootIds);
-        Map<Long, Long> childCounts = blockRepository.getChildCounts(rootIds);
-
-        List<BlockDetailResponseDto> allDtos = blockDtoAssembler.assembleMainList(rootBlocks, tags, tickers, childCounts);
-        LocalDate oldestDateInResult = allDtos.get(allDtos.size() - 1).getCreatedAt().toLocalDate();
-        LocalDate nextDate = blockRepository.findNextAvailableDate(userId, oldestDateInResult);
-
-        return BlockMainViewResponse.of(allDtos, nextDate);
     }
 
     @Override
