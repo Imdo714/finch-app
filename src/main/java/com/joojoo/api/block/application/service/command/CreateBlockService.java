@@ -1,8 +1,8 @@
 package com.joojoo.api.block.application.service.command;
 
 import com.joojoo.api.block.application.port.in.CreateBlockUseCase;
+import com.joojoo.api.block.application.port.out.BlockPort;
 import com.joojoo.api.block.domain.model.entity.Block;
-import com.joojoo.api.block.domain.repository.BlockRepository;
 import com.joojoo.api.block.domain.service.BlockDomainService;
 import com.joojoo.api.block.domain.service.assembler.BlockTreeAssembler;
 import com.joojoo.api.block.domain.service.validation.BlockValidator;
@@ -22,7 +22,7 @@ import java.util.List;
 @Transactional
 public class CreateBlockService implements CreateBlockUseCase {
 
-    private final BlockRepository blockRepository;
+    private final BlockPort blockPort;
     private final GetUserUseCase getUserUseCase;
     private final BlockDomainService blockDomainService;
     private final BlockValidator blockValidator;
@@ -35,7 +35,7 @@ public class CreateBlockService implements CreateBlockUseCase {
         User user = getUserUseCase.getUser(userId);
 
         List<Block> allBlocks = blockDomainService.createAndSaveBlocks(user, requestDto.getBlocks());
-        blockRepository.saveAll(allBlocks); // TODO : JDBC Batch Insert 고려, 지금 블럭이 10개면 10개의 Insert 쿼리 작동 중
+        blockPort.saveAll(allBlocks); // TODO : JDBC Batch Insert 고려, 지금 블럭이 10개면 10개의 Insert 쿼리 작동 중
 
         metadataUseCase.processMetadata(allBlocks, user.getId());
         return blockTreeAssembler.assembleReconstructBlockTree(allBlocks);
