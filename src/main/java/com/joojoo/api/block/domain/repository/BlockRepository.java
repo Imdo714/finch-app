@@ -17,6 +17,7 @@ public interface BlockRepository {
 
     Map<Long, Long> getChildCounts(List<Long> rootIds);
 
+    /** 데이터가 있는 2일치 데이터 조회 */
     List<Block> findBlocksByLatestDates(Long userId, LocalDate lastDate, int dateCount);
 
     LocalDate findNextAvailableDate(Long userId, LocalDate oldestDateInResult);

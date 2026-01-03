@@ -1,9 +1,10 @@
-package com.joojoo.api.block.infrastructure.rdbms;
+package com.joojoo.api.block.infrastructure.persistence;
 
 import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.block.domain.repository.BlockRepository;
 import com.joojoo.api.block.infrastructure.queryDsl.BlockQueryDslRepository;
 import com.joojoo.api.block.infrastructure.queryDsl.date.blockQueryDslDateRepository;
+import com.joojoo.api.block.infrastructure.rdbms.BlockJpaRepository;
 import com.joojoo.api.user.domain.model.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
