@@ -1,6 +1,7 @@
 package com.joojoo.api.block.presentation.controller;
 
 import com.joojoo.api.block.application.BlockService;
+import com.joojoo.api.block.application.port.in.CreateBlockUseCase;
 import com.joojoo.api.block.domain.model.enums.DeleteMode;
 import com.joojoo.api.block.presentation.dto.request.createBlock.BlockSaveRequestDto;
 import com.joojoo.api.block.presentation.dto.request.updateBlock.BlockUpdateDto;
@@ -31,6 +32,8 @@ public class BlockController {
 
     private final BlockService blockService;
 
+    private final CreateBlockUseCase createBlockUseCase;
+
     @Operation(summary = "블럭(노트) 생성 API", description = "사용자가 작성한 블럭(노트) 트리 구조를 받아 저장합니다.")
     @ApiResponses({
             @ApiResponse(
@@ -49,7 +52,7 @@ public class BlockController {
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestBody BlockSaveRequestDto requestDto
     ) {
-        return BaseResponse.ok(blockService.saveBlockTree(user.getUserId(), requestDto));
+        return BaseResponse.ok(createBlockUseCase.saveBlockTree(user.getUserId(), requestDto));
     }
 
     @Operation(summary = "블럭(노트) 상세 페이지", description = "메인 페이지에서 더보기 버튼 누르면 자식, 자손 블럭까지 응답 합니다.")
