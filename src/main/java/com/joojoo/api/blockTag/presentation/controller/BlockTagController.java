@@ -1,6 +1,5 @@
 package com.joojoo.api.blockTag.presentation.controller;
 
-import com.joojoo.api.blockTag.application.BlockTagService;
 import com.joojoo.api.blockTag.application.port.in.GetBlockTagUseCase;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.TotalCountResponse;
@@ -26,8 +25,6 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @RequestMapping("/tags")
 public class BlockTagController {
-
-    private final BlockTagService blockTagService;
 
     private final GetBlockTagUseCase getBlockTagUseCase;
 
@@ -78,7 +75,7 @@ public class BlockTagController {
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long tagId
     ){
-        return BaseResponse.ok(blockTagService.getBlockCount(user.getUserId(), tagId));
+        return BaseResponse.ok(getBlockTagUseCase.getBlockCount(user.getUserId(), tagId));
     }
 
 }

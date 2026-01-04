@@ -51,15 +51,18 @@ public class BlockTagQueryDslRepositoryImpl implements BlockTagQueryDslRepositor
         return queryFactory
                 .select(Projections.constructor(BlockTagCountResponse.class,
                         tag.name,
-                        blockTag.block.id.countDistinct(),
-                        blockTag.tradeLog.id.countDistinct()
+                        blockTag.block.id.countDistinct().coalesce(0L),
+                        blockTag.tradeLog.id.countDistinct().coalesce(0L)
                 ))
-                .from(blockTag)
-                .join(blockTag.tag, tag)
-                .where(
-                        tag.id.eq(tagId),
-                        blockTag.userId.eq(userId)
+                .from(tag)
+                .leftJoin(blockTag).on(
+                        blockTag.tag.id.eq(tag.id)
+                                .and(blockTag.userId.eq(userId))
                 )
+                .where(
+                        tag.id.eq(tagId)
+                )
+                .groupBy(tag.id, tag.name)
                 .fetchOne();
     }
 

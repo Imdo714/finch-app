@@ -20,8 +20,10 @@ public interface BlockTagRepository {
     /** 블럭에서만 사용한 최근 태그 조회 */
     List<RecentTagsResponse.RecentTagsDto> findRecentTags(Long userId);
 
+    /** userId가 tagId를 총 몇개의 블럭에 사용했는지 조회 */
     BlockTagCountResponse getBlockCount(Long userId, Long tagId);
 
+    /** 블랙태그 삭제 */
     void deleteByBlockIds(Long id);
     
     /** 2일치 날짜 조회해서 사용한 태그들 조회 */
