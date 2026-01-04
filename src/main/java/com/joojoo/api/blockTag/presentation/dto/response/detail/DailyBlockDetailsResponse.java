@@ -9,12 +9,12 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class BlockTagsResponse {
+public class DailyBlockDetailsResponse { // TODO : 이거 클래스명 수정
     private List<DailyGroupResponseDto> groups;
     private boolean hasNext;
     private LocalDate nextDate;
 
-    public static BlockTagsResponse of(List<DailyGroupResponseDto> blocks, boolean hasNext, LocalDate nextDate) {
-        return new BlockTagsResponse(blocks, hasNext, nextDate);
+    public static DailyBlockDetailsResponse of(List<DailyGroupResponseDto> blocks, boolean hasNext, LocalDate nextDate) {
+        return new DailyBlockDetailsResponse(blocks, hasNext, nextDate);
     }
 }

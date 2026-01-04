@@ -1,6 +1,6 @@
 package com.joojoo.api.ticker.presentation.controller;
 
-import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
+import com.joojoo.api.blockTag.presentation.dto.response.detail.DailyBlockDetailsResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.TotalCountResponse;
 import com.joojoo.api.ticker.application.TickerService;
 import com.joojoo.api.ticker.application.port.in.GetTickerUseCase;
@@ -67,17 +67,17 @@ public class TickerController {
     @Operation(summary = "티커 상세 API", description = "특정 티커를 조회하여 Block, TradeLog에 작성한 티커를 가져옵니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공",
-                    content = @Content(schema = @Schema(implementation = BlockTagsResponse.class)
+                    content = @Content(schema = @Schema(implementation = DailyBlockDetailsResponse.class)
                     )
             )
     })
     @GetMapping("/{tickerId}")
-    public BaseResponse<BlockTagsResponse> getTickerList(
+    public BaseResponse<DailyBlockDetailsResponse> getTickerDetail(
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long tickerId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lastDate
     ){
-        return BaseResponse.ok(tickerService.getTickerList(user.getUserId(), tickerId, lastDate));
+        return BaseResponse.ok(getTickerUseCase.getTickerDetail(user.getUserId(), tickerId, lastDate));
     }
 
     @Operation(summary = "Ticker 상세 페이지 블럭 개수 API", description = "티커 상세 페이지 위에 티커 이름 하고 수량을 조회하는 API입니다.")

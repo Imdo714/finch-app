@@ -5,7 +5,7 @@ import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
 import com.joojoo.api.blockTag.domain.service.assembler.BlockTagAssembler;
 import com.joojoo.api.blockTag.presentation.dto.response.all.TagDateResult;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
-import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
+import com.joojoo.api.blockTag.presentation.dto.response.detail.DailyBlockDetailsResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.TotalCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
 import com.joojoo.api.util.date.DateUtils;
@@ -35,12 +35,12 @@ public class BlockTagQueryService implements GetBlockTagUseCase {
     }
 
     @Override
-    public BlockTagsResponse getBlockTagDetail(Long userId, Long tagId, LocalDate lastDate) {
+    public DailyBlockDetailsResponse getBlockTagDetail(Long userId, Long tagId, LocalDate lastDate) {
         LocalDate targetDate = dateUtils.validateAndGetTargetDate(lastDate);
         TagDateResult result = blockTagRepository.findAllByTagAndDate(userId, tagId, targetDate);
 
         if (result.getContent().isEmpty()) {
-            return BlockTagsResponse.of(Collections.emptyList(), false, null);
+            return DailyBlockDetailsResponse.of(Collections.emptyList(), false, null);
         }
 
         List<LocalDate> displayDates = result.getTargetDates().stream().limit(2).toList();
