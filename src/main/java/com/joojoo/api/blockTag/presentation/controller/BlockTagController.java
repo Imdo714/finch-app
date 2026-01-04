@@ -53,12 +53,12 @@ public class BlockTagController {
             )
     })
     @GetMapping("/{tagId}")
-    public BaseResponse<BlockTagsResponse> getUserTagIdsByTagId(
+    public BaseResponse<BlockTagsResponse> getBlockTagDetail(
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long tagId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lastDate
     ){
-        return BaseResponse.ok(blockTagService.getUserTagIdsByTagId(user.getUserId(), tagId, lastDate));
+        return BaseResponse.ok(getBlockTagUseCase.getBlockTagDetail(user.getUserId(), tagId, lastDate));
     }
 
     @Operation(summary = "Tag 상세 페이지 블럭 개수 API", description = "태그 상세 페이지 위에 태그 이름 하고 블럭 수량을 조회하는 API입니다.")

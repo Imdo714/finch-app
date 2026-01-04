@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -84,4 +85,16 @@ public class BlockTag  {
                 .createdAt(tradeLog.getCreatedAt())
                 .build();
     }
+
+    /** 엔티티로부터 생성일자를 추출하는 메서드 */
+    public LocalDate getRelevantCreatedDate() {
+        if (this.block != null) {
+            return this.block.getCreatedAt().toLocalDate();
+        }
+        if (this.tradeLog != null) {
+            return this.tradeLog.getCreatedAt().toLocalDate();
+        }
+        return null;
+    }
+
 }

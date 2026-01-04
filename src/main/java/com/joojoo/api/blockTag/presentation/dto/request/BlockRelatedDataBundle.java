@@ -1,4 +1,4 @@
-package com.joojoo.api.util.detailQuery.dto;
+package com.joojoo.api.blockTag.presentation.dto.request;
 
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;

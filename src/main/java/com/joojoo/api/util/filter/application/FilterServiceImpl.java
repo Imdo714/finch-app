@@ -3,13 +3,13 @@ package com.joojoo.api.util.filter.application;
 import com.joojoo.api.block.application.validate.blockerTree.BlockTreeValidator;
 import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.blockTag.application.test.FilterQuery;
-import com.joojoo.api.util.filter.dto.request.TagListDto;
+import com.joojoo.api.blockTag.domain.service.assembler.BlockTagAssembler;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
-import com.joojoo.api.util.detailQuery.BlockTradeLogQueryService;
+import com.joojoo.api.util.filter.dto.request.RelatedKeywordsDto;
+import com.joojoo.api.util.filter.dto.request.TagListDto;
 import com.joojoo.api.util.filter.dto.request.TickerAndTagIdDto;
 import com.joojoo.api.util.filter.dto.response.FilterCountResponse;
-import com.joojoo.api.util.filter.dto.request.RelatedKeywordsDto;
 import com.joojoo.api.util.filter.dto.response.RelatedKeywordsResponse;
 import com.joojoo.global.common.enums.FilterCategory;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class FilterServiceImpl implements FilterService {
 
     private final FilterQuery filterQuery;
     private final BlockTreeValidator blockTreeValidator;
-    private final BlockTradeLogQueryService blockTradeLogQueryService;
+    private final BlockTagAssembler blockTagAssembler;
 
     @Override
     public BlockTagsResponse getFilterCategory(Long userId, TagListDto tagListDto, LocalDate lastDate) {
@@ -55,7 +55,7 @@ public class FilterServiceImpl implements FilterService {
             tradeLogs = filterQuery.searchTradeLogsWithAllKeywords(tagListDto.getTagIds(), tagListDto.getTickerIds(), userId, displayDates, category);
         }
 
-        return blockTradeLogQueryService.assembleBlockTagsResponse(targetDates, blocks, tradeLogs);
+        return blockTagAssembler.assembleBlockTagsResponse(targetDates, blocks, tradeLogs);
     }
 
     @Override

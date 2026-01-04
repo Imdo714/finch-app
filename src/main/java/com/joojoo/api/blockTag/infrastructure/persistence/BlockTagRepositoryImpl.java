@@ -1,16 +1,15 @@
-package com.joojoo.api.blockTag.infrastructure.rdbms;
+package com.joojoo.api.blockTag.infrastructure.persistence;
 
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
 import com.joojoo.api.blockTag.infrastructure.queryDsl.BlockTagQueryDslRepository;
 import com.joojoo.api.blockTag.infrastructure.queryDsl.date.BlockTagDateQueryDslRepository;
+import com.joojoo.api.blockTag.infrastructure.rdbms.BlockTagJpaRepository;
 import com.joojoo.api.blockTag.infrastructure.redis.BlockTagRedisRepository;
 import com.joojoo.api.blockTag.presentation.dto.response.all.TagDateResult;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Range;
-import org.springframework.data.redis.connection.Limit;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;

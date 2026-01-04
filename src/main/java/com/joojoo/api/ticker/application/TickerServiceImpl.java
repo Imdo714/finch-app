@@ -2,6 +2,7 @@ package com.joojoo.api.ticker.application;
 
 import com.joojoo.api.block.application.validate.blockerTree.BlockTreeValidator;
 import com.joojoo.api.block.domain.model.entity.Block;
+import com.joojoo.api.blockTag.domain.service.assembler.BlockTagAssembler;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.TotalCountResponse;
@@ -17,7 +18,6 @@ import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;
-import com.joojoo.api.util.detailQuery.BlockTradeLogQueryService;
 import com.joojoo.global.exception.handleException.tickers.InvalidTickerOrNameException;
 import com.joojoo.global.exception.handleException.tickers.TickerNotFoundException;
 import com.joojoo.global.exception.handleException.users.UserNotFoundException;
@@ -46,9 +46,10 @@ public class TickerServiceImpl implements TickerService {
     private final TickerRepository tickerRepository;
     private final TickerDataProvider tickerDataProvider;
     private final UserRepository userRepository;
-    private final BlockTradeLogQueryService blockTradeLogQueryService;
     private final BlockTreeValidator blockTreeValidator;
     private final BlockTickerRepository blockTickerRepository;
+
+    private final BlockTagAssembler blockTagAssembler;
 
     @Override
     public void addStockToRedis(String name, String ticker) {
@@ -142,7 +143,7 @@ public class TickerServiceImpl implements TickerService {
                 .distinct()
                 .toList();
 
-        return blockTradeLogQueryService.assembleBlockTagsResponse(result.getTargetDates(), blocks, tradeLogs);
+        return blockTagAssembler.assembleBlockTagsResponse(result.getTargetDates(), blocks, tradeLogs);
     }
 
     @Override
