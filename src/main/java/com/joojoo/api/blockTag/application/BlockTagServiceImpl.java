@@ -8,7 +8,6 @@ import com.joojoo.api.blockTag.presentation.dto.response.all.TagDateResult;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.TotalCountResponse;
-import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
 import com.joojoo.api.tag.domain.model.entity.Tag;
 import com.joojoo.api.tag.domain.repository.TagRepository;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
@@ -33,11 +32,6 @@ public class BlockTagServiceImpl implements BlockTagService {
     private final BlockTreeValidator blockTreeValidator;
     private final BlockTradeLogQueryService blockTradeLogQueryService;
     private final TagRepository tagRepository;
-
-    @Override
-    public RecentTagsResponse getRecentTags(Long userId) {
-        return RecentTagsResponse.of(blockTagRepository.findRecentTags(userId));
-    }
 
     @Override
     public TotalCountResponse getBlockCount(Long userId, Long tagId) {

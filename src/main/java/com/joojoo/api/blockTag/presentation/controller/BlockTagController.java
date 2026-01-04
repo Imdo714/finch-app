@@ -1,6 +1,7 @@
 package com.joojoo.api.blockTag.presentation.controller;
 
 import com.joojoo.api.blockTag.application.BlockTagService;
+import com.joojoo.api.blockTag.application.port.in.GetBlockTagUseCase;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.TotalCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
@@ -28,6 +29,8 @@ public class BlockTagController {
 
     private final BlockTagService blockTagService;
 
+    private final GetBlockTagUseCase getBlockTagUseCase;
+
     @Operation(summary = "Tag 최근 사용 기록", description = "Tag 작성할때 최근 10개 기록 리스트 API")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공",
@@ -39,7 +42,7 @@ public class BlockTagController {
     public BaseResponse<RecentTagsResponse> getRecentTags(
             @AuthenticationPrincipal CustomUserDetails user
     ){
-        return BaseResponse.ok(blockTagService.getRecentTags(user.getUserId()));
+        return BaseResponse.ok(getBlockTagUseCase.getRecentTags(user.getUserId()));
     }
 
     @Operation(summary = "Tag 상세 페이지 API", description = "내가 사용한 TagId로 블럭(노트) 리스트 조회 API")
