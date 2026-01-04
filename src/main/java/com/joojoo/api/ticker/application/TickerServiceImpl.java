@@ -14,7 +14,6 @@ import com.joojoo.api.ticker.domain.provider.TickerDataProvider;
 import com.joojoo.api.ticker.domain.repository.TickerRedisRepository;
 import com.joojoo.api.ticker.domain.repository.TickerRepository;
 import com.joojoo.api.ticker.presentation.dto.request.TickerDataDto;
-import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;
@@ -24,8 +23,6 @@ import com.joojoo.global.exception.handleException.users.UserNotFoundException;
 import com.joojoo.global.util.HangulUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Range;
-import org.springframework.data.redis.connection.Limit;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -61,16 +58,6 @@ public class TickerServiceImpl implements TickerService {
         tickers.add(HangulUtils.getChosung(name) + "*" + name + "*" + ticker);
 
         tickerRedisRepository.addStocksToRedis(tickers);
-    }
-
-    @Override
-    public TickerSearchResponse search(String query) {
-        if (!StringUtils.hasText(query)) return TickerSearchResponse.of(Collections.emptySet());
-        String convertedQuery = HangulUtils.splitToJaso(query); // query를 자모로 분해 해서 검색
-
-        // Range.rightOpen는 [start, end]를 의미함 convertedQuery으로 시작하는 글자와 convertedQuery뒤에 붙는 글자를 찾는다
-        Range<String> range = Range.rightOpen(convertedQuery, convertedQuery + "\uffff");
-        return TickerSearchResponse.of(tickerRedisRepository.searchTickerQuery(range, Limit.limit().count(10)));
     }
 
     @Override

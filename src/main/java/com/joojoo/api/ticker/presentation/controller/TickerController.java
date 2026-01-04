@@ -3,6 +3,7 @@ package com.joojoo.api.ticker.presentation.controller;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.TotalCountResponse;
 import com.joojoo.api.ticker.application.TickerService;
+import com.joojoo.api.ticker.application.port.in.GetTickerUseCase;
 import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
 import com.joojoo.global.common.request.auth.CustomUserDetails;
 import com.joojoo.global.common.response.BaseResponse;
@@ -27,6 +28,7 @@ import java.time.LocalDate;
 @Tag(name = "Ticker API", description = "주식 티커 관련 API")
 public class TickerController {
     private final TickerService tickerService;
+    private final GetTickerUseCase getTickerUseCase;
 
     @Operation(summary = "주식 티커 추가 (검색 확인용)", description = "Redis에 새로운 주식 이름과 티커 심볼을 저장합니다.")
     @ApiResponses(value = {
@@ -54,7 +56,7 @@ public class TickerController {
             @Parameter(description = "검색어 (종목명)", required = true)
             @RequestParam String query
     ) {
-        return BaseResponse.ok(tickerService.search(query));
+        return BaseResponse.ok(getTickerUseCase.search(query));
     }
 
     @PostMapping("/load-Cache")

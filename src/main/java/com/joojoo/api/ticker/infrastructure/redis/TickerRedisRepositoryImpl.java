@@ -1,6 +1,7 @@
 package com.joojoo.api.ticker.infrastructure.redis;
 
 import com.joojoo.api.ticker.domain.repository.TickerRedisRepository;
+import com.joojoo.api.ticker.presentation.dto.request.range.TickerSearchRange;
 import com.joojoo.global.exception.handleException.redis.RedisConnectionFailException;
 import jakarta.persistence.QueryTimeoutException;
 import lombok.RequiredArgsConstructor;
@@ -38,10 +39,13 @@ public class TickerRedisRepositoryImpl implements TickerRedisRepository {
     }
 
     @Override
-    public Set<String> searchTickerQuery(Range<String> range, Limit limit) {
+    public Set<String> searchTickerQuery(TickerSearchRange range, int limit) {
         try {
+            Range<String> redisRange = Range.rightOpen(range.getStart(), range.getEnd());
+            Limit redisLimit = Limit.limit().count(limit);
+
             return redisTemplate.opsForZSet()
-                    .rangeByLex(AUTOCOMPLETE_KEY, range, limit);
+                    .rangeByLex(AUTOCOMPLETE_KEY, redisRange, redisLimit);
         } catch (RedisConnectionFailureException | QueryTimeoutException e) {
             log.error("Redis 연결 실패 또는 타임아웃 발생: {}", e.getMessage());
             return Collections.emptySet();
