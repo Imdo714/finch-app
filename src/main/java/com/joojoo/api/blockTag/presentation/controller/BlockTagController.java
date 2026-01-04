@@ -1,6 +1,6 @@
 package com.joojoo.api.blockTag.presentation.controller;
 
-import com.joojoo.api.blockTag.application.BlockTagService;
+import com.joojoo.api.blockTag.application.port.in.GetBlockTagUseCase;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.TotalCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
@@ -26,7 +26,7 @@ import java.time.LocalDate;
 @RequestMapping("/tags")
 public class BlockTagController {
 
-    private final BlockTagService blockTagService;
+    private final GetBlockTagUseCase getBlockTagUseCase;
 
     @Operation(summary = "Tag 최근 사용 기록", description = "Tag 작성할때 최근 10개 기록 리스트 API")
     @ApiResponses({
@@ -39,7 +39,7 @@ public class BlockTagController {
     public BaseResponse<RecentTagsResponse> getRecentTags(
             @AuthenticationPrincipal CustomUserDetails user
     ){
-        return BaseResponse.ok(blockTagService.getRecentTags(user.getUserId()));
+        return BaseResponse.ok(getBlockTagUseCase.getRecentTags(user.getUserId()));
     }
 
     @Operation(summary = "Tag 상세 페이지 API", description = "내가 사용한 TagId로 블럭(노트) 리스트 조회 API")
@@ -50,12 +50,12 @@ public class BlockTagController {
             )
     })
     @GetMapping("/{tagId}")
-    public BaseResponse<BlockTagsResponse> getUserTagIdsByTagId(
+    public BaseResponse<BlockTagsResponse> getBlockTagDetail(
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long tagId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lastDate
     ){
-        return BaseResponse.ok(blockTagService.getUserTagIdsByTagId(user.getUserId(), tagId, lastDate));
+        return BaseResponse.ok(getBlockTagUseCase.getBlockTagDetail(user.getUserId(), tagId, lastDate));
     }
 
     @Operation(summary = "Tag 상세 페이지 블럭 개수 API", description = "태그 상세 페이지 위에 태그 이름 하고 블럭 수량을 조회하는 API입니다.")
@@ -75,7 +75,7 @@ public class BlockTagController {
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long tagId
     ){
-        return BaseResponse.ok(blockTagService.getBlockCount(user.getUserId(), tagId));
+        return BaseResponse.ok(getBlockTagUseCase.getBlockCount(user.getUserId(), tagId));
     }
 
 }

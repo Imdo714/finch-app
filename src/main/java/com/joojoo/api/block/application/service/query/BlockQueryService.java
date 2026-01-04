@@ -4,7 +4,7 @@ import com.joojoo.api.block.application.port.in.GetBlockUseCase;
 import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.block.domain.repository.BlockRepository;
 import com.joojoo.api.block.domain.service.assembler.BlockTreeAssembler;
-import com.joojoo.api.block.domain.service.validation.BlockDateValidator;
+import com.joojoo.api.util.date.DateUtils;
 import com.joojoo.api.block.presentation.dto.response.detail.BlockDetailResponseDto;
 import com.joojoo.api.block.presentation.dto.response.mainView.BlockMainViewResponse;
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
@@ -30,12 +30,12 @@ public class BlockQueryService implements GetBlockUseCase {
     private final BlockTagRepository blockTagRepository;
     private final BlockTickerRepository blockTickerRepository;
 
-    private final BlockDateValidator blockDateValidator;
+    private final DateUtils dateUtils;
     private final BlockTreeAssembler blockTreeAssembler;
 
     @Override
     public BlockMainViewResponse getBlockMainView(Long userId, LocalDate lastDate) {
-        LocalDate targetDate = blockDateValidator.validateAndGetTargetDate(lastDate);
+        LocalDate targetDate = dateUtils.validateAndGetTargetDate(lastDate);
 
         // 데이터 조회
         List<Block> rootBlocks = blockRepository.findBlocksByLatestDates(userId, targetDate, 2);

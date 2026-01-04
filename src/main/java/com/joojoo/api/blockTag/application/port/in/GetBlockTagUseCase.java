@@ -1,4 +1,4 @@
-package com.joojoo.api.blockTag.application;
+package com.joojoo.api.blockTag.application.port.in;
 
 import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.detail.TotalCountResponse;
@@ -6,10 +6,10 @@ import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsRespon
 
 import java.time.LocalDate;
 
-public interface BlockTagService {
+public interface GetBlockTagUseCase {
     RecentTagsResponse getRecentTags(Long userId);
 
-    BlockTagsResponse getUserTagIdsByTagId(Long userId, Long tagId, LocalDate lastDate);
+    BlockTagsResponse getBlockTagDetail(Long userId, Long tagId, LocalDate lastDate);
 
     TotalCountResponse getBlockCount(Long userId, Long tagId);
 }
