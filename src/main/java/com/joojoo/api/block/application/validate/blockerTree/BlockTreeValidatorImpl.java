@@ -1,13 +1,5 @@
 package com.joojoo.api.block.application.validate.blockerTree;
 
-import com.joojoo.api.block.domain.model.entity.Block;
-import com.joojoo.api.block.domain.repository.BlockRepository;
-import com.joojoo.api.block.presentation.dto.request.createBlock.BlockRequestDto;
-import com.joojoo.api.block.presentation.dto.request.createBlock.BlockSaveRequestDto;
-import com.joojoo.global.exception.enums.ErrorCode;
-import com.joojoo.global.exception.handleException.block.BlockOwnerMismatchException;
-import com.joojoo.global.exception.handleException.block.BlockPromotionLimitExceededException;
-import com.joojoo.global.exception.handleException.block.InvalidBlockStructureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,29 +17,6 @@ public class BlockTreeValidatorImpl implements BlockTreeValidator {
             return LocalDate.now();
         }
         return lastDate;
-    }
-
-    @Override
-    public void validatePromotionLimit(Block targetBlock, Block parentBlock) {
-        if (targetBlock.getDepth() == 0) {
-            return;
-        }
-
-        if (parentBlock != null) {
-            long currentSiblingCount = parentBlock.getChildren().size(); // 현재 뎁스에 형제들 수
-            long childrenToPromoteCount = targetBlock.getChildren().size(); // 승격될 자식들 수
-
-            if ((currentSiblingCount - 1) + childrenToPromoteCount > 3) {
-                throw new BlockPromotionLimitExceededException();
-            }
-        }
-    }
-
-    @Override
-    public void validateOwner(Block targetBlock, Long userId) {
-        if (!targetBlock.getUser().getId().equals(userId)) {
-            throw new BlockOwnerMismatchException();
-        }
     }
 
 }

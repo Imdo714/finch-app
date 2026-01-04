@@ -5,6 +5,7 @@ import com.joojoo.api.block.presentation.dto.request.createBlock.BlockRequestDto
 import com.joojoo.api.block.presentation.dto.request.createBlock.BlockSaveRequestDto;
 import com.joojoo.global.exception.enums.ErrorCode;
 import com.joojoo.global.exception.handleException.block.BlockOwnerMismatchException;
+import com.joojoo.global.exception.handleException.block.BlockPromotionLimitExceededException;
 import com.joojoo.global.exception.handleException.block.InvalidBlockStructureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -49,4 +50,21 @@ public class BlockValidator {
             throw new BlockOwnerMismatchException();
         }
     }
+
+    /** 자식들이 부모 레벨로 올라갔을 때 3개 제한을 넘지 않는지 검증 */
+    public void validatePromotionLimit(Block targetBlock, Block parent) {
+        if (targetBlock.getDepth() == 0) {
+            return;
+        }
+
+        if (parent != null) {
+            long currentSiblingCount = parent.getChildren().size(); // 현재 뎁스에 형제들 수
+            long childrenToPromoteCount = targetBlock.getChildren().size(); // 승격될 자식들 수
+
+            if ((currentSiblingCount - 1) + childrenToPromoteCount > 3) {
+                throw new BlockPromotionLimitExceededException();
+            }
+        }
+    }
+
 }

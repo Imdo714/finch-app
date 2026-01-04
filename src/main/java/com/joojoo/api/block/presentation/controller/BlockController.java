@@ -1,7 +1,7 @@
 package com.joojoo.api.block.presentation.controller;
 
-import com.joojoo.api.block.application.BlockService;
 import com.joojoo.api.block.application.port.in.CreateBlockUseCase;
+import com.joojoo.api.block.application.port.in.DeleteBlockUseCase;
 import com.joojoo.api.block.application.port.in.GetBlockUseCase;
 import com.joojoo.api.block.application.port.in.UpdateBlockUseCase;
 import com.joojoo.api.block.domain.model.enums.DeleteMode;
@@ -31,12 +31,11 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @RequestMapping("block")
 public class BlockController {
-
-    private final BlockService blockService;
-
+    
     private final GetBlockUseCase getBlockUseCase;
     private final CreateBlockUseCase createBlockUseCase;
     private final UpdateBlockUseCase updateBlockUseCase;
+    private final DeleteBlockUseCase deleteBlockUseCase;
 
     @Operation(summary = "블럭(노트) 생성 API", description = "사용자가 작성한 블럭(노트) 트리 구조를 받아 저장합니다.")
     @ApiResponses({
@@ -122,7 +121,7 @@ public class BlockController {
             @PathVariable Long blockId,
             @RequestParam(defaultValue = "SINGLE") DeleteMode mode
     ) {
-        blockService.deleteBlock(user.getUserId(), blockId, mode);
+        deleteBlockUseCase.deleteBlock(user.getUserId(), blockId, mode);
         return BaseResponse.ok("삭제 성공!");
     }
 
