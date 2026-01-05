@@ -40,7 +40,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource))
 
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/user/kakao/login", "/user/apple/login", "/user/apple/web/login", "/token/reissue").permitAll()
+                .requestMatchers("/user/kakao/login", "/user/apple/login", "/user/apple/web/login", "/user/apple/android/login", "/token/reissue").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
                 .requestMatchers("/health/**").permitAll()
                 .anyRequest().authenticated()

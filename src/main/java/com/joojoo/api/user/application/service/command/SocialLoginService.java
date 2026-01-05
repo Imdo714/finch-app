@@ -62,7 +62,7 @@ public class SocialLoginService implements SocialLoginUseCase {
         // Client Secret 생성
         String clientSecret = appleWeb.createClientSecret();
 
-        // 3. 애플 토큰 요청 (redirectUri 포함)
+        // 애플 토큰 요청 (redirectUri 포함)
         AppleTokenResponse appleTokenResponse = appleWeb.requestAppleToken(code, clientSecret);
         AppleUserInfo appleUser = appleClientSecret.getAppleUserInfo(appleTokenResponse.getIdToken());
 

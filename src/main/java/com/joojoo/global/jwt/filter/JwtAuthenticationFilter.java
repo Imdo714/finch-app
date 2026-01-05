@@ -32,6 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/user/kakao/login",
             "/user/apple/login",
             "/user/apple/web/login",
+            "/user/apple/android/login",
             "/token/reissue",
             "/v3/api-docs/**",
             "/swagger-ui/**",

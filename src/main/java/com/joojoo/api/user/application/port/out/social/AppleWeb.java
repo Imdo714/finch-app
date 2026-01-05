@@ -67,7 +67,7 @@ public class AppleWeb {
         params.add("code", code);
         params.add("grant_type", "authorization_code");
 
-        // ★ 웹/안드로이드의 경우 필수 추가
+        // 웹/안드로이드 추가
         params.add("redirect_uri", redirectUri);
 
         AppleTokenResponse responseBody = restClient.post()
