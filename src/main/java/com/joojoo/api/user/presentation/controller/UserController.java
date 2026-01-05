@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -72,8 +73,13 @@ public class UserController {
     }
 
     // 애플 웹 용
-    @PostMapping("/apple/web/login")
-    public BaseResponse<LoginResponse> appleWebLogin(@RequestBody AuthCodeDto payload) {
+//    @PostMapping("/apple/web/login")
+//    public BaseResponse<LoginResponse> appleWebLogin(@RequestBody AuthCodeDto payload) {
+//        return BaseResponse.ok(socialLoginUseCase.appleWebLogin(payload.getCode()));
+//    }
+
+    @PostMapping(value = "/apple/web/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public BaseResponse<LoginResponse> appleWebLogin(AuthCodeDto payload) {
         return BaseResponse.ok(socialLoginUseCase.appleWebLogin(payload.getCode()));
     }
 
