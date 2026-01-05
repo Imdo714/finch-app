@@ -31,6 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final List<String> excludedUrls = List.of(
             "/user/kakao/login",
             "/user/apple/login",
+            "/user/apple/web/login",
             "/token/reissue",
             "/v3/api-docs/**",
             "/swagger-ui/**",
