@@ -1,6 +1,6 @@
 package com.joojoo.api.ticker.infrastructure.queryDsl;
 
-import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
+import com.joojoo.global.common.response.detail.count.RelatedBlockDetailCountResponse;
 import com.joojoo.api.blockTicker.domain.model.entity.QBlockTicker;
 import com.joojoo.api.ticker.domain.model.entity.QTicker;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
@@ -34,19 +34,22 @@ public class TickerQueryDslRepositoryImpl implements TickerQueryDslRepository {
     }
 
     @Override
-    public BlockTagCountResponse getTickerDetailCount(Long userId, Long tickerId) {
+    public RelatedBlockDetailCountResponse getTickerDetailCount(Long userId, Long tickerId) {
         return queryFactory
-                .select(Projections.constructor(BlockTagCountResponse.class,
+                .select(Projections.constructor(RelatedBlockDetailCountResponse.class,
                         ticker.name,
-                        blockTicker.block.id.countDistinct(),
-                        blockTicker.tradeLog.id.countDistinct()
+                        blockTicker.block.id.countDistinct().coalesce(0L),
+                        blockTicker.tradeLog.id.countDistinct().coalesce(0L)
                 ))
-                .from(blockTicker)
-                .join(blockTicker.ticker, ticker)
-                .where(
-                        ticker.id.eq(tickerId),
-                        blockTicker.userId.eq(userId)
+                .from(ticker)
+                .leftJoin(blockTicker).on(
+                        blockTicker.ticker.id.eq(ticker.id)
+                                .and(blockTicker.userId.eq(userId))
                 )
+                .where(
+                        ticker.id.eq(tickerId)
+                )
+                .groupBy(ticker.id, ticker.name)
                 .fetchOne();
     }
 

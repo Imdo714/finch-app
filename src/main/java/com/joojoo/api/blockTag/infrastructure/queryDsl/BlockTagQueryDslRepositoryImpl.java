@@ -2,7 +2,7 @@ package com.joojoo.api.blockTag.infrastructure.queryDsl;
 
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.domain.model.entity.QBlockTag;
-import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
+import com.joojoo.global.common.response.detail.count.RelatedBlockDetailCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
 import com.joojoo.api.tag.domain.model.entity.QTag;
 import com.querydsl.core.types.Projections;
@@ -47,9 +47,9 @@ public class BlockTagQueryDslRepositoryImpl implements BlockTagQueryDslRepositor
     }
 
     @Override
-    public BlockTagCountResponse getBlockCount(Long userId, Long tagId) {
+    public RelatedBlockDetailCountResponse getBlockCount(Long userId, Long tagId) {
         return queryFactory
-                .select(Projections.constructor(BlockTagCountResponse.class,
+                .select(Projections.constructor(RelatedBlockDetailCountResponse.class,
                         tag.name,
                         blockTag.block.id.countDistinct().coalesce(0L),
                         blockTag.tradeLog.id.countDistinct().coalesce(0L)

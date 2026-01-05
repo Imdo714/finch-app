@@ -1,19 +1,21 @@
-package com.joojoo.api.ticker.infrastructure.rdbms;
+package com.joojoo.api.ticker.infrastructure.persistence;
 
-import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
+import com.joojoo.api.ticker.application.in.TickerInService;
+import com.joojoo.api.ticker.infrastructure.rdbms.TickerJpaRepository;
+import com.joojoo.global.common.response.detail.count.RelatedBlockDetailCountResponse;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.ticker.domain.repository.TickerRepository;
 import com.joojoo.api.ticker.infrastructure.queryDsl.TickerQueryDslRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-public class TickerRepositoryImpl implements TickerRepository {
+public class TickerRepositoryImpl implements TickerRepository, TickerInService {
 
     private final TickerJpaRepository tickerJpaRepository;
     private final TickerQueryDslRepository tickerQueryDslRepository;
@@ -29,17 +31,20 @@ public class TickerRepositoryImpl implements TickerRepository {
     }
 
     @Override
-    public List<Ticker> findAllByTickerNames(Set<String> tickerSymbols) {
-        return tickerQueryDslRepository.findAllByTickerNames(tickerSymbols);
-    }
-
-    @Override
     public Optional<Ticker> findById(Long tickerId) {
         return tickerJpaRepository.findById(tickerId);
     }
 
     @Override
-    public BlockTagCountResponse getTickerDetailCount(Long userId, Long tickerId) {
+    public RelatedBlockDetailCountResponse getTickerDetailCount(Long userId, Long tickerId) {
         return tickerQueryDslRepository.getTickerDetailCount(userId, tickerId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Ticker> getTickerMap(Set<String> names) {
+        if (names.isEmpty()) return Collections.emptyMap();
+        return tickerQueryDslRepository.findAllByTickerNames(names).stream()
+                .collect(Collectors.toMap(Ticker::getName, t -> t));
     }
 }

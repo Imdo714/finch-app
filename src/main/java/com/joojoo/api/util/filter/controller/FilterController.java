@@ -1,7 +1,6 @@
 package com.joojoo.api.util.filter.controller;
 
-import com.joojoo.api.block.presentation.dto.response.blockDetail.BlockResponse;
-import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
+import com.joojoo.global.common.response.detail.DailyBlockDetailsResponse;
 import com.joojoo.api.util.filter.application.FilterService;
 import com.joojoo.api.util.filter.dto.request.TagListDto;
 import com.joojoo.api.util.filter.dto.request.TickerAndTagIdDto;
@@ -39,7 +38,7 @@ public class FilterController {
             @ApiResponse(
                     responseCode = "200",
                     description = "조회 성공",
-                    content = @Content(schema = @Schema(implementation = BlockTagsResponse.class))
+                    content = @Content(schema = @Schema(implementation = DailyBlockDetailsResponse.class))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -48,7 +47,7 @@ public class FilterController {
             )
     })
     @PostMapping("/filter")
-    public BaseResponse<BlockTagsResponse> getFilterCategory(
+    public BaseResponse<DailyBlockDetailsResponse> getFilterCategory(
             @AuthenticationPrincipal CustomUserDetails user,
             @Valid @RequestBody TagListDto tagListDto,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lastDate

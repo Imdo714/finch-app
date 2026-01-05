@@ -4,7 +4,7 @@ import com.joojoo.api.block.application.validate.blockerTree.BlockTreeValidator;
 import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.blockTag.application.test.FilterQuery;
 import com.joojoo.api.blockTag.domain.service.assembler.BlockTagAssembler;
-import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
+import com.joojoo.global.common.response.detail.DailyBlockDetailsResponse;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
 import com.joojoo.api.util.filter.dto.request.RelatedKeywordsDto;
 import com.joojoo.api.util.filter.dto.request.TagListDto;
@@ -12,6 +12,7 @@ import com.joojoo.api.util.filter.dto.request.TickerAndTagIdDto;
 import com.joojoo.api.util.filter.dto.response.FilterCountResponse;
 import com.joojoo.api.util.filter.dto.response.RelatedKeywordsResponse;
 import com.joojoo.global.common.enums.FilterCategory;
+import com.joojoo.global.common.assembler.detailApiAssembler.DetailResponseAssembler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,8 +31,10 @@ public class FilterServiceImpl implements FilterService {
     private final BlockTreeValidator blockTreeValidator;
     private final BlockTagAssembler blockTagAssembler;
 
+    private final DetailResponseAssembler detailResponseAssembler;
+
     @Override
-    public BlockTagsResponse getFilterCategory(Long userId, TagListDto tagListDto, LocalDate lastDate) {
+    public DailyBlockDetailsResponse getFilterCategory(Long userId, TagListDto tagListDto, LocalDate lastDate) {
         tagListDto.validateHasKeywords();
 
         LocalDate targetDate = blockTreeValidator.validateAndGetTargetDate(lastDate);
@@ -40,7 +43,7 @@ public class FilterServiceImpl implements FilterService {
         List<LocalDate> targetDates = filterQuery.getTargetDates(userId, tagListDto.getTagIds(), tagListDto.getTickerIds(), targetDate, category, 3);
 
         if (targetDates.isEmpty()) {
-            return BlockTagsResponse.of(Collections.emptyList(), false, null);
+            return DailyBlockDetailsResponse.of(Collections.emptyList(), false, null);
         }
         List<LocalDate> displayDates = targetDates.stream().limit(2).toList();
 
@@ -55,7 +58,7 @@ public class FilterServiceImpl implements FilterService {
             tradeLogs = filterQuery.searchTradeLogsWithAllKeywords(tagListDto.getTagIds(), tagListDto.getTickerIds(), userId, displayDates, category);
         }
 
-        return blockTagAssembler.assembleBlockTagsResponse(targetDates, blocks, tradeLogs);
+        return detailResponseAssembler.assembleTagsAndTickersDetailResponse(targetDates, blocks, tradeLogs);
     }
 
     @Override

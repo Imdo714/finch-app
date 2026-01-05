@@ -1,8 +1,8 @@
 package com.joojoo.api.blockTag.presentation.controller;
 
 import com.joojoo.api.blockTag.application.port.in.GetBlockTagUseCase;
-import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagsResponse;
-import com.joojoo.api.blockTag.presentation.dto.response.detail.TotalCountResponse;
+import com.joojoo.global.common.response.detail.DailyBlockDetailsResponse;
+import com.joojoo.global.common.response.detail.count.TotalCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
 import com.joojoo.global.common.request.auth.CustomUserDetails;
 import com.joojoo.global.common.response.BaseResponse;
@@ -45,12 +45,12 @@ public class BlockTagController {
     @Operation(summary = "Tag 상세 페이지 API", description = "내가 사용한 TagId로 블럭(노트) 리스트 조회 API")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공",
-                    content = @Content(schema = @Schema(implementation = BlockTagsResponse.class)
+                    content = @Content(schema = @Schema(implementation = DailyBlockDetailsResponse.class)
                     )
             )
     })
     @GetMapping("/{tagId}")
-    public BaseResponse<BlockTagsResponse> getBlockTagDetail(
+    public BaseResponse<DailyBlockDetailsResponse> getBlockTagDetail(
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long tagId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lastDate

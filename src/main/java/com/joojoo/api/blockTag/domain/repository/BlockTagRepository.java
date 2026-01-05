@@ -2,13 +2,10 @@ package com.joojoo.api.blockTag.domain.repository;
 
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.presentation.dto.response.all.TagDateResult;
-import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
+import com.joojoo.global.common.response.detail.count.RelatedBlockDetailCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
-import org.springframework.data.domain.Range;
-import org.springframework.data.redis.connection.Limit;
 
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -21,7 +18,7 @@ public interface BlockTagRepository {
     List<RecentTagsResponse.RecentTagsDto> findRecentTags(Long userId);
 
     /** userId가 tagId를 총 몇개의 블럭에 사용했는지 조회 */
-    BlockTagCountResponse getBlockCount(Long userId, Long tagId);
+    RelatedBlockDetailCountResponse getBlockCount(Long userId, Long tagId);
 
     /** 블랙태그 삭제 */
     void deleteByBlockIds(Long id);

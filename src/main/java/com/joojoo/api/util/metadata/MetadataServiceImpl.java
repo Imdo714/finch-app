@@ -1,6 +1,5 @@
 package com.joojoo.api.util.metadata;
 
-import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.block.presentation.dto.request.metadata.MatchedMetadataDto;
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,81 +30,6 @@ public class MetadataServiceImpl implements MetadataService {
 
     private final BlockTickerRepository blockTickerRepository;
     private final BlockTagRepository blockTagRepository;
-
-    @Override
-    public void processMetadata(List<Block> blocks, Long userId) {
-        if (blocks == null || blocks.isEmpty()) return;
-
-        MetadataContext context = new MetadataContext();
-        Map<Block, List<MatchedMetadataDto>> analysisMap = new HashMap<>();
-
-        // 1. 이름 추출 및 수집
-        for (Block block : blocks) {
-            analysisMap.put(block, scanContent(block.getContent(), context));
-        }
-
-        // 마스터 데이터(Ticker, Tag) 일괄 로드
-        context.loadEntities(tickerInService, tagInService);
-
-        List<BlockTicker> bTickers = new ArrayList<>();
-        List<BlockTag> bTags = new ArrayList<>();
-
-        analysisMap.forEach((block, matches) -> {
-            int tSeq = 0, tagSeq = 0;
-            for (MatchedMetadataDto match : matches) {
-                if (match.isTicker()) {
-                    Ticker ticker = context.getTicker(match.name());
-                    if (ticker != null) {
-                        bTickers.add(BlockTicker.create(block, ticker, userId, match.start(), tSeq++, TagSourceType.BLOCK_CONTENT));
-                    }
-                } else {
-                    Tag tag = context.getTag(match.name());
-                    if (tag != null) {
-                        bTags.add(BlockTag.create(block, tag, userId, match.start(), tagSeq++, TagSourceType.BLOCK_CONTENT));
-                    }
-                }
-            }
-        });
-
-        if (!bTickers.isEmpty()) blockTickerRepository.saveAll(bTickers);
-        if (!bTags.isEmpty()) blockTagRepository.saveAll(bTags);
-
-        if (!context.getTagNames().isEmpty()) {
-            saveUserTagsToRedis(userId, context.getTagMap());
-        }
-    }
-
-    /** 단일 블록 업데이트용 */
-    @Override
-    public void processMetadata(Block targetBlock, Long userId) {
-        List<BlockTag> oldTags = blockTagRepository.findAllByBlockIdIn(Collections.singletonList(targetBlock.getId()));
-
-        blockTickerRepository.deleteByBlockIds(targetBlock.getId());
-        blockTagRepository.deleteByBlockIds(targetBlock.getId());
-
-        if (!oldTags.isEmpty()) {
-            processRedisTagRemoval(userId, oldTags);
-        }
-        this.processMetadata(Collections.singletonList(targetBlock), userId);
-    }
-
-    // TODO: 리팩토링 잊으면 안됨!
-    private void processRedisTagRemoval(Long userId, List<BlockTag> tagsToRemove) {
-        Map<Long, List<BlockTag>> groupedTags = tagsToRemove.stream()
-                .collect(Collectors.groupingBy(bt -> bt.getTag().getId()));
-
-        groupedTags.forEach((tagId, tags) -> {
-            Tag tag = tags.get(0).getTag();
-            String name = tag.getName();
-            int countToRemove = tags.size();
-
-            Set<String> lexEntries = new HashSet<>();
-            lexEntries.add(userId + ":" + HangulUtils.splitToJaso(name) + "*" + name + "*" + tagId);
-            lexEntries.add(userId + ":" + HangulUtils.getChosung(name) + "*" + name + "*" + tagId);
-
-            blockTagRepository.removeTagsFromRedis(userId, tagId, lexEntries, countToRemove);
-        });
-    }
 
     @Override
     public void processTradeLogMetadata(TradeLog tradeLog, Long userId, Ticker mainTicker) {
