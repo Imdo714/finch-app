@@ -6,7 +6,7 @@ import com.joojoo.api.blockTag.presentation.dto.request.BlockRelatedDataBundle;
 import com.joojoo.api.blockTag.presentation.dto.response.all.BlockDetailMode;
 import com.joojoo.api.blockTag.presentation.dto.response.all.DailyGroupResponseDto;
 import com.joojoo.api.blockTag.presentation.dto.response.all.TradeLogResponseDto;
-import com.joojoo.api.blockTag.presentation.dto.response.detail.DailyBlockDetailsResponse;
+import com.joojoo.global.common.response.detail.DailyBlockDetailsResponse;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

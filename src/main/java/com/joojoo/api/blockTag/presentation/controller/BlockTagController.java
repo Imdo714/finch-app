@@ -1,8 +1,8 @@
 package com.joojoo.api.blockTag.presentation.controller;
 
 import com.joojoo.api.blockTag.application.port.in.GetBlockTagUseCase;
-import com.joojoo.api.blockTag.presentation.dto.response.detail.DailyBlockDetailsResponse;
-import com.joojoo.api.blockTag.presentation.dto.response.detail.TotalCountResponse;
+import com.joojoo.global.common.response.detail.DailyBlockDetailsResponse;
+import com.joojoo.global.common.response.detail.count.TotalCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
 import com.joojoo.global.common.request.auth.CustomUserDetails;
 import com.joojoo.global.common.response.BaseResponse;

@@ -4,9 +4,9 @@ import com.joojoo.api.blockTag.application.port.in.GetBlockTagUseCase;
 import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
 import com.joojoo.api.blockTag.domain.service.assembler.BlockTagAssembler;
 import com.joojoo.api.blockTag.presentation.dto.response.all.TagDateResult;
-import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
-import com.joojoo.api.blockTag.presentation.dto.response.detail.DailyBlockDetailsResponse;
-import com.joojoo.api.blockTag.presentation.dto.response.detail.TotalCountResponse;
+import com.joojoo.global.common.response.detail.count.RelatedBlockDetailCountResponse;
+import com.joojoo.global.common.response.detail.DailyBlockDetailsResponse;
+import com.joojoo.global.common.response.detail.count.TotalCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
 import com.joojoo.api.util.date.DateUtils;
 import com.joojoo.global.exception.handleException.tags.TagNotFoundException;
@@ -49,7 +49,7 @@ public class BlockTagQueryService implements GetBlockTagUseCase {
 
     @Override
     public TotalCountResponse getBlockCount(Long userId, Long tagId) {
-        BlockTagCountResponse blockCount = blockTagRepository.getBlockCount(userId, tagId);
+        RelatedBlockDetailCountResponse blockCount = blockTagRepository.getBlockCount(userId, tagId);
 
         if (blockCount == null) {
             throw new TagNotFoundException();

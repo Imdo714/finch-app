@@ -1,7 +1,7 @@
 package com.joojoo.api.ticker.presentation.controller;
 
-import com.joojoo.api.blockTag.presentation.dto.response.detail.DailyBlockDetailsResponse;
-import com.joojoo.api.blockTag.presentation.dto.response.detail.TotalCountResponse;
+import com.joojoo.global.common.response.detail.DailyBlockDetailsResponse;
+import com.joojoo.global.common.response.detail.count.TotalCountResponse;
 import com.joojoo.api.ticker.application.TickerService;
 import com.joojoo.api.ticker.application.port.in.GetTickerUseCase;
 import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
@@ -97,6 +97,6 @@ public class TickerController {
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long tickerId
     ){
-        return BaseResponse.ok(tickerService.getTickerDetailCount(user.getUserId(), tickerId));
+        return BaseResponse.ok(getTickerUseCase.getTickerDetailCount(user.getUserId(), tickerId));
     }
 }

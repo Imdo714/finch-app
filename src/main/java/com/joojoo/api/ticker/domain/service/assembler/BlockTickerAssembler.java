@@ -1,7 +1,7 @@
 package com.joojoo.api.ticker.domain.service.assembler;
 
 import com.joojoo.api.block.domain.model.entity.Block;
-import com.joojoo.api.blockTag.presentation.dto.response.detail.DailyBlockDetailsResponse;
+import com.joojoo.global.common.response.detail.DailyBlockDetailsResponse;
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
 import com.joojoo.api.blockTicker.presentation.dto.request.TickerDateResult;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;

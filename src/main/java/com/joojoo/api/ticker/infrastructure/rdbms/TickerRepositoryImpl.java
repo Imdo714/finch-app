@@ -1,6 +1,6 @@
 package com.joojoo.api.ticker.infrastructure.rdbms;
 
-import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
+import com.joojoo.global.common.response.detail.count.RelatedBlockDetailCountResponse;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.ticker.domain.repository.TickerRepository;
 import com.joojoo.api.ticker.infrastructure.queryDsl.TickerQueryDslRepository;
@@ -39,7 +39,7 @@ public class TickerRepositoryImpl implements TickerRepository {
     }
 
     @Override
-    public BlockTagCountResponse getTickerDetailCount(Long userId, Long tickerId) {
+    public RelatedBlockDetailCountResponse getTickerDetailCount(Long userId, Long tickerId) {
         return tickerQueryDslRepository.getTickerDetailCount(userId, tickerId);
     }
 }

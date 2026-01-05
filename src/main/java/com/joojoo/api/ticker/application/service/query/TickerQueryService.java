@@ -1,15 +1,19 @@
 package com.joojoo.api.ticker.application.service.query;
 
-import com.joojoo.api.blockTag.presentation.dto.response.detail.DailyBlockDetailsResponse;
+import com.joojoo.global.common.response.detail.count.RelatedBlockDetailCountResponse;
+import com.joojoo.global.common.response.detail.DailyBlockDetailsResponse;
+import com.joojoo.global.common.response.detail.count.TotalCountResponse;
 import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
 import com.joojoo.api.blockTicker.presentation.dto.request.TickerDateResult;
 import com.joojoo.api.ticker.application.port.in.GetTickerUseCase;
 import com.joojoo.api.ticker.domain.repository.TickerRedisRepository;
+import com.joojoo.api.ticker.domain.repository.TickerRepository;
 import com.joojoo.api.ticker.domain.service.TickerDomainService;
 import com.joojoo.api.ticker.domain.service.assembler.BlockTickerAssembler;
 import com.joojoo.api.ticker.presentation.dto.request.range.TickerSearchRange;
 import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
 import com.joojoo.api.util.date.DateUtils;
+import com.joojoo.global.exception.handleException.tickers.TickerNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -27,6 +31,8 @@ public class TickerQueryService implements GetTickerUseCase {
     private final BlockTickerRepository blockTickerRepository;
     private final DateUtils dateUtils;
     private final BlockTickerAssembler blockTickerAssembler;
+
+    private final TickerRepository tickerRepository;
 
     @Override
     public TickerSearchResponse search(String query) {
@@ -47,6 +53,16 @@ public class TickerQueryService implements GetTickerUseCase {
 
         List<LocalDate> displayDates = result.getTargetDates().stream().limit(2).toList();
         return blockTickerAssembler.assembleBlockTickersResponse(result, displayDates);
+    }
+
+    @Override
+    public TotalCountResponse getTickerDetailCount(Long userId, Long tickerId) {
+        RelatedBlockDetailCountResponse tickerCount = tickerRepository.getTickerDetailCount(userId, tickerId);
+
+        if (tickerCount == null) {
+            throw new TickerNotFoundException();
+        }
+        return new TotalCountResponse(tickerCount.getName(), tickerCount.getTotalCount());
     }
 
 }

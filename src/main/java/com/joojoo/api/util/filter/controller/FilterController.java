@@ -1,6 +1,6 @@
 package com.joojoo.api.util.filter.controller;
 
-import com.joojoo.api.blockTag.presentation.dto.response.detail.DailyBlockDetailsResponse;
+import com.joojoo.global.common.response.detail.DailyBlockDetailsResponse;
 import com.joojoo.api.util.filter.application.FilterService;
 import com.joojoo.api.util.filter.dto.request.TagListDto;
 import com.joojoo.api.util.filter.dto.request.TickerAndTagIdDto;

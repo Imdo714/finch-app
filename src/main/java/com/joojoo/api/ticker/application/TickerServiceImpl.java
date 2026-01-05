@@ -1,7 +1,5 @@
 package com.joojoo.api.ticker.application;
 
-import com.joojoo.api.blockTag.presentation.dto.response.detail.BlockTagCountResponse;
-import com.joojoo.api.blockTag.presentation.dto.response.detail.TotalCountResponse;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.ticker.domain.provider.TickerDataProvider;
 import com.joojoo.api.ticker.domain.repository.TickerRedisRepository;
@@ -10,7 +8,6 @@ import com.joojoo.api.ticker.presentation.dto.request.TickerDataDto;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;
 import com.joojoo.global.exception.handleException.tickers.InvalidTickerOrNameException;
-import com.joojoo.global.exception.handleException.tickers.TickerNotFoundException;
 import com.joojoo.global.exception.handleException.users.UserNotFoundException;
 import com.joojoo.global.util.HangulUtils;
 import lombok.RequiredArgsConstructor;
@@ -88,15 +85,6 @@ public class TickerServiceImpl implements TickerService {
             tickerRedisRepository.addStocksToRedis(tickers);
         }
         log.info("티커 Cache 업데이트 완료: {}건 처리됨", tickers.size());
-    }
-
-    @Override
-    public TotalCountResponse getTickerDetailCount(Long userId, Long tickerId) {
-        Ticker ticker = tickerRepository.findById(tickerId)
-                .orElseThrow(TickerNotFoundException::new);
-
-        BlockTagCountResponse tickerDetailCount = tickerRepository.getTickerDetailCount(userId, tickerId);
-        return new TotalCountResponse(tickerDetailCount.getName(), tickerDetailCount.getTotalCount());
     }
 
     private Stream<String> generateSearchKeywords(Ticker stock) {
