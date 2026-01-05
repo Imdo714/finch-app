@@ -12,8 +12,6 @@ public interface TickerRepository {
 
     List<Ticker> findAll();
 
-    List<Ticker> findAllByTickerNames(Set<String> tickerSymbols);
-
     Optional<Ticker> findById(Long tickerId);
 
     RelatedBlockDetailCountResponse getTickerDetailCount(Long userId, Long tickerId);
