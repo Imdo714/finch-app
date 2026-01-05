@@ -1,4 +1,4 @@
-package com.joojoo.global.util;
+package com.joojoo.global.util.hangul;
 
 public class HangulUtils {
 

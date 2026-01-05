@@ -1,4 +1,4 @@
-package com.joojoo.api.tradeLog.application;
+package com.joojoo.api.tradeLog.application.service.command;
 
 import com.joojoo.api.tradeLog.application.port.in.DeleteTradeLogUseCase;
 import com.joojoo.api.tradeLog.domain.repository.TradeLogRepository;
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class TradeLogUseCaseService implements DeleteTradeLogUseCase {
+public class DeleteTradeLogService implements DeleteTradeLogUseCase {
 
     private final TradeLogRepository tradeLogRepository;
 

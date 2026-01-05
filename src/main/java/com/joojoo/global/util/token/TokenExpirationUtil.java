@@ -1,4 +1,4 @@
-package com.joojoo.global.common.util;
+package com.joojoo.global.util.token;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;

@@ -1,11 +1,13 @@
 package com.joojoo.api.ticker.infrastructure.persistence;
 
 import com.joojoo.api.ticker.application.in.TickerInService;
-import com.joojoo.api.ticker.infrastructure.rdbms.TickerJpaRepository;
-import com.joojoo.global.common.response.detail.count.RelatedBlockDetailCountResponse;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.ticker.domain.repository.TickerRepository;
 import com.joojoo.api.ticker.infrastructure.queryDsl.TickerQueryDslRepository;
+import com.joojoo.api.ticker.infrastructure.rdbms.TickerJpaRepository;
+import com.joojoo.global.common.response.detail.count.RelatedBlockDetailCountResponse;
+import com.joojoo.global.exception.handleException.tickers.TickerNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +40,15 @@ public class TickerRepositoryImpl implements TickerRepository, TickerInService {
     @Override
     public RelatedBlockDetailCountResponse getTickerDetailCount(Long userId, Long tickerId) {
         return tickerQueryDslRepository.getTickerDetailCount(userId, tickerId);
+    }
+
+    @Override
+    public Ticker getReferenceById(Long tickerId) {
+        try {
+            return tickerJpaRepository.getReferenceById(tickerId);
+        } catch (EntityNotFoundException e) {
+            throw new TickerNotFoundException();
+        }
     }
 
     @Override

@@ -8,7 +8,7 @@ import com.joojoo.global.common.response.detail.count.RelatedBlockDetailCountRes
 import com.joojoo.global.common.response.detail.DailyBlockDetailsResponse;
 import com.joojoo.global.common.response.detail.count.TotalCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
-import com.joojoo.api.util.date.DateUtils;
+import com.joojoo.global.util.date.DateUtils;
 import com.joojoo.global.exception.handleException.tags.TagNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

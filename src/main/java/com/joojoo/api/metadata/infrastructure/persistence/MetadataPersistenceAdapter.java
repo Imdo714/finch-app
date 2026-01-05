@@ -7,7 +7,7 @@ import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
 import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
 import com.joojoo.api.metadata.application.port.out.MetadataPort;
 import com.joojoo.api.tag.domain.model.entity.Tag;
-import com.joojoo.global.util.HangulUtils;
+import com.joojoo.global.util.hangul.HangulUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

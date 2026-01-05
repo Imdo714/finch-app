@@ -3,7 +3,7 @@ package com.joojoo.api.user.domain.service;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;
 import com.joojoo.api.user.presentation.dto.request.kakao.KakaoUserDto;
-import com.joojoo.api.util.random.GeneratorRandom;
+import com.joojoo.api.util.port.in.GeneratorRandom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

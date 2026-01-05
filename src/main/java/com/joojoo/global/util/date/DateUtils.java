@@ -1,4 +1,4 @@
-package com.joojoo.api.util.date;
+package com.joojoo.global.util.date;
 
 import org.springframework.stereotype.Component;
 

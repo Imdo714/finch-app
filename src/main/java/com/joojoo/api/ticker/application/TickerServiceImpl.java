@@ -9,7 +9,7 @@ import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;
 import com.joojoo.global.exception.handleException.tickers.InvalidTickerOrNameException;
 import com.joojoo.global.exception.handleException.users.UserNotFoundException;
-import com.joojoo.global.util.HangulUtils;
+import com.joojoo.global.util.hangul.HangulUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
