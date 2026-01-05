@@ -1,4 +1,4 @@
-package com.joojoo.api.ticker.application.port.in;
+package com.joojoo.api.blockTicker.application.port.in;
 
 import com.joojoo.global.common.response.detail.DailyBlockDetailsResponse;
 import com.joojoo.global.common.response.detail.count.TotalCountResponse;

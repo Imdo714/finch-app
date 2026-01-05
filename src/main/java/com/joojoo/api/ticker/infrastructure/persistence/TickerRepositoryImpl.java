@@ -1,5 +1,6 @@
-package com.joojoo.api.ticker.infrastructure.rdbms;
+package com.joojoo.api.ticker.infrastructure.persistence;
 
+import com.joojoo.api.ticker.infrastructure.rdbms.TickerJpaRepository;
 import com.joojoo.global.common.response.detail.count.RelatedBlockDetailCountResponse;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.ticker.domain.repository.TickerRepository;

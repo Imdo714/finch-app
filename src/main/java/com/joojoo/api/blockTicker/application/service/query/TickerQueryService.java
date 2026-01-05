@@ -1,15 +1,15 @@
-package com.joojoo.api.ticker.application.service.query;
+package com.joojoo.api.blockTicker.application.service.query;
 
 import com.joojoo.global.common.response.detail.count.RelatedBlockDetailCountResponse;
 import com.joojoo.global.common.response.detail.DailyBlockDetailsResponse;
 import com.joojoo.global.common.response.detail.count.TotalCountResponse;
 import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
 import com.joojoo.api.blockTicker.presentation.dto.request.TickerDateResult;
-import com.joojoo.api.ticker.application.port.in.GetTickerUseCase;
+import com.joojoo.api.blockTicker.application.port.in.GetTickerUseCase;
 import com.joojoo.api.ticker.domain.repository.TickerRedisRepository;
 import com.joojoo.api.ticker.domain.repository.TickerRepository;
-import com.joojoo.api.ticker.domain.service.TickerDomainService;
-import com.joojoo.api.ticker.domain.service.assembler.BlockTickerAssembler;
+import com.joojoo.api.blockTicker.domain.service.TickerDomainService;
+import com.joojoo.api.blockTicker.domain.service.BlockTickerAssembler;
 import com.joojoo.api.ticker.presentation.dto.request.range.TickerSearchRange;
 import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
 import com.joojoo.api.util.date.DateUtils;
@@ -27,12 +27,11 @@ import java.util.List;
 public class TickerQueryService implements GetTickerUseCase {
 
     private final TickerRedisRepository tickerRedisRepository;
-    private final TickerDomainService tickerDomainService;
     private final BlockTickerRepository blockTickerRepository;
+    private final TickerRepository tickerRepository;
     private final DateUtils dateUtils;
     private final BlockTickerAssembler blockTickerAssembler;
-
-    private final TickerRepository tickerRepository;
+    private final TickerDomainService tickerDomainService;
 
     @Override
     public TickerSearchResponse search(String query) {

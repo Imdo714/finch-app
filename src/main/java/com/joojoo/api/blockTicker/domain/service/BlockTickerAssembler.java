@@ -1,4 +1,4 @@
-package com.joojoo.api.ticker.domain.service.assembler;
+package com.joojoo.api.blockTicker.domain.service;
 
 import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.global.common.response.detail.DailyBlockDetailsResponse;

@@ -1,4 +1,4 @@
-package com.joojoo.api.ticker.domain.service;
+package com.joojoo.api.blockTicker.domain.service;
 
 import com.joojoo.api.ticker.presentation.dto.request.range.TickerSearchRange;
 import com.joojoo.api.util.port.in.JasoConverter;
