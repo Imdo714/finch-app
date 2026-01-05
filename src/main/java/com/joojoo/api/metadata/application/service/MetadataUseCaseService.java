@@ -8,16 +8,16 @@ import com.joojoo.api.metadata.application.port.in.MetadataUseCase;
 import com.joojoo.api.metadata.application.port.out.MetadataPort;
 import com.joojoo.api.metadata.domain.service.MetadataAnalyzer;
 import com.joojoo.api.tag.application.in.TagInService;
-import com.joojoo.api.tag.domain.model.entity.Tag;
 import com.joojoo.api.ticker.application.in.TickerInService;
-import com.joojoo.api.util.metadata.MetadataContext;
-import com.joojoo.global.util.HangulUtils;
+import com.joojoo.api.ticker.domain.model.entity.Ticker;
+import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
+import com.joojoo.api.metadata.domain.MetadataContext;
+import com.joojoo.global.common.enums.TagSourceType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -70,6 +70,32 @@ public class MetadataUseCaseService implements MetadataUseCase {
             metadataPort.processRedisTagRemoval(userId, oldTags);
         }
         this.processMetadata(Collections.singletonList(targetBlock), userId);
+    }
+
+    @Override
+    @Transactional
+    public void processTradeLogMetadata(TradeLog tradeLog, Long userId, Ticker mainTicker) {
+        MetadataContext context = new MetadataContext();
+
+        // 분석 대상 데이터 정의 (SourceType별 콘텐츠 스캔)
+        Map<TagSourceType, String> sources = tradeLog.getMetadataSources();
+
+        // 스캔 및 마스터 데이터 일괄 로드
+        Map<TagSourceType, List<MatchedMetadataDto>> analysisMap = metadataAnalyzer.scanSources(sources, context);
+        context.loadEntities(tickerInService, tagInService);
+
+        // 도메인 엔티티 생성
+        List<BlockTicker> tlTickers = metadataAnalyzer.createTradeLogTickers(analysisMap, context, tradeLog, userId);
+        List<BlockTag> tlTags = metadataAnalyzer.createTradeLogTags(analysisMap, context, tradeLog, userId);
+        tlTickers.add(BlockTicker.create(tradeLog, mainTicker, userId, TagSourceType.TRADE_HEADER, -1, 0));
+
+        // 저장 및 동기화
+        metadataPort.saveTickersAndTags(tlTickers, tlTags);
+
+        // Redis 저장
+        if (!context.getTagNames().isEmpty()) {
+            metadataPort.syncUserTagsToRedis(userId, context.getTagMap());
+        }
     }
 
 }

@@ -4,6 +4,7 @@ import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.tradeLog.presentation.dto.request.TradeRequestDto;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.global.common.entity.BaseTimeEntity;
+import com.joojoo.global.common.enums.TagSourceType;
 import com.joojoo.global.common.enums.TradeType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -13,6 +14,8 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -85,4 +88,13 @@ public class TradeLog extends BaseTimeEntity {
                 .tradingPlan(tradeRequestDto.getTradingPlan())
                 .build();
     }
+
+    public Map<TagSourceType, String> getMetadataSources() {
+        return Map.of(
+                TagSourceType.TRADE_MEMO, Objects.requireNonNullElse(this.memo, ""),
+                TagSourceType.TRADE_RISK, Objects.requireNonNullElse(this.riskFactor, ""),
+                TagSourceType.TRADE_PLAN, Objects.requireNonNullElse(this.tradingPlan, "")
+        );
+    }
+
 }

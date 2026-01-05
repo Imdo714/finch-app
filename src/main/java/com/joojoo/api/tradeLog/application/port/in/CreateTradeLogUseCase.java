@@ -1,7 +1,7 @@
-package com.joojoo.api.tradeLog.application;
+package com.joojoo.api.tradeLog.application.port.in;
 
 import com.joojoo.api.tradeLog.presentation.dto.request.TradeRequestDto;
 
-public interface TradeLogService {
+public interface CreateTradeLogUseCase {
     void createTradesLog(Long userId, TradeRequestDto tradeRequestDto);
 }

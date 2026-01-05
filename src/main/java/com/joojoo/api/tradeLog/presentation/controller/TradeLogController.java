@@ -1,6 +1,6 @@
 package com.joojoo.api.tradeLog.presentation.controller;
 
-import com.joojoo.api.tradeLog.application.TradeLogService;
+import com.joojoo.api.tradeLog.application.port.in.CreateTradeLogUseCase;
 import com.joojoo.api.tradeLog.presentation.dto.request.TradeRequestDto;
 import com.joojoo.global.common.request.auth.CustomUserDetails;
 import com.joojoo.global.common.response.BaseResponse;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/trades")
 public class TradeLogController {
 
-    private final TradeLogService tradeLogService;
+    private final CreateTradeLogUseCase createTradeLogUseCase;
 
     @Operation(summary = "템플릿 생성 API", description = "템플릿 작성 API입니다.")
     @ApiResponses({
@@ -50,7 +50,7 @@ public class TradeLogController {
             @AuthenticationPrincipal CustomUserDetails user,
             @Valid @RequestBody TradeRequestDto tradeRequestDto
     ) {
-        tradeLogService.createTradesLog(user.getUserId(), tradeRequestDto);
+        createTradeLogUseCase.createTradesLog(user.getUserId(), tradeRequestDto);
         return BaseResponse.ok("템플릿 작성 성공!");
     }
 
