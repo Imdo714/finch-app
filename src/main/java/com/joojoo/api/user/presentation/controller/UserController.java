@@ -76,12 +76,13 @@ public class UserController {
         return BaseResponse.ok(socialLoginUseCase.appleSocialLogin(payload.getCode()));
     }
 
-    // 애플 웹 용
-//    @PostMapping(value = "/apple/web/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-//    public BaseResponse<LoginResponse> appleWebLogin(AuthCodeDto payload) {
-//        return BaseResponse.ok(socialLoginUseCase.appleWebLogin(payload.getCode()));
-//    }
+    /** 애플 로그인 웹/안드로이드 */
+    @PostMapping(value = "/apple/android/login")
+    public BaseResponse<LoginResponse> appleAndroidLogin(@RequestBody AuthCodeDto payload) {
+        return BaseResponse.ok(socialLoginUseCase.appleWebLogin(payload.getCode()));
+    }
 
+    /** 애플 서버로 받은 코드를 앱 서버로 리다력션 */
     @PostMapping(value = "/apple/web/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<Void> appleWebLogin(AuthCodeDto payload) {
         String intentUrl = socialLoginUseCase.getRedirectUrl(payload.getCode());
