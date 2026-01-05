@@ -7,4 +7,6 @@ public interface SocialLoginUseCase {
     LoginResponse kakaoWebSocialLogin(String code);
     LoginResponse kakaoAppSocialLogin(AuthTokenDto authTokenDto);
     LoginResponse appleSocialLogin(String code);
+
+    LoginResponse appleWebLogin(String code);
 }

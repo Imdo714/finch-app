@@ -31,8 +31,6 @@ import java.util.Map;
 @Service
 public class AppleClientSecretImpl implements AppleClientSecret {
 
-    private final RestTemplate restTemplate = new RestTemplate();
-
     @Value("${APPLE_TEAM_ID}")
     private String teamId;
 
