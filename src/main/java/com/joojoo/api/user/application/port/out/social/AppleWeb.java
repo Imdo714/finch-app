@@ -41,9 +41,6 @@ public class AppleWeb {
     @Value("${APPLE_PRIVATE_KEY}")
     private String privateKeyP8;
 
-    @Value("${FINCH_SCHEME_KEY}")
-    private String scheme;
-
     // Client Secret 생성
     public String createClientSecret() {
         Date now = new Date();
@@ -114,11 +111,4 @@ public class AppleWeb {
         }
     }
 
-    public String getPackageName() {
-        return clientServiceId;
-    }
-
-    public String getScheme() {
-        return scheme;
-    }
 }

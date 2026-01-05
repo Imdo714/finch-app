@@ -40,6 +40,9 @@ public class AppleClientSecretImpl implements AppleClientSecret {
     @Value("${APPLE_CLIENT_ID}")
     private String clientId;
 
+    @Value("${FINCH_SCHEME_KEY}")
+    private String scheme;
+
     @Value("${APPLE_PRIVATE_KEY}")
     private String privateKeyP8;
 
@@ -139,6 +142,16 @@ public class AppleClientSecretImpl implements AppleClientSecret {
     public AppleUserInfo getAppleUserInfo(String idToken) {
         Map<String, Object> claims = this.getAppleUserIdFromIdToken(idToken);
         return AppleUserInfo.from(claims);
+    }
+
+    @Override
+    public String getPackageName() {
+        return clientId;
+    }
+
+    @Override
+    public String getScheme() {
+        return scheme;
     }
 
     // PrivateKey 객체 생성 헬퍼 (BouncyCastle 라이브러리 필요할 수 있음)

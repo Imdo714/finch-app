@@ -17,4 +17,8 @@ public interface AppleClientSecret {
 
     /** idToken으로 사용자 정보 추출하는 메서드 */
     AppleUserInfo getAppleUserInfo(String idToken);
+
+    String getPackageName();
+
+    String getScheme();
 }

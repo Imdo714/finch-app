@@ -75,8 +75,8 @@ public class SocialLoginService implements SocialLoginUseCase {
         StringBuilder uriBuilder = new StringBuilder("intent://callback");
         uriBuilder.append("?code=").append(code);
         uriBuilder.append("#Intent;");
-        uriBuilder.append("package=").append(appleWeb.getPackageName()).append(";");
-        uriBuilder.append("scheme=").append(appleWeb.getScheme()).append(";");
+        uriBuilder.append("package=").append(appleClientSecret.getPackageName()).append(";");
+        uriBuilder.append("scheme=").append(appleClientSecret.getScheme()).append(";");
         uriBuilder.append("end");
 
         return uriBuilder.toString();
