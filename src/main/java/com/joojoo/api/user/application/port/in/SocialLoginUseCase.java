@@ -9,4 +9,6 @@ public interface SocialLoginUseCase {
     LoginResponse appleSocialLogin(String code);
 
     LoginResponse appleWebLogin(String code);
+
+    String getRedirectUrl(String code);
 }

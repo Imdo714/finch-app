@@ -18,9 +18,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 @Tag(name = "User API", description = "유저 관련 API")
 @RestController
@@ -73,14 +77,19 @@ public class UserController {
     }
 
     // 애플 웹 용
-//    @PostMapping("/apple/web/login")
-//    public BaseResponse<LoginResponse> appleWebLogin(@RequestBody AuthCodeDto payload) {
+//    @PostMapping(value = "/apple/web/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+//    public BaseResponse<LoginResponse> appleWebLogin(AuthCodeDto payload) {
 //        return BaseResponse.ok(socialLoginUseCase.appleWebLogin(payload.getCode()));
 //    }
 
     @PostMapping(value = "/apple/web/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public BaseResponse<LoginResponse> appleWebLogin(AuthCodeDto payload) {
-        return BaseResponse.ok(socialLoginUseCase.appleWebLogin(payload.getCode()));
+    public ResponseEntity<Void> appleWebLogin(AuthCodeDto payload) {
+        String intentUrl = socialLoginUseCase.getRedirectUrl(payload.getCode());
+
+        // 307(Temporary Redirect)을 사용하여 앱으로 강제 이동
+        return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
+                .location(URI.create(intentUrl))
+                .build();
     }
 
     @Operation(summary = "회원 탈퇴", description = "현재 로그인된 사용자를 탈퇴 처리합니다.")

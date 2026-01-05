@@ -70,6 +70,18 @@ public class SocialLoginService implements SocialLoginUseCase {
         return generateLoginResponse(user);
     }
 
+    @Override
+    public String getRedirectUrl(String code) {
+        StringBuilder uriBuilder = new StringBuilder("intent://callback");
+        uriBuilder.append("?code=").append(code);
+        uriBuilder.append("#Intent;");
+        uriBuilder.append("package=").append(appleWeb.getPackageName()).append(";");
+        uriBuilder.append("scheme=").append(appleWeb.getScheme()).append(";");
+        uriBuilder.append("end");
+
+        return uriBuilder.toString();
+    }
+
     private LoginResponse generateLoginResponse(User user){
         String refreshToken = jwtTokenUseCase.createAndSaveRefreshToken(user.getId(), user.getName(), user);
         String accessToken = jwtTokenUseCase.createAccessToken(user.getId(), user.getName());
