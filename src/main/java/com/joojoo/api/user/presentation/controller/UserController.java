@@ -71,6 +71,12 @@ public class UserController {
         return BaseResponse.ok(socialLoginUseCase.appleSocialLogin(payload.getCode()));
     }
 
+    // 애플 웹 용
+    @PostMapping("/apple/web/login")
+    public BaseResponse<LoginResponse> appleWebLogin(@RequestBody AuthCodeDto payload) {
+        return BaseResponse.ok(socialLoginUseCase.appleWebLogin(payload.getCode()));
+    }
+
     @Operation(summary = "회원 탈퇴", description = "현재 로그인된 사용자를 탈퇴 처리합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "회원 탈퇴 성공"),
