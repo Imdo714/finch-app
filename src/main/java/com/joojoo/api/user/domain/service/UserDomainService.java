@@ -16,7 +16,7 @@ public class UserDomainService {
 
     /** Kakao 로그인/회원가입 */
     public User registerOrLogin(KakaoUserDto kakaoUser, String socialRefreshToken) {
-        return userRepository.findByEmail(kakaoUser.getEmail())
+        return userRepository.findByProviderId(kakaoUser.getProviderId())
                 .map(user -> {
                     user.updateSocialRefreshToken(socialRefreshToken);
                     return user;
