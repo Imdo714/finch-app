@@ -12,7 +12,7 @@ import com.joojoo.api.blockTicker.domain.service.TickerDomainService;
 import com.joojoo.api.blockTicker.domain.service.BlockTickerAssembler;
 import com.joojoo.api.ticker.presentation.dto.request.range.TickerSearchRange;
 import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
-import com.joojoo.api.util.date.DateUtils;
+import com.joojoo.global.util.date.DateUtils;
 import com.joojoo.global.exception.handleException.tickers.TickerNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

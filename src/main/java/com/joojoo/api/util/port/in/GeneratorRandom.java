@@ -1,4 +1,4 @@
-package com.joojoo.api.util.random;
+package com.joojoo.api.util.port.in;
 
 public interface GeneratorRandom {
     String getRandomName();
