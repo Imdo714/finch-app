@@ -70,7 +70,7 @@ public class User extends BaseTimeEntity {
             .profileImageUrl(kakaoUser.getProfileImageUrl())
             .provider(Provider.KAKAO)
             .currency(Currency.KRW)
-            .role(Role.USER)
+            .role(Role.PENDING)
             .providerId(kakaoUser.getProviderId())
             .socialRefresh(socialRefreshToken)
             .build();
@@ -84,7 +84,7 @@ public class User extends BaseTimeEntity {
                 .providerId(providerId)
                 .socialRefresh(appleRefreshToken)
                 .currency(Currency.KRW)
-                .role(Role.USER)
+                .role(Role.PENDING)
                 .build();
     }
 

@@ -8,6 +8,7 @@ import lombok.Getter;
 public enum Role {
 
     USER("회원"),
+    PENDING("대기"),
     ADMIN("관리자"),
     ;
 
