@@ -7,6 +7,7 @@ import com.joojoo.api.user.domain.model.enums.Role;
 import com.joojoo.api.user.presentation.dto.request.kakao.KakaoUserDto;
 import com.joojoo.global.common.entity.BaseTimeEntity;
 import com.joojoo.global.exception.handleException.users.AdminOnlyAccessException;
+import com.joojoo.global.exception.handleException.users.UserAlreadyActivatedException;
 import com.joojoo.global.exception.handleException.users.UserNameRequiredException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -123,5 +124,12 @@ public class User extends BaseTimeEntity {
         } else if (this.profileImageUrl == null) {
             this.profileImageUrl = DefaultProfileImage.PROFILE_1.getFileName();
         }
+    }
+
+    public void activateUser() {
+        if (this.role != Role.PENDING) {
+            throw new UserAlreadyActivatedException();
+        }
+        this.role = Role.USER;
     }
 }

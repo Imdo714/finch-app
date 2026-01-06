@@ -169,4 +169,10 @@ public class UserController {
         return BaseResponse.ok(getUserUseCase.getUserInfo(user.getUserId()));
     }
 
+    @PostMapping("/consent")
+    public BaseResponse<String> completeSignup(@AuthenticationPrincipal CustomUserDetails user){
+        updateUserUseCase.completeSignup(user.getUserId());
+        return BaseResponse.ok("OK");
+    }
+
 }

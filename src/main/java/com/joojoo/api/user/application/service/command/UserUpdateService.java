@@ -31,4 +31,11 @@ public class UserUpdateService implements UpdateUserUseCase  {
 
         return UserInfoResponse.of(user, filePort.getFullUrl(user.getProfileImageUrl()));
     }
+
+    @Override
+    public void completeSignup(Long userId) {
+        User user = userRepository.getUserById(userId);
+        user.activateUser();
+    }
+
 }

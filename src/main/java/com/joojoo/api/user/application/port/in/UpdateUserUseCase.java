@@ -7,4 +7,7 @@ public interface UpdateUserUseCase {
 
     /** 회원 이름, 프로필 업데이트 */
     UserInfoResponse updateProfile(Long userId, UpdateProfileDto updateProfileDto);
+
+    /** 회원 동의 승인 시 권한 업데이트 */
+    void completeSignup(Long userId);
 }
