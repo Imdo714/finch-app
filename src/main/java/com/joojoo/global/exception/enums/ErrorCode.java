@@ -27,6 +27,7 @@ public enum ErrorCode {
     ADMIN_ONLY(403, "ADMIN_ONLY", "관리자 권한이 필요합니다."),
     USER_NAME_REQUIRED(400, "USER_NAME_REQUIRED", "초기 설정 시 닉네임은 필수입니다."),
     USER_NAME_DUPLICATED(409, "USER_NAME_DUPLICATED", "이미 사용 중인 닉네임입니다."),
+    USER_ALREADY_ACTIVATED(400, "USER_ALREADY_ACTIVATED", "이미 가입이 완료된 회원이거나 변경할 수 없는 상태입니다."),
 
     // ───────────────────────────── 인증/인가(auth) ─────────────────────────────
     INVALID_AUTHORIZATION_CODE(400, "INVALID_AUTHORIZATION_CODE", "유효하지 않은 인가 코드입니다."),

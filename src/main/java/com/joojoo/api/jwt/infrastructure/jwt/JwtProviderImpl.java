@@ -37,19 +37,21 @@ public class JwtProviderImpl implements JwtProvider {
     }
 
     @Override
-    public String createAccessToken(Long userId, String userName) {
+    public String createAccessToken(Long userId, String userName, String role) {
         Claims claims = Jwts.claims()
                 .subject(userName)
                 .add("userId", userId) // 여기서 값을 추가합니다
+                .add("role", role)
                 .build();
         return createToken(claims, accessTokenValidity);
     }
 
     @Override
-    public String createRefreshToken(Long userId, String userName) {
+    public String createRefreshToken(Long userId, String userName, String role) {
         Claims claims = Jwts.claims()
                 .subject(userName)
                 .add("userId", userId)
+                .add("role", role)
                 .build();
 
         return createToken(claims, refreshTokenValidity);
@@ -103,9 +105,10 @@ public class JwtProviderImpl implements JwtProvider {
             throw new TokenVerificationException();
         }
         Long userId = Long.valueOf(claims.get("userId").toString());
+        String role = claims.get("role").toString();
 
-        CustomUserDetails user = new CustomUserDetails(userId, username);
-        return new UsernamePasswordAuthenticationToken(user, "", List.of());
+        CustomUserDetails user = new CustomUserDetails(userId, username, role);
+        return new UsernamePasswordAuthenticationToken(user, "", user.getAuthorities());
     }
 
     @Override

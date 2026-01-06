@@ -169,4 +169,13 @@ public class UserController {
         return BaseResponse.ok(getUserUseCase.getUserInfo(user.getUserId()));
     }
 
+    @Operation(summary = "동의 화면 API", description = "동의 항목 동의 성공시 회원 토큰으로 응답")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "회원 권한 변경 성공")
+    })
+    @PostMapping("/consent")
+    public BaseResponse<LoginResponse> completeSignup(@AuthenticationPrincipal CustomUserDetails user){
+        return BaseResponse.ok(updateUserUseCase.completeSignup(user.getUserId()));
+    }
+
 }

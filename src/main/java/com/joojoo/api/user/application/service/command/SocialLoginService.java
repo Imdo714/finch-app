@@ -83,8 +83,8 @@ public class SocialLoginService implements SocialLoginUseCase {
     }
 
     private LoginResponse generateLoginResponse(User user){
-        String refreshToken = jwtTokenUseCase.createAndSaveRefreshToken(user.getId(), user.getName(), user);
-        String accessToken = jwtTokenUseCase.createAccessToken(user.getId(), user.getName());
+        String refreshToken = jwtTokenUseCase.createAndSaveRefreshToken(user.getId(), user.getName(), user, user.getRole().name());
+        String accessToken = jwtTokenUseCase.createAccessToken(user.getId(), user.getName(), user.getRole().name());
         return LoginResponse.of(user, accessToken, refreshToken);
     }
 

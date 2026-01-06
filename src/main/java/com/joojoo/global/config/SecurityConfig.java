@@ -2,6 +2,7 @@ package com.joojoo.global.config;
 
 import com.joojoo.api.jwt.domain.repository.TokenBlacklistRepository;
 import com.joojoo.api.jwt.domain.service.JwtProvider;
+import com.joojoo.global.exception.authentication.CustomAccessDeniedHandler;
 import com.joojoo.global.exception.authentication.CustomAuthenticationEntryPoint;
 import com.joojoo.global.jwt.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
@@ -40,15 +41,19 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource))
 
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/user/kakao/login", "/user/apple/login", "/user/apple/web/login", "/user/apple/android/login", "/token/reissue").permitAll()
-                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
-                .requestMatchers("/health/**").permitAll()
-                .anyRequest().authenticated()
+                    .requestMatchers("/user/kakao/login", "/user/apple/login", "/user/apple/web/login", "/user/apple/android/login", "/token/reissue").permitAll()
+                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/health/**").permitAll()
+
+                    // 가입 대기자(PENDING)만 접근 가능한 API
+                    .requestMatchers("/user/consent").hasRole("PENDING")
+
+                    .anyRequest().hasAnyRole("USER", "ADMIN")
             )
 
+            // Security 에서 걸린 애들 즉, authenticated()에 로그인을 안한 애들은 예외처리
             .exceptionHandling(ex -> ex
-                // Security 에서 걸린 애들 즉, authenticated()에 로그인을 안한 애들은 예외처리
-                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                    .authenticationEntryPoint(new CustomAuthenticationEntryPoint()) // 401
+                    .accessDeniedHandler(new CustomAccessDeniedHandler()) // 403
             )
 
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)

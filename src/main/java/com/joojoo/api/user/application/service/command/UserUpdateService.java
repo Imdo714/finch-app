@@ -1,11 +1,13 @@
 package com.joojoo.api.user.application.service.command;
 
+import com.joojoo.api.jwt.application.JwtTokenUseCase;
 import com.joojoo.api.user.application.port.in.UpdateUserUseCase;
 import com.joojoo.api.user.application.port.out.file.FilePort;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;
 import com.joojoo.api.user.domain.service.UserValidator;
 import com.joojoo.api.user.presentation.dto.request.UpdateProfileDto;
+import com.joojoo.api.user.presentation.dto.response.LoginResponse;
 import com.joojoo.api.user.presentation.dto.response.UserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ public class UserUpdateService implements UpdateUserUseCase  {
     private final UserRepository userRepository;
     private final UserValidator userValidator;
     private final FilePort filePort;
+    private final JwtTokenUseCase jwtTokenUseCase;
 
     @Override
     public UserInfoResponse updateProfile(Long userId, UpdateProfileDto dto) {
@@ -31,4 +34,18 @@ public class UserUpdateService implements UpdateUserUseCase  {
 
         return UserInfoResponse.of(user, filePort.getFullUrl(user.getProfileImageUrl()));
     }
+
+    @Override
+    public LoginResponse completeSignup(Long userId) {
+        User user = userRepository.getUserById(userId);
+        user.activateUser();
+        return generateLoginResponse(user);
+    }
+
+    private LoginResponse generateLoginResponse(User user){
+        String refreshToken = jwtTokenUseCase.createAndSaveRefreshToken(user.getId(), user.getName(), user, user.getRole().name());
+        String accessToken = jwtTokenUseCase.createAccessToken(user.getId(), user.getName(), user.getRole().name());
+        return LoginResponse.of(user, accessToken, refreshToken);
+    }
+
 }
