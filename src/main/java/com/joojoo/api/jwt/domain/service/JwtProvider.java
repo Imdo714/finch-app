@@ -7,10 +7,10 @@ import java.util.Date;
 
 public interface JwtProvider {
     // AccessToken 생성
-    String createAccessToken(Long userId, String userName);
+    String createAccessToken(Long userId, String userName, String role);
 
     // RefreshToken 생성
-    String createRefreshToken(Long userId, String userName);
+    String createRefreshToken(Long userId, String userName, String role);
 
     // 해더에서 토큰 추출
     String extractBearerToken(HttpServletRequest request);

@@ -33,8 +33,8 @@ public class JwtTokenUseCaseImpl implements JwtTokenUseCase {
 
     @Override
     @Transactional
-    public String createAndSaveRefreshToken(Long userId, String userName, User user) {
-        String refreshToken = jwtProvider.createRefreshToken(userId, userName);
+    public String createAndSaveRefreshToken(Long userId, String userName, User user, String role) {
+        String refreshToken = jwtProvider.createRefreshToken(userId, userName, role);
         LocalDateTime expiresAt = TokenExpirationUtil.toLocalDateTime(jwtProvider.getExpiration(refreshToken));
 
         registerRefreshToken(user, refreshToken, expiresAt);
@@ -54,8 +54,8 @@ public class JwtTokenUseCaseImpl implements JwtTokenUseCase {
     }
 
     @Override
-    public String createAccessToken(Long userId, String userName) {
-        return jwtProvider.createAccessToken(userId, userName);
+    public String createAccessToken(Long userId, String userName, String role) {
+        return jwtProvider.createAccessToken(userId, userName, role);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class JwtTokenUseCaseImpl implements JwtTokenUseCase {
                 .orElseThrow(RefreshTokenExpiredException::new);
 
         storedToken.validateSameToken(refreshToken);
-        return new ReissueTokenResponse(jwtProvider.createAccessToken(userDetails.getUserId(), userDetails.getUsername()));
+        return new ReissueTokenResponse(jwtProvider.createAccessToken(userDetails.getUserId(), userDetails.getUsername(), userDetails.getRole()));
     }
 
     private void validateToken(String refreshToken) {

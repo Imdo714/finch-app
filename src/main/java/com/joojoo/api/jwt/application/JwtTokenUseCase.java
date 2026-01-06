@@ -6,10 +6,10 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public interface JwtTokenUseCase {
     // RefreshToken 생성 및 DB 저장
-    String createAndSaveRefreshToken(Long userId, String userName, User user);
+    String createAndSaveRefreshToken(Long userId, String userName, User user, String role);
 
     // AccessToken 생성
-    String createAccessToken(Long userId, String userName);
+    String createAccessToken(Long userId, String userName, String role);
 
     // 로그아웃시 토큰 블랙리스트 삽입 및 DB제거
     void clearUserTokens(Long userId, HttpServletRequest request);

@@ -1,6 +1,7 @@
 package com.joojoo.api.user.application.port.in;
 
 import com.joojoo.api.user.presentation.dto.request.UpdateProfileDto;
+import com.joojoo.api.user.presentation.dto.response.LoginResponse;
 import com.joojoo.api.user.presentation.dto.response.UserInfoResponse;
 
 public interface UpdateUserUseCase {
@@ -9,5 +10,5 @@ public interface UpdateUserUseCase {
     UserInfoResponse updateProfile(Long userId, UpdateProfileDto updateProfileDto);
 
     /** 회원 동의 승인 시 권한 업데이트 */
-    void completeSignup(Long userId);
+    LoginResponse completeSignup(Long userId);
 }
