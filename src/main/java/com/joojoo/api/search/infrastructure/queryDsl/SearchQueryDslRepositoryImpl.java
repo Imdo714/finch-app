@@ -1,12 +1,11 @@
 package com.joojoo.api.search.infrastructure.queryDsl;
 
+import com.joojoo.api.common.domain.enums.SearchTarget;
 import com.joojoo.api.search.domain.entity.QSearchHistory;
 import com.joojoo.api.search.domain.entity.SearchHistory;
 import com.joojoo.api.tag.domain.model.entity.QTag;
-import com.joojoo.api.tag.domain.model.entity.Tag;
 import com.joojoo.api.ticker.domain.model.entity.QTicker;
-import com.joojoo.api.ticker.domain.model.entity.Ticker;
-import com.joojoo.api.common.domain.enums.SearchTarget;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -22,18 +21,6 @@ public class SearchQueryDslRepositoryImpl implements SearchQueryDslRepository {
     private final QSearchHistory searchHistory = QSearchHistory.searchHistory;
     private final QTag tag = QTag.tag;
     private final QTicker ticker = QTicker.ticker;
-
-    @Override
-    public void deleteIfExists(Long userId, SearchTarget type, Tag tag, Ticker ticker) {
-        queryFactory
-                .delete(searchHistory)
-                .where(
-                        searchHistory.user.id.eq(userId),
-                        searchHistory.targetType.eq(type),
-                        tag != null ? searchHistory.tag.eq(tag) : searchHistory.ticker.eq(ticker)
-                )
-                .execute();
-    }
 
     @Override
     public List<SearchHistory> findRecentByTargetType(Long userId, SearchTarget type, int limitSize) {
@@ -54,6 +41,25 @@ public class SearchQueryDslRepositoryImpl implements SearchQueryDslRepository {
                 .orderBy(searchHistory.createdAt.desc())
                 .limit(limitSize)
                 .fetch();
+    }
+
+    @Override
+    public void deleteDuplicateHistory(SearchHistory history) {
+        queryFactory
+                .delete(searchHistory)
+                .where(
+                        searchHistory.user.id.eq(history.getUser().getId()),
+                        searchHistory.targetType.eq(history.getTargetType()),
+                        targetCondition(history)
+                )
+                .execute();
+    }
+
+    private BooleanExpression targetCondition(SearchHistory history) {
+        if (history.getTargetType() == SearchTarget.TAG) {
+            return searchHistory.tag.eq(history.getTag());
+        }
+        return searchHistory.ticker.eq(history.getTicker());
     }
 
 }

@@ -7,12 +7,14 @@ import com.joojoo.api.search.application.port.in.GetSearchUseCase;
 import com.joojoo.api.search.presentation.dto.response.TagHistoryResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class GetSearchService implements GetSearchUseCase {
 
     private final SearchRangeFactory searchRangeFactory;

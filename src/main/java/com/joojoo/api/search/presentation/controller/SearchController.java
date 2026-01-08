@@ -4,6 +4,7 @@ import com.joojoo.api.common.domain.request.auth.CustomUserDetails;
 import com.joojoo.api.common.domain.response.BaseResponse;
 import com.joojoo.api.common.domain.response.ErrorResponse;
 import com.joojoo.api.search.application.SearchService;
+import com.joojoo.api.search.application.port.in.CreateSearchUseCase;
 import com.joojoo.api.search.application.port.in.GetSearchUseCase;
 import com.joojoo.api.search.presentation.dto.request.SearchRequestDto;
 import com.joojoo.api.search.presentation.dto.response.RecentSearchListResponse;
@@ -27,6 +28,7 @@ public class SearchController {
 
     private final SearchService searchService;
     private final GetSearchUseCase getSearchUseCase;
+    private final CreateSearchUseCase createSearchUseCase;
 
     @Operation(summary = "내가 사용한 태그 자동 검색 API", description = "검색창에서 내가 사용한 태그들 초성, 단어로 자동 검색해주는 API입니다.")
     @ApiResponses({
@@ -62,7 +64,7 @@ public class SearchController {
             @AuthenticationPrincipal CustomUserDetails user,
             @Valid @RequestBody SearchRequestDto requestDto
     ) {
-        searchService.recordSearch(user.getUserId(), requestDto);
+        createSearchUseCase.recordSearch(user.getUserId(), requestDto);
         return BaseResponse.ok("최근 검색어 저장 성공!");
     }
 
