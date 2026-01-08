@@ -1,11 +1,11 @@
 package com.joojoo.api.blockTicker.domain.service;
 
 import com.joojoo.api.block.domain.model.entity.Block;
-import com.joojoo.global.common.response.detail.DailyBlockDetailsResponse;
+import com.joojoo.api.common.domain.response.detail.DailyBlockDetailsResponse;
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
 import com.joojoo.api.blockTicker.presentation.dto.request.TickerDateResult;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
-import com.joojoo.global.common.assembler.detailApiAssembler.DetailResponseAssembler;
+import com.joojoo.api.common.assembler.detailApiAssembler.DetailResponseAssembler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

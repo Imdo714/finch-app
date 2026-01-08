@@ -1,9 +1,9 @@
 package com.joojoo.api.ticker.presentation.controller;
 
 import com.joojoo.api.ticker.application.TickerService;
-import com.joojoo.global.common.request.auth.CustomUserDetails;
-import com.joojoo.global.common.response.BaseResponse;
-import com.joojoo.global.common.response.ErrorResponse;
+import com.joojoo.api.common.domain.request.auth.CustomUserDetails;
+import com.joojoo.api.common.domain.response.BaseResponse;
+import com.joojoo.api.common.domain.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

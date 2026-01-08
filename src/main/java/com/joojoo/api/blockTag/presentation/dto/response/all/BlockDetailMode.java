@@ -4,7 +4,7 @@ import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.block.presentation.dto.response.detail.BlockDetailResponseDto;
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
-import com.joojoo.global.common.enums.TagSourceType;
+import com.joojoo.api.common.domain.enums.TagSourceType;
 import lombok.*;
 
 import java.time.LocalDateTime;

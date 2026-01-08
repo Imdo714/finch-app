@@ -1,6 +1,6 @@
 package com.joojoo.api.tag.domain.model.entity;
 
-import com.joojoo.global.common.entity.BaseCreateEntity;
+import com.joojoo.api.common.domain.entity.BaseCreateEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

@@ -4,7 +4,7 @@ import com.joojoo.api.block.presentation.dto.request.createBlock.BlockRequestDto
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
 import com.joojoo.api.user.domain.model.entity.User;
-import com.joojoo.global.common.entity.BaseTimeEntity;
+import com.joojoo.api.common.domain.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

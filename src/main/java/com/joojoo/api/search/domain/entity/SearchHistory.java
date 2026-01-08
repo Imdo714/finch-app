@@ -1,22 +1,21 @@
 package com.joojoo.api.search.domain.entity;
 
+import com.joojoo.api.common.domain.entity.BaseCreateEntity;
+import com.joojoo.api.common.domain.enums.SearchTarget;
 import com.joojoo.api.tag.domain.model.entity.Tag;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.user.domain.model.entity.User;
-import com.joojoo.global.common.enums.SearchTarget;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "search_histories")
-public class SearchHistory {
+public class SearchHistory extends BaseCreateEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,16 +37,12 @@ public class SearchHistory {
     @JoinColumn(name = "ticker_id")
     private Ticker ticker;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
     @Builder
-    public SearchHistory(User user, SearchTarget targetType, Tag tag, Ticker ticker, LocalDateTime createdAt) {
+    public SearchHistory(User user, SearchTarget targetType, Tag tag, Ticker ticker) {
         this.user = user;
         this.targetType = targetType;
         this.tag = tag;
         this.ticker = ticker;
-        this.createdAt = createdAt;
     }
 
     public static SearchHistory of(User user, SearchTarget type, Tag tag, Ticker ticker){
@@ -56,7 +51,15 @@ public class SearchHistory {
                 .targetType(type)
                 .tag(tag)
                 .ticker(ticker)
-                .createdAt(LocalDateTime.now())
                 .build();
     }
+
+    public static SearchHistory createTickerHistory(User user, Ticker ticker) {
+        return new SearchHistory(user, SearchTarget.TICKER, null, ticker);
+    }
+
+    public static SearchHistory createTagHistory(User user, Tag tag) {
+        return new SearchHistory(user, SearchTarget.TAG, tag, null);
+    }
+
 }

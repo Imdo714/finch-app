@@ -1,6 +1,6 @@
 package com.joojoo.api.search.presentation.dto.request;
 
-import com.joojoo.global.common.enums.SearchTarget;
+import com.joojoo.api.common.domain.enums.SearchTarget;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

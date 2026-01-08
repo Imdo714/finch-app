@@ -12,7 +12,7 @@ import com.joojoo.api.ticker.application.in.TickerInService;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
 import com.joojoo.api.metadata.domain.MetadataContext;
-import com.joojoo.global.common.enums.TagSourceType;
+import com.joojoo.api.common.domain.enums.TagSourceType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

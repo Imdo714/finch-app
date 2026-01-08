@@ -1,7 +1,7 @@
 package com.joojoo.api.tradeLog.presentation.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.joojoo.global.common.enums.TradeType;
+import com.joojoo.api.common.domain.enums.TradeType;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

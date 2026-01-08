@@ -1,6 +1,6 @@
 package com.joojoo.global.healthcheck.controller;
 
-import com.joojoo.global.common.response.BaseResponse;
+import com.joojoo.api.common.domain.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.joojoo.api.util.filter.dto.request;
 
-import com.joojoo.global.common.enums.FilterCategory;
+import com.joojoo.api.common.domain.enums.FilterCategory;
 import com.joojoo.global.exception.handleException.filter.FilterInputInvalidException;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

@@ -1,18 +1,18 @@
 package com.joojoo.api.blockTicker.application.service.query;
 
-import com.joojoo.global.common.response.detail.count.RelatedBlockDetailCountResponse;
-import com.joojoo.global.common.response.detail.DailyBlockDetailsResponse;
-import com.joojoo.global.common.response.detail.count.TotalCountResponse;
-import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
-import com.joojoo.api.blockTicker.presentation.dto.request.TickerDateResult;
 import com.joojoo.api.blockTicker.application.port.in.GetTickerUseCase;
+import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
+import com.joojoo.api.blockTicker.domain.service.BlockTickerAssembler;
+import com.joojoo.api.blockTicker.presentation.dto.request.TickerDateResult;
+import com.joojoo.api.common.date.DateUtils;
+import com.joojoo.api.common.domain.response.detail.DailyBlockDetailsResponse;
+import com.joojoo.api.common.domain.response.detail.count.RelatedBlockDetailCountResponse;
+import com.joojoo.api.common.domain.response.detail.count.TotalCountResponse;
+import com.joojoo.api.common.search.SearchRangeFactory;
+import com.joojoo.api.common.search.range.SearchRange;
 import com.joojoo.api.ticker.domain.repository.TickerRedisRepository;
 import com.joojoo.api.ticker.domain.repository.TickerRepository;
-import com.joojoo.api.blockTicker.domain.service.TickerDomainService;
-import com.joojoo.api.blockTicker.domain.service.BlockTickerAssembler;
-import com.joojoo.api.ticker.presentation.dto.request.range.TickerSearchRange;
 import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
-import com.joojoo.global.util.date.DateUtils;
 import com.joojoo.global.exception.handleException.tickers.TickerNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,13 +31,13 @@ public class TickerQueryService implements GetTickerUseCase {
     private final TickerRepository tickerRepository;
     private final DateUtils dateUtils;
     private final BlockTickerAssembler blockTickerAssembler;
-    private final TickerDomainService tickerDomainService;
+    private final SearchRangeFactory searchRangeFactory;
 
     @Override
     public TickerSearchResponse search(String query) {
         if (!StringUtils.hasText(query)) return TickerSearchResponse.of(Collections.emptySet());
 
-        TickerSearchRange range = tickerDomainService.createSearchRange(query);
+        SearchRange range = searchRangeFactory.createSearchRange(query);
         return TickerSearchResponse.of(tickerRedisRepository.searchTickerQuery(range, 10));
     }
 

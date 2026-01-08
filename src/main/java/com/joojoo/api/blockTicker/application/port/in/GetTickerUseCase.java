@@ -1,7 +1,7 @@
 package com.joojoo.api.blockTicker.application.port.in;
 
-import com.joojoo.global.common.response.detail.DailyBlockDetailsResponse;
-import com.joojoo.global.common.response.detail.count.TotalCountResponse;
+import com.joojoo.api.common.domain.response.detail.DailyBlockDetailsResponse;
+import com.joojoo.api.common.domain.response.detail.count.TotalCountResponse;
 import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
 
 import java.time.LocalDate;

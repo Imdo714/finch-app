@@ -5,7 +5,7 @@ import com.joojoo.api.user.domain.model.enums.DefaultProfileImage;
 import com.joojoo.api.user.domain.model.enums.Provider;
 import com.joojoo.api.user.domain.model.enums.Role;
 import com.joojoo.api.user.presentation.dto.request.kakao.KakaoUserDto;
-import com.joojoo.global.common.entity.BaseTimeEntity;
+import com.joojoo.api.common.domain.entity.BaseTimeEntity;
 import com.joojoo.global.exception.handleException.users.AdminOnlyAccessException;
 import com.joojoo.global.exception.handleException.users.UserAlreadyActivatedException;
 import com.joojoo.global.exception.handleException.users.UserNameRequiredException;

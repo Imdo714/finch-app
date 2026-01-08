@@ -1,7 +1,7 @@
 package com.joojoo.api.ticker.infrastructure.redis;
 
 import com.joojoo.api.ticker.domain.repository.TickerRedisRepository;
-import com.joojoo.api.ticker.presentation.dto.request.range.TickerSearchRange;
+import com.joojoo.api.common.search.range.SearchRange;
 import com.joojoo.global.exception.handleException.redis.RedisConnectionFailException;
 import jakarta.persistence.QueryTimeoutException;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +39,7 @@ public class TickerRedisRepositoryImpl implements TickerRedisRepository {
     }
 
     @Override
-    public Set<String> searchTickerQuery(TickerSearchRange range, int limit) {
+    public Set<String> searchTickerQuery(SearchRange range, int limit) {
         try {
             Range<String> redisRange = Range.rightOpen(range.getStart(), range.getEnd());
             Limit redisLimit = Limit.limit().count(limit);

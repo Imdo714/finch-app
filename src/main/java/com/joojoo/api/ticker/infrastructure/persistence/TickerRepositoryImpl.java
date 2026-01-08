@@ -5,7 +5,7 @@ import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.ticker.domain.repository.TickerRepository;
 import com.joojoo.api.ticker.infrastructure.queryDsl.TickerQueryDslRepository;
 import com.joojoo.api.ticker.infrastructure.rdbms.TickerJpaRepository;
-import com.joojoo.global.common.response.detail.count.RelatedBlockDetailCountResponse;
+import com.joojoo.api.common.domain.response.detail.count.RelatedBlockDetailCountResponse;
 import com.joojoo.global.exception.handleException.tickers.TickerNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
