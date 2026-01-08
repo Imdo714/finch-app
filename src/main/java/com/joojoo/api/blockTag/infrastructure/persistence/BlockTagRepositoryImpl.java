@@ -7,8 +7,8 @@ import com.joojoo.api.blockTag.infrastructure.queryDsl.date.BlockTagDateQueryDsl
 import com.joojoo.api.blockTag.infrastructure.rdbms.BlockTagJpaRepository;
 import com.joojoo.api.blockTag.infrastructure.redis.BlockTagRedisRepository;
 import com.joojoo.api.blockTag.presentation.dto.response.all.TagDateResult;
-import com.joojoo.global.common.response.detail.count.RelatedBlockDetailCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
+import com.joojoo.api.common.domain.response.detail.count.RelatedBlockDetailCountResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -78,11 +78,6 @@ public class BlockTagRepositoryImpl implements BlockTagRepository {
     @Override
     public List<BlockTag> findAllTagsByBlockId(Long blockId) {
         return blockTagQueryDslRepository.findAllTagsByBlockId(blockId);
-    }
-
-    @Override
-    public Set<String> searchTagQuery(String prefix) {
-        return blockTagRedisRepository.searchTagQuery(prefix);
     }
 
 }

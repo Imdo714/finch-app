@@ -3,9 +3,9 @@ package com.joojoo.api.blockTag.domain.service.assembler;
 import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.presentation.dto.response.all.TagDateResult;
-import com.joojoo.global.common.response.detail.DailyBlockDetailsResponse;
+import com.joojoo.api.common.domain.response.detail.DailyBlockDetailsResponse;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
-import com.joojoo.global.common.assembler.detailApiAssembler.DetailResponseAssembler;
+import com.joojoo.api.common.assembler.detailApiAssembler.DetailResponseAssembler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

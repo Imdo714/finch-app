@@ -6,7 +6,7 @@ import com.joojoo.api.jwt.domain.repository.TokenRepository;
 import com.joojoo.api.jwt.domain.service.JwtProvider;
 import com.joojoo.api.jwt.presentation.dto.response.ReissueTokenResponse;
 import com.joojoo.api.user.domain.model.entity.User;
-import com.joojoo.global.common.request.auth.CustomUserDetails;
+import com.joojoo.api.common.domain.request.auth.CustomUserDetails;
 import com.joojoo.global.util.token.TokenExpirationUtil;
 import com.joojoo.global.exception.handleException.jwt.RefreshTokenExpiredException;
 import com.joojoo.global.exception.handleException.jwt.TokenVerificationException;

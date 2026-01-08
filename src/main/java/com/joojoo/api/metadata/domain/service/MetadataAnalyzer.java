@@ -8,7 +8,7 @@ import com.joojoo.api.tag.domain.model.entity.Tag;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
 import com.joojoo.api.metadata.domain.MetadataContext;
-import com.joojoo.global.common.enums.TagSourceType;
+import com.joojoo.api.common.domain.enums.TagSourceType;
 import org.springframework.stereotype.Component;
 
 import java.util.*;

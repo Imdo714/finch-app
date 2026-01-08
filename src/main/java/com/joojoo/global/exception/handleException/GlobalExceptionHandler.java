@@ -1,6 +1,6 @@
 package com.joojoo.global.exception.handleException;
 
-import com.joojoo.global.common.response.ErrorResponse;
+import com.joojoo.api.common.domain.response.ErrorResponse;
 import com.joojoo.global.exception.ServiceException;
 import com.joojoo.global.exception.enums.ErrorCode;
 import org.springframework.http.HttpStatus;

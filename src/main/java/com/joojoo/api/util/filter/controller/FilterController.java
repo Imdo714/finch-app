@@ -1,14 +1,14 @@
 package com.joojoo.api.util.filter.controller;
 
-import com.joojoo.global.common.response.detail.DailyBlockDetailsResponse;
+import com.joojoo.api.common.domain.response.detail.DailyBlockDetailsResponse;
 import com.joojoo.api.util.filter.application.FilterService;
 import com.joojoo.api.util.filter.dto.request.TagListDto;
 import com.joojoo.api.util.filter.dto.request.TickerAndTagIdDto;
 import com.joojoo.api.util.filter.dto.response.FilterCountResponse;
 import com.joojoo.api.util.filter.dto.response.RelatedKeywordsResponse;
-import com.joojoo.global.common.request.auth.CustomUserDetails;
-import com.joojoo.global.common.response.BaseResponse;
-import com.joojoo.global.common.response.ErrorResponse;
+import com.joojoo.api.common.domain.request.auth.CustomUserDetails;
+import com.joojoo.api.common.domain.response.BaseResponse;
+import com.joojoo.api.common.domain.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -5,7 +5,7 @@ import com.joojoo.api.search.domain.repository.SearchRepository;
 import com.joojoo.api.search.infrastructure.queryDsl.SearchQueryDslRepository;
 import com.joojoo.api.tag.domain.model.entity.Tag;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
-import com.joojoo.global.common.enums.SearchTarget;
+import com.joojoo.api.common.domain.enums.SearchTarget;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

@@ -1,7 +1,7 @@
 package com.joojoo.api.util.filter.application;
 
 import com.joojoo.api.util.filter.dto.request.TagListDto;
-import com.joojoo.global.common.response.detail.DailyBlockDetailsResponse;
+import com.joojoo.api.common.domain.response.detail.DailyBlockDetailsResponse;
 import com.joojoo.api.util.filter.dto.request.TickerAndTagIdDto;
 import com.joojoo.api.util.filter.dto.response.FilterCountResponse;
 import com.joojoo.api.util.filter.dto.response.RelatedKeywordsResponse;

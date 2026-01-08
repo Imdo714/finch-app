@@ -3,7 +3,7 @@ package com.joojoo.api.search.domain.entity;
 import com.joojoo.api.tag.domain.model.entity.Tag;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.user.domain.model.entity.User;
-import com.joojoo.global.common.enums.SearchTarget;
+import com.joojoo.api.common.domain.enums.SearchTarget;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

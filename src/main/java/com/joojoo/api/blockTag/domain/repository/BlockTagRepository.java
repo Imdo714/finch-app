@@ -2,8 +2,8 @@ package com.joojoo.api.blockTag.domain.repository;
 
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.presentation.dto.response.all.TagDateResult;
-import com.joojoo.global.common.response.detail.count.RelatedBlockDetailCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
+import com.joojoo.api.common.domain.response.detail.count.RelatedBlockDetailCountResponse;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -40,8 +40,5 @@ public interface BlockTagRepository {
 
     /** blockId와 연관된 태그들 단일 조회 */
     List<BlockTag> findAllTagsByBlockId(Long blockId);
-
-    /** 내가 사용하고있는 태그들 검색 */
-    Set<String> searchTagQuery(String prefix);
 
 }

@@ -1,12 +1,13 @@
 package com.joojoo.api.search.presentation.controller;
 
+import com.joojoo.api.common.domain.request.auth.CustomUserDetails;
+import com.joojoo.api.common.domain.response.BaseResponse;
+import com.joojoo.api.common.domain.response.ErrorResponse;
 import com.joojoo.api.search.application.SearchService;
+import com.joojoo.api.search.application.port.in.GetSearchUseCase;
 import com.joojoo.api.search.presentation.dto.request.SearchRequestDto;
 import com.joojoo.api.search.presentation.dto.response.RecentSearchListResponse;
 import com.joojoo.api.search.presentation.dto.response.TagHistoryResponseDto;
-import com.joojoo.global.common.request.auth.CustomUserDetails;
-import com.joojoo.global.common.response.BaseResponse;
-import com.joojoo.global.common.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class SearchController {
 
     private final SearchService searchService;
+    private final GetSearchUseCase getSearchUseCase;
 
     @Operation(summary = "내가 사용한 태그 자동 검색 API", description = "검색창에서 내가 사용한 태그들 초성, 단어로 자동 검색해주는 API입니다.")
     @ApiResponses({
@@ -39,7 +41,7 @@ public class SearchController {
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestParam String query
     ) {
-        return BaseResponse.ok(searchService.searchTags(user.getUserId(), query));
+        return BaseResponse.ok(getSearchUseCase.searchTags(user.getUserId(), query));
     }
 
     @Operation(summary = "최근 검색 저장 API", description = "검색한 ID를 최근 검색어에 저장하는 API입니다.")

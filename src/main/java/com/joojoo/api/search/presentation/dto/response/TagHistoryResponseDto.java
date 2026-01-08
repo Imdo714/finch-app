@@ -16,6 +16,10 @@ public class TagHistoryResponseDto {
     }
 
     public static TagHistoryResponseDto from(Set<String> rawStrings) {
+        if (rawStrings == null || rawStrings.isEmpty()) {
+            return TagHistoryResponseDto.of(Collections.emptyList());
+        }
+
         return TagHistoryResponseDto.of( new ArrayList<>(rawStrings.stream()
                 .map(TagElement::fromRawString)
                 .filter(Objects::nonNull)

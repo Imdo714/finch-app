@@ -4,7 +4,7 @@ import com.joojoo.api.block.application.port.in.GetBlockUseCase;
 import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.block.domain.repository.BlockRepository;
 import com.joojoo.api.block.domain.service.assembler.BlockTreeAssembler;
-import com.joojoo.global.util.date.DateUtils;
+import com.joojoo.api.common.date.DateUtils;
 import com.joojoo.api.block.presentation.dto.response.detail.BlockDetailResponseDto;
 import com.joojoo.api.block.presentation.dto.response.mainView.BlockMainViewResponse;
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;

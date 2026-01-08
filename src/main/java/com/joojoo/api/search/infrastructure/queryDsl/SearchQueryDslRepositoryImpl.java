@@ -6,7 +6,7 @@ import com.joojoo.api.tag.domain.model.entity.QTag;
 import com.joojoo.api.tag.domain.model.entity.Tag;
 import com.joojoo.api.ticker.domain.model.entity.QTicker;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
-import com.joojoo.global.common.enums.SearchTarget;
+import com.joojoo.api.common.domain.enums.SearchTarget;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

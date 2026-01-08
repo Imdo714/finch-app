@@ -1,12 +1,12 @@
 package com.joojoo.api.blockTag.presentation.controller;
 
 import com.joojoo.api.blockTag.application.port.in.GetBlockTagUseCase;
-import com.joojoo.global.common.response.detail.DailyBlockDetailsResponse;
-import com.joojoo.global.common.response.detail.count.TotalCountResponse;
+import com.joojoo.api.common.domain.response.detail.DailyBlockDetailsResponse;
+import com.joojoo.api.common.domain.response.detail.count.TotalCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
-import com.joojoo.global.common.request.auth.CustomUserDetails;
-import com.joojoo.global.common.response.BaseResponse;
-import com.joojoo.global.common.response.ErrorResponse;
+import com.joojoo.api.common.domain.request.auth.CustomUserDetails;
+import com.joojoo.api.common.domain.response.BaseResponse;
+import com.joojoo.api.common.domain.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

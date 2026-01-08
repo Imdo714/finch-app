@@ -2,7 +2,7 @@ package com.joojoo.api.blockTag.infrastructure.queryDsl;
 
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.domain.model.entity.QBlockTag;
-import com.joojoo.global.common.response.detail.count.RelatedBlockDetailCountResponse;
+import com.joojoo.api.common.domain.response.detail.count.RelatedBlockDetailCountResponse;
 import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
 import com.joojoo.api.tag.domain.model.entity.QTag;
 import com.querydsl.core.types.Projections;

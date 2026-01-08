@@ -1,5 +1,6 @@
 package com.joojoo.api.blockTag.infrastructure.redis;
 
+import com.joojoo.api.common.search.range.SearchRange;
 import com.joojoo.global.exception.handleException.redis.RedisConnectionFailException;
 import jakarta.persistence.QueryTimeoutException;
 import lombok.RequiredArgsConstructor;
@@ -67,13 +68,13 @@ public class BlockTagRedisRepositoryImpl implements BlockTagRedisRepository {
     }
 
     @Override
-    public Set<String> searchTagQuery(String prefix) {
+    public Set<String> searchTagQuery(SearchRange range) {
         try {
-            Range<String> range = Range.from(Range.Bound.inclusive(prefix))
-                    .to(Range.Bound.inclusive(prefix + "\uffff"));
+            Range<String> redisRange = Range.from(Range.Bound.inclusive(range.getStart()))
+                    .to(Range.Bound.inclusive(range.getEnd()));
 
             return redisTemplate.opsForZSet()
-                    .rangeByLex(AUTOCOMPLETE_LEX_KEY, range, Limit.limit().count(10));
+                    .rangeByLex(AUTOCOMPLETE_LEX_KEY, redisRange, Limit.limit().count(10));
 
         } catch (RedisConnectionFailureException | QueryTimeoutException e) {
             log.error("Redis 연결 실패 또는 타임아웃 발생: {}", e.getMessage());
@@ -83,4 +84,5 @@ public class BlockTagRedisRepositoryImpl implements BlockTagRedisRepository {
             return Collections.emptySet();
         }
     }
+
 }

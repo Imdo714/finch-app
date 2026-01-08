@@ -3,7 +3,7 @@ package com.joojoo.global.jwt.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joojoo.api.jwt.domain.repository.TokenBlacklistRepository;
 import com.joojoo.api.jwt.domain.service.JwtProvider;
-import com.joojoo.global.common.response.ErrorResponse;
+import com.joojoo.api.common.domain.response.ErrorResponse;
 import com.joojoo.global.exception.handleException.redis.RedisConnectionFailException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;

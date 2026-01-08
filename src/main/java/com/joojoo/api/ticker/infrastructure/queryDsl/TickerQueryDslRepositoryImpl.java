@@ -1,6 +1,6 @@
 package com.joojoo.api.ticker.infrastructure.queryDsl;
 
-import com.joojoo.global.common.response.detail.count.RelatedBlockDetailCountResponse;
+import com.joojoo.api.common.domain.response.detail.count.RelatedBlockDetailCountResponse;
 import com.joojoo.api.blockTicker.domain.model.entity.QBlockTicker;
 import com.joojoo.api.ticker.domain.model.entity.QTicker;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;

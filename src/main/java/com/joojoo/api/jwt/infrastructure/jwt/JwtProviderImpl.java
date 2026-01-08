@@ -1,7 +1,7 @@
 package com.joojoo.api.jwt.infrastructure.jwt;
 
 import com.joojoo.api.jwt.domain.service.JwtProvider;
-import com.joojoo.global.common.request.auth.CustomUserDetails;
+import com.joojoo.api.common.domain.request.auth.CustomUserDetails;
 import com.joojoo.global.exception.handleException.jwt.TokenVerificationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
-import java.util.List;
 
 @Slf4j
 @Component
