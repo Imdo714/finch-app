@@ -3,7 +3,6 @@ package com.joojoo.api.search.presentation.controller;
 import com.joojoo.api.common.domain.request.auth.CustomUserDetails;
 import com.joojoo.api.common.domain.response.BaseResponse;
 import com.joojoo.api.common.domain.response.ErrorResponse;
-import com.joojoo.api.search.application.SearchService;
 import com.joojoo.api.search.application.port.in.CreateSearchUseCase;
 import com.joojoo.api.search.application.port.in.GetSearchUseCase;
 import com.joojoo.api.search.presentation.dto.request.SearchRequestDto;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/search")
 public class SearchController {
 
-    private final SearchService searchService;
     private final GetSearchUseCase getSearchUseCase;
     private final CreateSearchUseCase createSearchUseCase;
 
@@ -68,11 +66,19 @@ public class SearchController {
         return BaseResponse.ok("최근 검색어 저장 성공!");
     }
 
+    @Operation(summary = "최근 검색어 리스트 조회 API", description = "최근 검색했던 내역 조회 API입니다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "조회 성공",
+                    content = @Content(schema = @Schema(implementation = RecentSearchListResponse.class))
+            )
+    })
     @GetMapping("/record")
     public BaseResponse<RecentSearchListResponse> recordSearchList(
             @AuthenticationPrincipal CustomUserDetails user
     ) {
-        return BaseResponse.ok(searchService.recordSearchList(user.getUserId()));
+        return BaseResponse.ok(getSearchUseCase.recordSearchList(user.getUserId()));
     }
 
 }
