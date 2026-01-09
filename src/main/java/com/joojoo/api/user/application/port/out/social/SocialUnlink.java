@@ -1,4 +1,4 @@
-package com.joojoo.api.user.application.auth.withdraw.out;
+package com.joojoo.api.user.application.port.out.social;
 
 import com.joojoo.api.user.domain.model.entity.User;
 

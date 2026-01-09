@@ -2,9 +2,8 @@ package com.joojoo.api.user.application.service.command;
 
 import com.joojoo.api.block.domain.repository.BlockRepository;
 import com.joojoo.api.jwt.application.JwtTokenUseCase;
-import com.joojoo.api.tradeLog.application.port.in.DeleteTradeLogUseCase;
 import com.joojoo.api.tradeLog.domain.repository.TradeLogRepository;
-import com.joojoo.api.user.application.auth.withdraw.out.SocialUnlink;
+import com.joojoo.api.user.application.port.out.social.SocialUnlink;
 import com.joojoo.api.user.application.port.in.WithdrawUserUseCase;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;

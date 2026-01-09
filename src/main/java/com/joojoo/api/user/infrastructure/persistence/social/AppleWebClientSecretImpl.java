@@ -1,5 +1,6 @@
-package com.joojoo.api.user.application.port.out.social;
+package com.joojoo.api.user.infrastructure.persistence.social;
 
+import com.joojoo.api.user.application.port.out.social.AppleWebClientSecret;
 import com.joojoo.api.user.presentation.dto.request.apple.AppleTokenResponse;
 import com.joojoo.global.exception.handleException.auth.InvalidAuthorizationException;
 import com.joojoo.global.exception.handleException.auth.apple.AppleInvalidTokenResponseException;
@@ -7,11 +8,12 @@ import com.joojoo.global.exception.handleException.auth.apple.AppleTokenIssueFai
 import io.jsonwebtoken.JwsHeader;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
@@ -23,8 +25,9 @@ import java.util.Base64;
 import java.util.Date;
 
 @Slf4j
-@Component
-public class AppleWeb {
+@Service
+@RequiredArgsConstructor
+public class AppleWebClientSecretImpl implements AppleWebClientSecret {
 
     @Value("${APPLE_TEAM_ID}")
     private String teamId;
@@ -41,7 +44,7 @@ public class AppleWeb {
     @Value("${APPLE_PRIVATE_KEY}")
     private String privateKeyP8;
 
-    // Client Secret 생성
+    @Override
     public String createClientSecret() {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + 3600000); // 1시간 유효
@@ -57,7 +60,7 @@ public class AppleWeb {
                 .compact();
     }
 
-
+    @Override
     public AppleTokenResponse requestAppleToken(String code, String clientSecret) {
         RestClient restClient = RestClient.create();
 
@@ -92,7 +95,6 @@ public class AppleWeb {
         return responseBody;
     }
 
-
     // PrivateKey 객체 생성 헬퍼 (BouncyCastle 라이브러리 필요할 수 있음)
     private PrivateKey getPrivateKey() {
         try {
@@ -110,5 +112,4 @@ public class AppleWeb {
             throw new RuntimeException("Private Key 생성 실패", e);
         }
     }
-
 }
