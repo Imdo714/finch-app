@@ -6,7 +6,6 @@ import java.util.Optional;
 
 /** UserPort 역할 */
 public interface UserRepository {
-    Optional<User> findByEmail(String email);
     User save(User user);
     Optional<User> findByProviderId(String providerId);
     void delete(User user);
