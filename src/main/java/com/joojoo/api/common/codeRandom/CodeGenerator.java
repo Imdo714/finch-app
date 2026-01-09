@@ -1,6 +1,5 @@
-package com.joojoo.global.util.codeRandom;
+package com.joojoo.api.common.codeRandom;
 
-import com.joojoo.api.util.port.in.GeneratorRandom;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;

@@ -1,5 +1,6 @@
 package com.joojoo.api.ticker.application;
 
+import com.joojoo.api.common.hangul.HangulConverter;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.ticker.domain.provider.TickerDataProvider;
 import com.joojoo.api.ticker.domain.repository.TickerRedisRepository;
@@ -9,7 +10,6 @@ import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;
 import com.joojoo.global.exception.handleException.tickers.InvalidTickerOrNameException;
 import com.joojoo.global.exception.handleException.users.UserNotFoundException;
-import com.joojoo.global.util.hangul.HangulUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,6 +30,7 @@ public class TickerServiceImpl implements TickerService {
     private final TickerRepository tickerRepository;
     private final TickerDataProvider tickerDataProvider;
     private final UserRepository userRepository;
+    private final HangulConverter hangulConverter;
 
     @Override
     public void addStockToRedis(String name, String ticker) {
@@ -37,8 +38,8 @@ public class TickerServiceImpl implements TickerService {
             throw new InvalidTickerOrNameException();
         }
         Set<String> tickers = new HashSet<>();
-        tickers.add(HangulUtils.splitToJaso(name) + "*" + name + "*" + ticker);
-        tickers.add(HangulUtils.getChosung(name) + "*" + name + "*" + ticker);
+        tickers.add(hangulConverter.jasoConvert(name) + "*" + name + "*" + ticker);
+        tickers.add(hangulConverter.chosungConvert(name) + "*" + name + "*" + ticker);
 
         tickerRedisRepository.addStocksToRedis(tickers);
     }
@@ -93,8 +94,8 @@ public class TickerServiceImpl implements TickerService {
         Long tickerId = stock.getId();
 
         return Stream.of(
-                HangulUtils.splitToJaso(name) + "*" + name + "*" + symbol + "*" + tickerId,
-                HangulUtils.getChosung(name) + "*" + name + "*" + symbol + "*" + tickerId
+                hangulConverter.jasoConvert(name) + "*" + name + "*" + symbol + "*" + tickerId,
+                hangulConverter.chosungConvert(name) + "*" + name + "*" + symbol + "*" + tickerId
         );
     }
 
