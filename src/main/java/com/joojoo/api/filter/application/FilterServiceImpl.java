@@ -1,4 +1,4 @@
-package com.joojoo.api.util.filter.application;
+package com.joojoo.api.filter.application;
 
 import com.joojoo.api.block.application.validate.blockerTree.BlockTreeValidator;
 import com.joojoo.api.block.domain.model.entity.Block;
@@ -6,11 +6,11 @@ import com.joojoo.api.blockTag.application.test.FilterQuery;
 import com.joojoo.api.blockTag.domain.service.assembler.BlockTagAssembler;
 import com.joojoo.api.common.domain.response.detail.DailyBlockDetailsResponse;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
-import com.joojoo.api.util.filter.dto.request.RelatedKeywordsDto;
-import com.joojoo.api.util.filter.dto.request.TagListDto;
-import com.joojoo.api.util.filter.dto.request.TickerAndTagIdDto;
-import com.joojoo.api.util.filter.dto.response.FilterCountResponse;
-import com.joojoo.api.util.filter.dto.response.RelatedKeywordsResponse;
+import com.joojoo.api.filter.presentation.dto.request.RelatedKeywordsDto;
+import com.joojoo.api.filter.presentation.dto.request.TagListDto;
+import com.joojoo.api.filter.presentation.dto.request.TickerAndTagIdDto;
+import com.joojoo.api.filter.presentation.dto.response.FilterCountResponse;
+import com.joojoo.api.filter.presentation.dto.response.RelatedKeywordsResponse;
 import com.joojoo.api.common.domain.enums.FilterCategory;
 import com.joojoo.api.common.assembler.detailApiAssembler.DetailResponseAssembler;
 import lombok.RequiredArgsConstructor;

@@ -21,7 +21,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class MetadataUseCaseService implements MetadataUseCase {
+public class MetadataService implements MetadataUseCase {
 
     private final MetadataAnalyzer metadataAnalyzer;
     private final MetadataPort metadataPort;

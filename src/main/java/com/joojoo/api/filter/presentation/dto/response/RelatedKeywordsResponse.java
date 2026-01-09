@@ -1,4 +1,4 @@
-package com.joojoo.api.util.filter.dto.response;
+package com.joojoo.api.filter.presentation.dto.response;
 
 import com.joojoo.api.tag.domain.model.entity.Tag;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;

@@ -8,7 +8,7 @@ import com.joojoo.api.tag.domain.model.entity.Tag;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.tradeLog.domain.model.entity.QTradeLog;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
-import com.joojoo.api.util.filter.dto.request.RelatedKeywordsDto;
+import com.joojoo.api.filter.presentation.dto.request.RelatedKeywordsDto;
 import com.joojoo.api.common.domain.enums.FilterCategory;
 import com.joojoo.api.common.domain.enums.TradeType;
 import com.querydsl.core.types.dsl.BooleanExpression;

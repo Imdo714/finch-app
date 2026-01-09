@@ -1,11 +1,11 @@
-package com.joojoo.api.util.filter.controller;
+package com.joojoo.api.filter.presentation.controller;
 
 import com.joojoo.api.common.domain.response.detail.DailyBlockDetailsResponse;
-import com.joojoo.api.util.filter.application.FilterService;
-import com.joojoo.api.util.filter.dto.request.TagListDto;
-import com.joojoo.api.util.filter.dto.request.TickerAndTagIdDto;
-import com.joojoo.api.util.filter.dto.response.FilterCountResponse;
-import com.joojoo.api.util.filter.dto.response.RelatedKeywordsResponse;
+import com.joojoo.api.filter.application.FilterService;
+import com.joojoo.api.filter.presentation.dto.request.TagListDto;
+import com.joojoo.api.filter.presentation.dto.request.TickerAndTagIdDto;
+import com.joojoo.api.filter.presentation.dto.response.FilterCountResponse;
+import com.joojoo.api.filter.presentation.dto.response.RelatedKeywordsResponse;
 import com.joojoo.api.common.domain.request.auth.CustomUserDetails;
 import com.joojoo.api.common.domain.response.BaseResponse;
 import com.joojoo.api.common.domain.response.ErrorResponse;

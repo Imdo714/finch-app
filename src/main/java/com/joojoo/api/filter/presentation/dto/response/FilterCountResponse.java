@@ -1,4 +1,4 @@
-package com.joojoo.api.util.filter.dto.response;
+package com.joojoo.api.filter.presentation.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
