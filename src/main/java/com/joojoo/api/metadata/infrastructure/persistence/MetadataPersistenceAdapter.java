@@ -5,13 +5,16 @@ import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
 import com.joojoo.api.blockTag.infrastructure.redis.BlockTagRedisRepository;
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
 import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
+import com.joojoo.api.common.hangul.HangulConverter;
 import com.joojoo.api.metadata.application.port.out.MetadataPort;
 import com.joojoo.api.tag.domain.model.entity.Tag;
-import com.joojoo.global.util.hangul.HangulUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -21,6 +24,7 @@ public class MetadataPersistenceAdapter implements MetadataPort { // User 도메
     private final BlockTickerRepository blockTickerRepository;
     private final BlockTagRepository blockTagRepository;
     private final BlockTagRedisRepository blockTagRedisRepository;
+    private final HangulConverter hangulConverter;
 
     @Override
     public void saveTickersAndTags(List<BlockTicker> tickers, List<BlockTag> tags) {
@@ -57,8 +61,8 @@ public class MetadataPersistenceAdapter implements MetadataPort { // User 도메
         String base = "*" + name + "*" + tagId;
 
         return Set.of(
-                userId + ":" + HangulUtils.splitToJaso(name) + base,
-                userId + ":" + HangulUtils.getChosung(name) + base
+                userId + ":" + hangulConverter.jasoConvert(name) + base,
+                userId + ":" + hangulConverter.chosungConvert(name) + base
         );
     }
 
