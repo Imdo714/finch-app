@@ -1,5 +1,8 @@
 package com.joojoo.api.user.presentation.controller;
 
+import com.joojoo.api.common.domain.request.auth.CustomUserDetails;
+import com.joojoo.api.common.domain.response.BaseResponse;
+import com.joojoo.api.common.domain.response.ErrorResponse;
 import com.joojoo.api.user.application.port.in.*;
 import com.joojoo.api.user.presentation.dto.request.AuthCodeDto;
 import com.joojoo.api.user.presentation.dto.request.AuthTokenDto;
@@ -7,9 +10,6 @@ import com.joojoo.api.user.presentation.dto.request.UpdateProfileDto;
 import com.joojoo.api.user.presentation.dto.response.DefaultProfileImageResponse;
 import com.joojoo.api.user.presentation.dto.response.LoginResponse;
 import com.joojoo.api.user.presentation.dto.response.UserInfoResponse;
-import com.joojoo.api.common.domain.request.auth.CustomUserDetails;
-import com.joojoo.api.common.domain.response.BaseResponse;
-import com.joojoo.api.common.domain.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -76,18 +76,35 @@ public class UserController {
         return BaseResponse.ok(socialLoginUseCase.appleSocialLogin(payload.getCode()));
     }
 
+    @Operation(summary = "안드로이드 애플 로그인 API", description = "안드로이드 애플 로그인 API")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "회원가입 성공",
+                    content = @Content(schema = @Schema(implementation = LoginResponse.class)
+                    )
+            )
+    })
     /** 애플 로그인 웹/안드로이드 */
     @PostMapping(value = "/apple/android/login")
     public BaseResponse<LoginResponse> appleAndroidLogin(@RequestBody AuthCodeDto payload) {
         return BaseResponse.ok(socialLoginUseCase.appleWebLogin(payload.getCode()));
     }
 
+    @Operation(summary = "웹에서 애플 로그인 받아주는 API", description = "웹에서 애플 로그인 후 Code를 받아 앱으로 반화해주는 API")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "회원 권한 변경 성공",
+                    content = @Content(schema = @Schema(implementation = LoginResponse.class)
+                    )
+            )
+    })
     /** 애플 서버로 받은 코드를 앱 서버로 리다력션 */
     @PostMapping(value = "/apple/web/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<Void> appleWebLogin(AuthCodeDto payload) {
         String intentUrl = socialLoginUseCase.getRedirectUrl(payload.getCode());
 
-        // 307(Temporary Redirect)을 사용하여 앱으로 강제 이동
         return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
                 .location(URI.create(intentUrl))
                 .build();
