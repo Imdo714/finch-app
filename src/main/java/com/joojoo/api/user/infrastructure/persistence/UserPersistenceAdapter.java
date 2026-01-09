@@ -16,11 +16,6 @@ public class UserPersistenceAdapter implements UserRepository {
     private final UserJpaRepository userJpaRepository;
 
     @Override
-    public Optional<User> findByEmail(String email) {
-        return userJpaRepository.findByEmail(email);
-    }
-
-    @Override
     public Optional<User> findByProviderId(String providerId) {
         return userJpaRepository.findByProviderId(providerId);
     }

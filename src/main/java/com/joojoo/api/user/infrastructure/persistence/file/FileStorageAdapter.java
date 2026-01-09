@@ -1,4 +1,4 @@
-package com.joojoo.api.user.infrastructure.file;
+package com.joojoo.api.user.infrastructure.persistence.file;
 
 import com.joojoo.api.user.application.port.out.file.FilePort;
 import org.springframework.beans.factory.annotation.Value;

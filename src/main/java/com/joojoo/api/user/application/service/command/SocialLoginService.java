@@ -3,7 +3,7 @@ package com.joojoo.api.user.application.service.command;
 import com.joojoo.api.jwt.application.JwtTokenUseCase;
 import com.joojoo.api.user.application.port.in.SocialLoginUseCase;
 import com.joojoo.api.user.application.port.out.social.AppleClientSecret;
-import com.joojoo.api.user.application.port.out.social.AppleWeb;
+import com.joojoo.api.user.application.port.out.social.AppleWebClientSecret;
 import com.joojoo.api.user.application.port.out.social.KakaoClientSecret;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.service.UserDomainService;
@@ -25,6 +25,7 @@ public class SocialLoginService implements SocialLoginUseCase {
     private final UserDomainService userDomainService;
     private final KakaoClientSecret kakaoClientSecret;
     private final AppleClientSecret appleClientSecret;
+    private final AppleWebClientSecret appleWebClientSecret;
 
     @Override
     @Transactional
@@ -55,15 +56,13 @@ public class SocialLoginService implements SocialLoginUseCase {
         return generateLoginResponse(user);
     }
 
-    private final AppleWeb appleWeb;
-
     @Override
     public LoginResponse appleWebLogin(String code) {
         // Client Secret 생성
-        String clientSecret = appleWeb.createClientSecret();
+        String clientSecret = appleWebClientSecret.createClientSecret();
 
         // 애플 토큰 요청 (redirectUri 포함)
-        AppleTokenResponse appleTokenResponse = appleWeb.requestAppleToken(code, clientSecret);
+        AppleTokenResponse appleTokenResponse = appleWebClientSecret.requestAppleToken(code, clientSecret);
         AppleUserInfo appleUser = appleClientSecret.getAppleUserInfo(appleTokenResponse.getIdToken());
 
         User user = userDomainService.registerOrLogin(appleUser.getProviderId(), appleTokenResponse.getRefreshToken(), appleUser.getEmail());

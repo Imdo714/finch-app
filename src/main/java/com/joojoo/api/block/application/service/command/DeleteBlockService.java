@@ -27,11 +27,6 @@ public class DeleteBlockService implements DeleteBlockUseCase {
     private final BlockDomainService blockDomainService;
 
     @Override
-    public void deleteAllBlockMappings(Long userId) {
-        blockRepository.deleteAllBlockMappings(userId);
-    }
-
-    @Override
     @Transactional
     public void deleteBlock(Long userId, Long blockId, DeleteMode mode) {
         // 블록 조회 및 권한 검증

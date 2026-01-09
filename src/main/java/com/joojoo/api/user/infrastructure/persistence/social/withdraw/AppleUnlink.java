@@ -1,5 +1,6 @@
-package com.joojoo.api.user.application.auth.withdraw.out;
+package com.joojoo.api.user.infrastructure.persistence.social.withdraw;
 
+import com.joojoo.api.user.application.port.out.social.SocialUnlink;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.application.port.out.social.AppleClientSecret;
 import lombok.RequiredArgsConstructor;

@@ -23,12 +23,6 @@ public class UserQueryService implements GetUserUseCase {
     private final FilePort filePort;
 
     @Override
-    public User getUser(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
-    }
-
-    @Override
     public User getUserReference(Long userId) {
         try {
             return userRepository.getReferenceById(userId);
@@ -39,7 +33,7 @@ public class UserQueryService implements GetUserUseCase {
 
     @Override
     public UserInfoResponse getUserInfo(Long userId) {
-        User user = this.getUser(userId);
+        User user = userRepository.getUserById(userId);
         return UserInfoResponse.of(user);
     }
 

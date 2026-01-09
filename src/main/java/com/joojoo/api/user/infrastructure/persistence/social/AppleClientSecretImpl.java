@@ -1,4 +1,4 @@
-package com.joojoo.api.user.infrastructure.social;
+package com.joojoo.api.user.infrastructure.persistence.social;
 
 import com.joojoo.api.user.application.port.out.social.AppleClientSecret;
 import com.joojoo.api.user.presentation.dto.request.apple.AppleTokenResponse;
