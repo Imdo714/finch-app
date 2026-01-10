@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class TagListDto {
+public class FilterListDto {
 
     @NotNull(message = "category 타입(ALL/BLOCK/BUY/SELL)은 입니다.")
     private FilterCategory category;

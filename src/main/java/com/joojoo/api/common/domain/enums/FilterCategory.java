@@ -24,4 +24,12 @@ public enum FilterCategory {
         }
         return null;
     }
+
+    public boolean isBlockApplicable() {
+        return this == ALL || this == BLOCK;
+    }
+
+    public boolean isTradeLogApplicable() {
+        return this == ALL || this == BUY || this == SELL;
+    }
 }
