@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
@@ -59,11 +60,14 @@ public class MetadataPersistenceAdapter implements MetadataPort { // User 도메
     /** Redis Tag Key 생성 로직 */
     private Set<String> generateLexEntries(Long userId, String name, Long tagId) {
         String base = "*" + name + "*" + tagId;
+        String prefix = userId + ":";
 
-        return Set.of(
-                userId + ":" + hangulConverter.jasoConvert(name) + base,
-                userId + ":" + hangulConverter.chosungConvert(name) + base
-        );
+        return Stream.of(
+                        hangulConverter.jasoConvert(name),
+                        hangulConverter.chosungConvert(name)
+                )
+                .map(converted -> prefix + converted + base)
+                .collect(Collectors.toSet()); // toSet()은 중복이 있어도 에러를 내지 않고 하나로 합칩니다.
     }
 
     @Override
