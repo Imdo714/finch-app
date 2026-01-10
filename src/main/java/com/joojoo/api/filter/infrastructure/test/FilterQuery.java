@@ -1,30 +1,16 @@
 package com.joojoo.api.filter.infrastructure.test;
 
-import com.joojoo.api.block.domain.model.entity.Block;
-import com.joojoo.api.block.domain.model.entity.QBlock;
 import com.joojoo.api.blockTag.domain.model.entity.QBlockTag;
 import com.joojoo.api.blockTicker.domain.model.entity.QBlockTicker;
+import com.joojoo.api.filter.presentation.dto.request.RelatedKeywordsDto;
 import com.joojoo.api.tag.domain.model.entity.Tag;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
-import com.joojoo.api.tradeLog.domain.model.entity.QTradeLog;
-import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
-import com.joojoo.api.filter.presentation.dto.request.RelatedKeywordsDto;
-import com.joojoo.api.common.domain.enums.FilterCategory;
-import com.joojoo.api.common.domain.enums.TradeType;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Repository
 @RequiredArgsConstructor
@@ -33,85 +19,6 @@ public class FilterQuery {
     private final JPAQueryFactory queryFactory;
     private final QBlockTag blockTag = QBlockTag.blockTag;
     private final QBlockTicker blockTicker = QBlockTicker.blockTicker;
-    private final QBlock block = QBlock.block;
-    private final QTradeLog tradeLog = QTradeLog.tradeLog;
-
-    /** Block 전용 쿼리 */
-    public List<Block> searchBlocksWithAllKeywordsCount(List<Long> tagIds, List<Long> tickerIds, Long userId) {
-        if ((tickerIds == null || tickerIds.isEmpty()) && (tagIds == null || tagIds.isEmpty())) {
-            return Collections.emptyList();
-        }
-
-        JPQLQuery<Block> query = queryFactory.selectFrom(block);
-
-        if (tickerIds != null && !tickerIds.isEmpty()) {
-            query.where(block.id.in(
-                    JPAExpressions.select(blockTicker.block.id)
-                            .from(blockTicker)
-                            .where(
-                                    blockTicker.userId.eq(userId),
-                                    blockTicker.ticker.id.in(tickerIds)
-                            )
-                            .groupBy(blockTicker.block.id)
-                            .having(blockTicker.ticker.id.countDistinct().eq((long) tickerIds.size()))
-            ));
-        }
-
-        if (tagIds != null && !tagIds.isEmpty()) {
-            query.where(block.id.in(
-                    JPAExpressions.select(blockTag.block.id)
-                            .from(blockTag)
-                            .where(
-                                    blockTag.userId.eq(userId),
-                                    blockTag.tag.id.in(tagIds)
-                            )
-                            .groupBy(blockTag.block.id)
-                            .having(blockTag.tag.id.countDistinct().eq((long) tagIds.size()))
-            ));
-        }
-
-        return query.orderBy(block.createdAt.desc()).fetch();
-    }
-
-    /** TradeLog 전용 쿼리 */
-    public List<TradeLog> searchTradeLogsWithAllKeywordsCount(List<Long> tagIds, List<Long> tickerIds, Long userId, FilterCategory category) {
-        if ((tickerIds == null || tickerIds.isEmpty()) && (tagIds == null || tagIds.isEmpty())) {
-            return Collections.emptyList();
-        }
-
-        JPQLQuery<TradeLog> query = queryFactory.selectFrom(tradeLog)
-                .where(
-                        filterByTradeType(category)
-                );
-
-        if (tickerIds != null && !tickerIds.isEmpty()) {
-            query.where(tradeLog.id.in(
-                    JPAExpressions.select(blockTicker.tradeLog.id)
-                            .from(blockTicker)
-                            .where(
-                                    blockTicker.userId.eq(userId),
-                                    blockTicker.ticker.id.in(tickerIds)
-                            )
-                            .groupBy(blockTicker.tradeLog.id)
-                            .having(blockTicker.ticker.id.countDistinct().eq((long) tickerIds.size()))
-            ));
-        }
-
-        if (tagIds != null && !tagIds.isEmpty()) {
-            query.where(tradeLog.id.in(
-                    JPAExpressions.select(blockTag.tradeLog.id)
-                            .from(blockTag)
-                            .where(
-                                    blockTag.userId.eq(userId),
-                                    blockTag.tag.id.in(tagIds)
-                            )
-                            .groupBy(blockTag.tradeLog.id)
-                            .having(blockTag.tag.id.countDistinct().eq((long) tagIds.size()))
-            ));
-        }
-        return query.orderBy(tradeLog.createdAt.desc()).fetch();
-    }
-
 
     /** 태그 기준으로  연관된 태그, 티커들 반환 리스트 */
     public RelatedKeywordsDto findRelatedKeywordsByTag(Long userId, Long targetTagId) {
@@ -210,15 +117,6 @@ public class FilterQuery {
                 ).distinct().fetch();
 
         return new RelatedKeywordsDto(tags, tickers);
-    }
-
-    private BooleanExpression filterByTradeType(FilterCategory category) {
-        if (category == FilterCategory.BUY) {
-            return tradeLog.tradeType.eq(TradeType.BUY);
-        } else if (category == FilterCategory.SELL) {
-            return tradeLog.tradeType.eq(TradeType.SELL);
-        }
-        return null;
     }
 
 }

@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class FilterCountResponse {
-    private int filterCount;
+    private long filterCount;
 }

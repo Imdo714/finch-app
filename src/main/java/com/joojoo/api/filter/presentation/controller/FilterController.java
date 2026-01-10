@@ -1,5 +1,8 @@
 package com.joojoo.api.filter.presentation.controller;
 
+import com.joojoo.api.common.domain.request.auth.CustomUserDetails;
+import com.joojoo.api.common.domain.response.BaseResponse;
+import com.joojoo.api.common.domain.response.ErrorResponse;
 import com.joojoo.api.common.domain.response.detail.DailyBlockDetailsResponse;
 import com.joojoo.api.filter.application.FilterService;
 import com.joojoo.api.filter.application.port.in.GetFilterUseCase;
@@ -7,9 +10,6 @@ import com.joojoo.api.filter.presentation.dto.request.FilterListDto;
 import com.joojoo.api.filter.presentation.dto.request.TickerAndTagIdDto;
 import com.joojoo.api.filter.presentation.dto.response.FilterCountResponse;
 import com.joojoo.api.filter.presentation.dto.response.RelatedKeywordsResponse;
-import com.joojoo.api.common.domain.request.auth.CustomUserDetails;
-import com.joojoo.api.common.domain.response.BaseResponse;
-import com.joojoo.api.common.domain.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -75,7 +75,7 @@ public class FilterController {
             @AuthenticationPrincipal CustomUserDetails user,
             @Valid @RequestBody FilterListDto filterListDto
     ){
-        return BaseResponse.ok(filterService.getFilterCategoryCount(user.getUserId(), filterListDto));
+        return BaseResponse.ok(getFilterUseCase.getFilterCategoryCount(user.getUserId(), filterListDto));
     }
 
     @Operation(summary = "필터 연관 키워드 티커, 테그 API", description = "상세 종목의 연관된 키원드 티커, 태그 API 입니다.")

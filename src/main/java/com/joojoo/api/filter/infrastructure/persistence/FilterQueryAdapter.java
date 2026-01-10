@@ -63,6 +63,41 @@ public class FilterQueryAdapter implements FilterQueryPort {
                 .fetch();
     }
 
+    /** 필터 조건에 맞는 블록 전체 개수 조회 */
+    @Override
+    public long countBlocksByCriteria(List<Long> tagIds, List<Long> tickerIds, Long userId) {
+        if (isFilterEmpty(tagIds, tickerIds)) return 0L;
+
+        Long count = queryFactory
+                .select(block.count())
+                .from(block)
+                .where(
+                        hasAllTickerIdsInBlock(tickerIds, userId),
+                        hasAllTagIdsInBlock(tagIds, userId)
+                )
+                .fetchOne();
+
+        return count != null ? count : 0L;
+    }
+
+    /** 필터 조건에 맞는 매매 일지 전체 개수 조회 */
+    @Override
+    public long countTradeLogsByCriteria(List<Long> tagIds, List<Long> tickerIds, Long userId, FilterCategory category) {
+        if (isFilterEmpty(tagIds, tickerIds)) return 0L;
+
+        Long count = queryFactory
+                .select(tradeLog.count())
+                .from(tradeLog)
+                .where(
+                        filterByTradeType(category),
+                        hasAllTickerIdsInTradeLog(tickerIds, userId),
+                        hasAllTagIdsInTradeLog(tagIds, userId)
+                )
+                .fetchOne();
+
+        return count != null ? count : 0L;
+    }
+
     /** 블록 생성일이 지정된 날짜 범위 내에 있는지 확인하는 조건을 생성합니다. */
     private BooleanExpression blockCreatedAtBetween(List<LocalDate> dates) {
         if (dates == null || dates.isEmpty()) return null;
