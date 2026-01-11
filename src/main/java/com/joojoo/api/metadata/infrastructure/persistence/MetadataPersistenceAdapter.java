@@ -5,9 +5,11 @@ import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
 import com.joojoo.api.blockTag.infrastructure.redis.BlockTagRedisRepository;
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
 import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
+import com.joojoo.api.blockTicker.infrastructure.redis.BlockTickerRedisRepository;
 import com.joojoo.api.common.hangul.HangulConverter;
 import com.joojoo.api.metadata.application.port.out.MetadataPort;
 import com.joojoo.api.tag.domain.model.entity.Tag;
+import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +25,7 @@ import java.util.stream.Stream;
 public class MetadataPersistenceAdapter implements MetadataPort { // User 도메인에 있는 어뎁터도 수정해야 함
 
     private final BlockTickerRepository blockTickerRepository;
+    private final BlockTickerRedisRepository blockTickerRedisRepository;
     private final BlockTagRepository blockTagRepository;
     private final BlockTagRedisRepository blockTagRedisRepository;
     private final HangulConverter hangulConverter;
@@ -44,6 +47,19 @@ public class MetadataPersistenceAdapter implements MetadataPort { // User 도메
         });
 
         blockTagRedisRepository.addTagsToRedis(userId, lexEntries, tagIds);
+    }
+
+    @Override
+    public void syncUserTickersToRedis(Long userId, Map<String, Ticker> tickerMap) {
+        Set<String> lexEntries = new HashSet<>();
+        Set<Long> tickerIds = new HashSet<>();
+
+        tickerMap.forEach((name, ticker) -> {
+            lexEntries.addAll(generateLexEntries(userId, name, ticker.getId()));
+            tickerIds.add(ticker.getId());
+        });
+
+        blockTickerRedisRepository.addTickersToRedis(userId, lexEntries, tickerIds);
     }
 
     @Override

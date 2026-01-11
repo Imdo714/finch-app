@@ -58,6 +58,7 @@ public class MetadataService implements MetadataUseCase {
         // Redis 저장
         if (!context.getTagNames().isEmpty()) {
             metadataPort.syncUserTagsToRedis(userId, context.getTagMap());
+            metadataPort.syncUserTickersToRedis(userId, context.getTickerMap());
         }
     }
 
@@ -98,6 +99,7 @@ public class MetadataService implements MetadataUseCase {
         // Redis 저장
         if (!context.getTagNames().isEmpty()) {
             metadataPort.syncUserTagsToRedis(userId, context.getTagMap());
+            metadataPort.syncUserTickersToRedis(userId, context.getTickerMap());
         }
     }
 
