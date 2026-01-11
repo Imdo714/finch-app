@@ -62,16 +62,17 @@ public class MetadataService implements MetadataUseCase {
         if (!context.getTagNames().isEmpty()) {
             metadataPort.syncUserTagsToRedis(userId, context.getTagMap());
         }
-        if (!context.getTickerMap().isEmpty()) {
-            metadataPort.syncUserTickersToRedis(userId, context.getTickerMap());
-        }
+        // 최근 티커 사용할거면 사용 아직, 고도화 전에는 보류
+//        if (!context.getTickerMap().isEmpty()) {
+//            metadataPort.syncUserTickersToRedis(userId, context.getTickerMap());
+//        }
     }
 
     @Override
     @Transactional
     public void processMetadata(Block targetBlock, Long userId) {
         List<BlockTag> oldTags = blockTagRepository.findAllTagsByBlockId(targetBlock.getId());
-        List<BlockTicker> oldTickers = blockTickerRepository.findAllTickersByBlockId(targetBlock.getId()); // 추가 필요
+//        List<BlockTicker> oldTickers = blockTickerRepository.findAllTickersByBlockId(targetBlock.getId());
 
         // 연관된 티커 태그 삭제
         metadataPort.deleteMetadataByBlockId(targetBlock.getId());
@@ -80,9 +81,10 @@ public class MetadataService implements MetadataUseCase {
             metadataPort.processRedisTagRemoval(userId, oldTags);
         }
 
-        if (!oldTickers.isEmpty()) {
-            metadataPort.processRedisTickerRemoval(userId, oldTickers);
-        }
+        // 최근 티커 사용할거면 사용 아직, 고도화 전에는 보류
+//        if (!oldTickers.isEmpty()) {
+//            metadataPort.processRedisTickerRemoval(userId, oldTickers);
+//        }
 
         this.processMetadata(Collections.singletonList(targetBlock), userId);
     }
@@ -111,9 +113,10 @@ public class MetadataService implements MetadataUseCase {
         if (!context.getTagNames().isEmpty()) {
             metadataPort.syncUserTagsToRedis(userId, context.getTagMap());
         }
-        if (!context.getTickerMap().isEmpty()) {
-            metadataPort.syncUserTickersToRedis(userId, context.getTickerMap());
-        }
+        // 최근 티커 사용할거면 사용 아직, 고도화 전에는 보류
+//        if (!context.getTickerMap().isEmpty()) {
+//            metadataPort.syncUserTickersToRedis(userId, context.getTickerMap());
+//        }
     }
 
 }
