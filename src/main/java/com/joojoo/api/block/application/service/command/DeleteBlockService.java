@@ -52,9 +52,10 @@ public class DeleteBlockService implements DeleteBlockUseCase {
         if (!tagsToRemove.isEmpty()) {
             metadataPort.processRedisTagRemoval(userId, tagsToRemove);
         }
-        if (!tickersToRemove.isEmpty()) {
-            metadataPort.processRedisTickerRemoval(userId, tickersToRemove);
-        }
+        // 최근 티커 사용할거면 사용 아직, 고도화 전에는 보류
+//        if (!tickersToRemove.isEmpty()) {
+//            metadataPort.processRedisTickerRemoval(userId, tickersToRemove);
+//        }
     }
 
 }
