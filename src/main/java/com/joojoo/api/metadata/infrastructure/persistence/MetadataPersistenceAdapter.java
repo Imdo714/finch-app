@@ -55,7 +55,7 @@ public class MetadataPersistenceAdapter implements MetadataPort { // User 도메
         Set<Long> tickerIds = new HashSet<>();
 
         tickerMap.forEach((name, ticker) -> {
-            lexEntries.addAll(generateLexEntries(userId, name, ticker.getId()));
+            lexEntries.addAll(generateSearchKeywords(userId, name, ticker.getId(), ticker.getSymbol()));
             tickerIds.add(ticker.getId());
         });
 
@@ -79,28 +79,39 @@ public class MetadataPersistenceAdapter implements MetadataPort { // User 도메
                 .collect(Collectors.groupingBy(BlockTicker::getTicker, Collectors.counting()));
 
         tickerCounts.forEach((ticker, count) -> {
-            Set<String> lexEntries = generateLexEntries(userId, ticker.getName(), ticker.getId());
+            Set<String> lexEntries = generateSearchKeywords(userId, ticker.getName(), ticker.getId(), ticker.getSymbol());
             blockTickerRedisRepository.removeTickersFromRedis(userId, ticker.getId(), lexEntries, count.intValue());
         });
-    }
-
-    /** Redis Tag Key 생성 로직 */
-    private Set<String> generateLexEntries(Long userId, String name, Long tagId) {
-        String base = "*" + name + "*" + tagId;
-        String prefix = userId + ":";
-
-        return Stream.of(
-                        hangulConverter.jasoConvert(name),
-                        hangulConverter.chosungConvert(name)
-                )
-                .map(converted -> prefix + converted + base)
-                .collect(Collectors.toSet()); // toSet()은 중복이 있어도 에러를 내지 않고 하나로 합칩니다.
     }
 
     @Override
     public void deleteMetadataByBlockId(Long blockId) {
         blockTickerRepository.deleteByBlockIds(blockId);
         blockTagRepository.deleteByBlockIds(blockId);
+    }
+
+    /** Redis Tag Key 생성 로직 */
+    private Set<String> generateLexEntries(Long userId, String name, Long targetId) {
+        String suffix = "*" + name + "*" + targetId;
+        return generateCommonRedisKeys(userId, name, suffix);
+    }
+
+    /** Redis Ticker Key 생성 로직 */
+    private Set<String> generateSearchKeywords(Long userId, String name, Long tickerId, String symbol) {
+        String suffix = "*" + name + "*" + symbol + "*" + tickerId;
+        return generateCommonRedisKeys(userId, name, suffix);
+    }
+
+    /** Redis 검색 키 생성을 위한 공통 템플릿 로직 */
+    private Set<String> generateCommonRedisKeys(Long userId, String name, String suffix) {
+        String prefix = userId + ":";
+
+        return Stream.of(
+                        hangulConverter.jasoConvert(name),
+                        hangulConverter.chosungConvert(name)
+                )
+                .map(converted -> prefix + converted + suffix)
+                .collect(Collectors.toSet());
     }
 
 }
