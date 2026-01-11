@@ -2,9 +2,9 @@ package com.joojoo.api.blockTicker.domain.repository;
 
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
 import com.joojoo.api.blockTicker.presentation.dto.request.TickerDateResult;
+import com.joojoo.api.blockTicker.presentation.dto.response.recent.RecentTickersResponse;
 
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.List;
 
 public interface BlockTickerRepository {
@@ -25,4 +25,7 @@ public interface BlockTickerRepository {
 
     /** blockId와 연관된 티커들 IN절 조회 */
     List<BlockTicker> findAllTickersByBlockIdIn(List<Long> idsToDelete);
+
+    /** 사용자가 최근 사용한 Ticker 10개 조회 */
+    List<RecentTickersResponse.RecentTickersDto> findRecentTickers(Long userId);
 }

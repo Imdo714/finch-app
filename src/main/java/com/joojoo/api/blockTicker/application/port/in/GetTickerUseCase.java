@@ -1,5 +1,6 @@
 package com.joojoo.api.blockTicker.application.port.in;
 
+import com.joojoo.api.blockTicker.presentation.dto.response.recent.RecentTickersResponse;
 import com.joojoo.api.common.domain.response.detail.DailyBlockDetailsResponse;
 import com.joojoo.api.common.domain.response.detail.count.TotalCountResponse;
 import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
@@ -12,4 +13,6 @@ public interface GetTickerUseCase {
     DailyBlockDetailsResponse getTickerDetail(Long userId, Long tickerId, LocalDate lastDate);
 
     TotalCountResponse getTickerDetailCount(Long userId, Long tickerId);
+
+    RecentTickersResponse getRecentTickers(Long userId);
 }

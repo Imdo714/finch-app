@@ -1,12 +1,13 @@
 package com.joojoo.api.blockTicker.presentation.controller;
 
 import com.joojoo.api.blockTicker.application.port.in.GetTickerUseCase;
-import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
+import com.joojoo.api.blockTicker.presentation.dto.response.recent.RecentTickersResponse;
 import com.joojoo.api.common.domain.request.auth.CustomUserDetails;
 import com.joojoo.api.common.domain.response.BaseResponse;
 import com.joojoo.api.common.domain.response.ErrorResponse;
 import com.joojoo.api.common.domain.response.detail.DailyBlockDetailsResponse;
 import com.joojoo.api.common.domain.response.detail.count.TotalCountResponse;
+import com.joojoo.api.ticker.presentation.dto.response.TickerSearchResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -72,6 +73,20 @@ public class BlockTickerController {
             @PathVariable Long tickerId
     ){
         return BaseResponse.ok(getTickerUseCase.getTickerDetailCount(user.getUserId(), tickerId));
+    }
+
+    @Operation(summary = "Ticker 최근 사용 기록", description = "Ticker 작성할때 최근 10개 기록 리스트 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공",
+                    content = @Content(schema = @Schema(implementation = RecentTickersResponse.class)
+                    )
+            )
+    })
+    @GetMapping("/recent")
+    public BaseResponse<RecentTickersResponse> getRecentTags(
+            @AuthenticationPrincipal CustomUserDetails user
+    ){
+        return BaseResponse.ok(getTickerUseCase.getRecentTickers(user.getUserId()));
     }
 
 }
