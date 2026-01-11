@@ -5,6 +5,7 @@ import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -12,4 +13,9 @@ import java.util.List;
 public class RelatedKeywordsDto {
     private List<Tag> relatedTags;
     private List<Ticker> relatedTickers;
+
+    public static RelatedKeywordsDto empty() {
+        return new RelatedKeywordsDto(Collections.emptyList(), Collections.emptyList());
+    }
+
 }

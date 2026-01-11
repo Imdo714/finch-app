@@ -9,7 +9,10 @@ import com.joojoo.api.filter.application.port.in.GetFilterUseCase;
 import com.joojoo.api.filter.application.port.out.BlockAndTradeFilterDatePort;
 import com.joojoo.api.filter.application.port.out.FilterQueryPort;
 import com.joojoo.api.filter.presentation.dto.request.FilterListDto;
+import com.joojoo.api.filter.presentation.dto.request.RelatedKeywordsDto;
+import com.joojoo.api.filter.presentation.dto.request.TickerAndTagIdDto;
 import com.joojoo.api.filter.presentation.dto.response.FilterCountResponse;
+import com.joojoo.api.filter.presentation.dto.response.RelatedKeywordsResponse;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -64,6 +67,17 @@ public class FilterQueryService implements GetFilterUseCase {
                 filterQueryPort.countTradeLogsByCriteria(dto.getTagIds(), dto.getTickerIds(), userId, category) : 0;
 
         return new FilterCountResponse(blockCount + tradeLogsCount);
+    }
+
+    @Override
+    public RelatedKeywordsResponse getFilterRelation(Long userId, TickerAndTagIdDto dto) {
+        dto.validate();
+
+        RelatedKeywordsDto data = dto.isTagSearch()
+                ? filterQueryPort.findRelatedKeywordsByTag(userId, dto.getTagId())
+                : filterQueryPort.findRelatedKeywordsByTicker(userId, dto.getTickerId());
+
+        return RelatedKeywordsResponse.of(data.getRelatedTags(), data.getRelatedTickers());
     }
 
 }

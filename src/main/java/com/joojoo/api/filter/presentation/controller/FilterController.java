@@ -4,7 +4,6 @@ import com.joojoo.api.common.domain.request.auth.CustomUserDetails;
 import com.joojoo.api.common.domain.response.BaseResponse;
 import com.joojoo.api.common.domain.response.ErrorResponse;
 import com.joojoo.api.common.domain.response.detail.DailyBlockDetailsResponse;
-import com.joojoo.api.filter.application.FilterService;
 import com.joojoo.api.filter.application.port.in.GetFilterUseCase;
 import com.joojoo.api.filter.presentation.dto.request.FilterListDto;
 import com.joojoo.api.filter.presentation.dto.request.TickerAndTagIdDto;
@@ -32,7 +31,6 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class FilterController {
 
-    private final FilterService filterService;
     private final GetFilterUseCase getFilterUseCase;
 
     @Operation(summary = "필터 카테고리 적용 API", description = "필터를 적용한 노트, 템플릿을 보여주는 API입니다.")
@@ -101,7 +99,7 @@ public class FilterController {
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestBody TickerAndTagIdDto tickerAndTagIdDto
     ){
-        return BaseResponse.ok(filterService.getFilterRelation(user.getUserId(), tickerAndTagIdDto));
+        return BaseResponse.ok(getFilterUseCase.getFilterRelation(user.getUserId(), tickerAndTagIdDto));
     }
 
 }
