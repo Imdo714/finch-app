@@ -1,5 +1,7 @@
 package com.joojoo.api.blockTicker.infrastructure.redis;
 
+import com.joojoo.api.common.search.range.SearchRange;
+
 import java.util.Set;
 
 public interface BlockTickerRedisRepository {
@@ -8,4 +10,7 @@ public interface BlockTickerRedisRepository {
 
     /** Redis에 사용자가 사용한 티커 삭제 및 점수 감소 */
     void removeTickersFromRedis(Long userId, Long tickerId, Set<String> lexEntries, int countToRemove);
+
+    /** 내가 사용하고있는 Ticker들 검색 */
+    Set<String> searchTickersQuery(SearchRange range);
 }

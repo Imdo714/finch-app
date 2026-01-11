@@ -1,11 +1,17 @@
 package com.joojoo.api.blockTicker.infrastructure.redis;
 
+import com.joojoo.api.common.search.range.SearchRange;
 import com.joojoo.global.exception.handleException.redis.RedisConnectionFailException;
+import jakarta.persistence.QueryTimeoutException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Range;
+import org.springframework.data.redis.RedisConnectionFailureException;
+import org.springframework.data.redis.connection.Limit;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.Set;
 
 @Slf4j
@@ -56,6 +62,24 @@ public class BlockTickerRedisRepositoryImpl implements BlockTickerRedisRepositor
         } catch (Exception e) {
             log.error("Redis 삭제 실패 - 태그ID: {}, 에러: {}", tickerId, e.getMessage());
             throw new RedisConnectionFailException();
+        }
+    }
+
+    @Override
+    public Set<String> searchTickersQuery(SearchRange range) {
+        try {
+            Range<String> redisRange = Range.from(Range.Bound.inclusive(range.getStart()))
+                    .to(Range.Bound.inclusive(range.getEnd()));
+
+            return redisTemplate.opsForZSet()
+                    .rangeByLex(AUTOCOMPLETE_TICKER_LEX_KEY, redisRange, Limit.limit().count(10));
+
+        } catch (RedisConnectionFailureException | QueryTimeoutException e) {
+            log.error("Redis 연결 실패 또는 타임아웃 발생: {}", e.getMessage());
+            return Collections.emptySet();
+        } catch (Exception e) {
+            log.error("Redis 알 수 없는 에러: {}", e.getMessage());
+            return Collections.emptySet();
         }
     }
 

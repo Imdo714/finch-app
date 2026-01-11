@@ -8,6 +8,7 @@ import com.joojoo.api.search.application.port.in.GetSearchUseCase;
 import com.joojoo.api.search.presentation.dto.request.SearchRequestDto;
 import com.joojoo.api.search.presentation.dto.response.RecentSearchListResponse;
 import com.joojoo.api.search.presentation.dto.response.TagHistoryResponseDto;
+import com.joojoo.api.search.presentation.dto.response.ticker.TickerHistoryResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -28,7 +29,7 @@ public class SearchController {
     private final GetSearchUseCase getSearchUseCase;
     private final CreateSearchUseCase createSearchUseCase;
 
-    @Operation(summary = "내가 사용한 태그 자동 검색 API", description = "검색창에서 내가 사용한 태그들 초성, 단어로 자동 검색해주는 API입니다.")
+    @Operation(summary = "내가 사용한 태그 자동 검색 API", description = "검색창에서 내가 사용한 태그들 초성, 자성 단어로 자동 검색해주는 API입니다.")
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
@@ -37,12 +38,28 @@ public class SearchController {
             )
     })
     @GetMapping("/tags")
-    public BaseResponse<TagHistoryResponseDto> searchStock(
+    public BaseResponse<TagHistoryResponseDto> searchTag(
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestParam String query
     ) {
         return BaseResponse.ok(getSearchUseCase.searchTags(user.getUserId(), query));
     }
+
+//    @Operation(summary = "내가 사용한 티커 자동 검색 API", description = "검색창에서 내가 사용한 티커를 초성, 자성 단어로 자동 검색해주는 API입니다.")
+//    @ApiResponses({
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "조회 성공",
+//                    content = @Content(schema = @Schema(implementation = TickerHistoryResponseDto.class))
+//            )
+//    })
+//    @GetMapping("/ticker")
+//    public BaseResponse<TickerHistoryResponseDto> searchTicker(
+//            @AuthenticationPrincipal CustomUserDetails user,
+//            @RequestParam String query
+//    ) {
+//        return BaseResponse.ok(getSearchUseCase.searchTickers(user.getUserId(), query));
+//    }
 
     @Operation(summary = "최근 검색 저장 API", description = "검색한 ID를 최근 검색어에 저장하는 API입니다.")
     @ApiResponses({
