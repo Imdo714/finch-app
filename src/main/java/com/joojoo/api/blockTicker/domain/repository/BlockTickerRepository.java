@@ -22,4 +22,7 @@ public interface BlockTickerRepository {
 
     /** blockId와 연관된 티커들 조회 */
     List<BlockTicker> findAllTickersByBlockId(Long blockId);
+
+    /** blockId와 연관된 티커들 IN절 조회 */
+    List<BlockTicker> findAllTickersByBlockIdIn(List<Long> idsToDelete);
 }

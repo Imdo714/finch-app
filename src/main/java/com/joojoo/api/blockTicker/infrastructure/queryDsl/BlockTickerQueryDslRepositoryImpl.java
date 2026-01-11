@@ -50,4 +50,17 @@ public class BlockTickerQueryDslRepositoryImpl implements BlockTickerQueryDslRep
                 .where(blockTicker.block.id.eq(blockId))
                 .fetch();
     }
+
+    @Override
+    public List<BlockTicker> findAllTickersByBlockIdIn(List<Long> blockIds) {
+        if (blockIds == null || blockIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return queryFactory
+                .selectFrom(blockTicker)
+                .join(blockTicker.ticker, ticker).fetchJoin()
+                .where(blockTicker.block.id.in(blockIds))
+                .fetch();
+    }
 }

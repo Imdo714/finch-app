@@ -10,4 +10,6 @@ public interface BlockTickerQueryDslRepository {
     List<BlockTicker> findAllTickersByTradeLogIds(List<Long> tradeLogIds);
 
     List<BlockTicker> findAllTickersByBlockId(Long blockId);
+
+    List<BlockTicker> findAllTickersByBlockIdIn(List<Long> idsToDelete);
 }

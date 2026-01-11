@@ -8,6 +8,8 @@ import com.joojoo.api.block.domain.service.BlockDomainService;
 import com.joojoo.api.block.domain.service.validation.BlockValidator;
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
+import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
+import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
 import com.joojoo.api.metadata.application.port.out.MetadataPort;
 import com.joojoo.global.exception.handleException.block.BlockNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class DeleteBlockService implements DeleteBlockUseCase {
 
     private final BlockRepository blockRepository;
     private final BlockTagRepository blockTagRepository;
+    private final BlockTickerRepository blockTickerRepository;
     private final BlockValidator blockValidator;
     private final MetadataPort metadataPort;
     private final BlockDomainService blockDomainService;
@@ -37,6 +40,7 @@ public class DeleteBlockService implements DeleteBlockUseCase {
         // 삭제 대상 ID 수집 및 관련 태그 백업 (Redis 삭제용)
         List<Long> idsToDelete = blockDomainService.getIdsToDelete(targetBlock, mode);
         List<BlockTag> tagsToRemove = blockTagRepository.findAllByBlockIdIn(idsToDelete);
+        List<BlockTicker> tickersToRemove = blockTickerRepository.findAllTickersByBlockIdIn(idsToDelete);
 
         // 트리 구조 재조정 및 DB 삭제
         if (mode == DeleteMode.ALL) {
@@ -44,9 +48,12 @@ public class DeleteBlockService implements DeleteBlockUseCase {
         } else {
             blockDomainService.performSingleDeleteWithPromotion(targetBlock);
         }
-        // 태그는 Redis 차감
+
         if (!tagsToRemove.isEmpty()) {
             metadataPort.processRedisTagRemoval(userId, tagsToRemove);
+        }
+        if (!tickersToRemove.isEmpty()) {
+            metadataPort.processRedisTickerRemoval(userId, tickersToRemove);
         }
     }
 
