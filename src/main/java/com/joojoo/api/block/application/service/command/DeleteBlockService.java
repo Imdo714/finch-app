@@ -43,7 +43,7 @@ public class DeleteBlockService implements DeleteBlockUseCase {
         List<BlockTicker> tickersToRemove = blockTickerRepository.findAllTickersByBlockIdIn(idsToDelete);
 
         // 트리 구조 재조정 및 DB 삭제
-        if (mode == DeleteMode.ALL) {
+        if (mode.isAll()) {
             blockDomainService.performRecursiveDelete(targetBlock, idsToDelete);
         } else {
             blockDomainService.performSingleDeleteWithPromotion(targetBlock);
