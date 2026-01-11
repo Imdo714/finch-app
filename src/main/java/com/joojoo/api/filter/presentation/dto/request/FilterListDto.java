@@ -1,4 +1,4 @@
-package com.joojoo.api.util.filter.dto.request;
+package com.joojoo.api.filter.presentation.dto.request;
 
 import com.joojoo.api.common.domain.enums.FilterCategory;
 import com.joojoo.global.exception.handleException.filter.FilterInputInvalidException;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class TagListDto {
+public class FilterListDto {
 
     @NotNull(message = "category 타입(ALL/BLOCK/BUY/SELL)은 입니다.")
     private FilterCategory category;

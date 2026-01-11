@@ -1,4 +1,4 @@
-package com.joojoo.api.util.filter.dto.response;
+package com.joojoo.api.filter.presentation.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class FilterCountResponse {
-    private int filterCount;
+    private long filterCount;
 }

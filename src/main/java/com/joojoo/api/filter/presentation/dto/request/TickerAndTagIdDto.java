@@ -1,4 +1,4 @@
-package com.joojoo.api.util.filter.dto.request;
+package com.joojoo.api.filter.presentation.dto.request;
 
 import com.joojoo.global.exception.handleException.filter.FilterInputDuplicateException;
 import com.joojoo.global.exception.handleException.filter.FilterInputInvalidException;
