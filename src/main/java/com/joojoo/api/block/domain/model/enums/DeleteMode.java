@@ -11,4 +11,8 @@ public enum DeleteMode {
     ;
 
     private final String text;
+
+    public boolean isAll(){
+        return this == ALL;
+    }
 }

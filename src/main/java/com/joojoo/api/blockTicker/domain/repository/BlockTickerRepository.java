@@ -19,4 +19,10 @@ public interface BlockTickerRepository {
 
     /** TradeLog에서 사용한 티커들 조회 */
     List<BlockTicker> findAllTickersByTradeLogIds(List<Long> tradeLogIds);
+
+    /** blockId와 연관된 티커들 조회 */
+    List<BlockTicker> findAllTickersByBlockId(Long blockId);
+
+    /** blockId와 연관된 티커들 IN절 조회 */
+    List<BlockTicker> findAllTickersByBlockIdIn(List<Long> idsToDelete);
 }

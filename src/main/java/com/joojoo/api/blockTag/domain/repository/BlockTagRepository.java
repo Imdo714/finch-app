@@ -38,7 +38,7 @@ public interface BlockTagRepository {
     /** 삭제할 블럭아이디의 연관된 태그들 IN절 조회 */
     List<BlockTag> findAllByBlockIdIn(List<Long> blockIds);
 
-    /** blockId와 연관된 태그들 단일 조회 */
+    /** blockId와 연관된 태그들 조회 */
     List<BlockTag> findAllTagsByBlockId(Long blockId);
 
 }
