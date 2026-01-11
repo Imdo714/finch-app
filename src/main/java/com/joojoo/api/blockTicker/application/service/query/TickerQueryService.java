@@ -1,6 +1,5 @@
 package com.joojoo.api.blockTicker.application.service.query;
 
-import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
 import com.joojoo.api.blockTicker.application.port.in.GetTickerUseCase;
 import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
 import com.joojoo.api.blockTicker.domain.service.BlockTickerAssembler;

@@ -5,7 +5,6 @@ import com.joojoo.api.blockTicker.presentation.dto.request.TickerDateResult;
 import com.joojoo.api.blockTicker.presentation.dto.response.recent.RecentTickersResponse;
 
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.List;
 
 public interface BlockTickerRepository {
