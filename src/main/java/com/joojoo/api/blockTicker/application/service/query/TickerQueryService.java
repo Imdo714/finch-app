@@ -1,9 +1,11 @@
 package com.joojoo.api.blockTicker.application.service.query;
 
+import com.joojoo.api.blockTag.presentation.dto.response.recent.RecentTagsResponse;
 import com.joojoo.api.blockTicker.application.port.in.GetTickerUseCase;
 import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
 import com.joojoo.api.blockTicker.domain.service.BlockTickerAssembler;
 import com.joojoo.api.blockTicker.presentation.dto.request.TickerDateResult;
+import com.joojoo.api.blockTicker.presentation.dto.response.recent.RecentTickersResponse;
 import com.joojoo.api.common.date.DateUtils;
 import com.joojoo.api.common.domain.response.detail.DailyBlockDetailsResponse;
 import com.joojoo.api.common.domain.response.detail.count.RelatedBlockDetailCountResponse;
@@ -62,6 +64,11 @@ public class TickerQueryService implements GetTickerUseCase {
             throw new TickerNotFoundException();
         }
         return new TotalCountResponse(tickerCount.getName(), tickerCount.getTotalCount());
+    }
+
+    @Override
+    public RecentTickersResponse getRecentTickers(Long userId) {
+        return RecentTickersResponse.of(blockTickerRepository.findRecentTickers(userId));
     }
 
 }

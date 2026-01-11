@@ -2,7 +2,9 @@ package com.joojoo.api.blockTicker.infrastructure.queryDsl;
 
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
 import com.joojoo.api.blockTicker.domain.model.entity.QBlockTicker;
+import com.joojoo.api.blockTicker.presentation.dto.response.recent.RecentTickersResponse;
 import com.joojoo.api.ticker.domain.model.entity.QTicker;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -61,6 +63,23 @@ public class BlockTickerQueryDslRepositoryImpl implements BlockTickerQueryDslRep
                 .selectFrom(blockTicker)
                 .join(blockTicker.ticker, ticker).fetchJoin()
                 .where(blockTicker.block.id.in(blockIds))
+                .fetch();
+    }
+
+    @Override
+    public List<RecentTickersResponse.RecentTickersDto> findRecentTickers(Long userId) {
+        return queryFactory
+                .select(Projections.constructor(RecentTickersResponse.RecentTickersDto.class,
+                        ticker.id,
+                        ticker.name,
+                        ticker.symbol
+                ))
+                .from(blockTicker)
+                .join(blockTicker.ticker, ticker)
+                .where(blockTicker.userId.eq(userId))
+                .groupBy(ticker.id)
+                .orderBy(blockTicker.id.max().desc())
+                .limit(10)
                 .fetch();
     }
 }

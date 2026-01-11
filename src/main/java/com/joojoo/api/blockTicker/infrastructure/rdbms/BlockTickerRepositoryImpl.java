@@ -5,6 +5,7 @@ import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
 import com.joojoo.api.blockTicker.infrastructure.queryDsl.BlockTickerQueryDslRepository;
 import com.joojoo.api.blockTicker.infrastructure.queryDsl.date.BlockTickerDateQueryDslRepository;
 import com.joojoo.api.blockTicker.presentation.dto.request.TickerDateResult;
+import com.joojoo.api.blockTicker.presentation.dto.response.recent.RecentTickersResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -52,5 +53,10 @@ public class BlockTickerRepositoryImpl implements BlockTickerRepository {
     @Override
     public List<BlockTicker> findAllTickersByBlockIdIn(List<Long> idsToDelete) {
         return blockTickerQueryDslRepository.findAllTickersByBlockIdIn(idsToDelete);
+    }
+
+    @Override
+    public List<RecentTickersResponse.RecentTickersDto> findRecentTickers(Long userId) {
+        return blockTickerQueryDslRepository.findRecentTickers(userId);
     }
 }
