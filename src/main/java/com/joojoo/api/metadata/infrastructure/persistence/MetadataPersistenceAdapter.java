@@ -73,6 +73,17 @@ public class MetadataPersistenceAdapter implements MetadataPort { // User 도메
         });
     }
 
+    @Override
+    public void processRedisTickerRemoval(Long userId, List<BlockTicker> oldTickers) {
+        Map<Ticker, Long> tickerCounts = oldTickers.stream()
+                .collect(Collectors.groupingBy(BlockTicker::getTicker, Collectors.counting()));
+
+        tickerCounts.forEach((ticker, count) -> {
+            Set<String> lexEntries = generateLexEntries(userId, ticker.getName(), ticker.getId());
+            blockTickerRedisRepository.removeTickersFromRedis(userId, ticker.getId(), lexEntries, count.intValue());
+        });
+    }
+
     /** Redis Tag Key 생성 로직 */
     private Set<String> generateLexEntries(Long userId, String name, Long tagId) {
         String base = "*" + name + "*" + tagId;
@@ -84,11 +95,6 @@ public class MetadataPersistenceAdapter implements MetadataPort { // User 도메
                 )
                 .map(converted -> prefix + converted + base)
                 .collect(Collectors.toSet()); // toSet()은 중복이 있어도 에러를 내지 않고 하나로 합칩니다.
-    }
-
-    @Override
-    public List<BlockTag> findAllTagsByBlockId(Long blockId) {
-        return blockTagRepository.findAllTagsByBlockId(blockId);
     }
 
     @Override

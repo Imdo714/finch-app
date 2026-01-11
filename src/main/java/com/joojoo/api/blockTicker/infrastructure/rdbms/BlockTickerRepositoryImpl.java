@@ -43,4 +43,9 @@ public class BlockTickerRepositoryImpl implements BlockTickerRepository {
     public List<BlockTicker> findAllTickersByTradeLogIds(List<Long> tradeLogIds) {
         return blockTickerQueryDslRepository.findAllTickersByTradeLogIds(tradeLogIds);
     }
+
+    @Override
+    public List<BlockTicker> findAllTickersByBlockId(Long blockId) {
+        return blockTickerQueryDslRepository.findAllTickersByBlockId(blockId);
+    }
 }

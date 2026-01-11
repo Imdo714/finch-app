@@ -3,7 +3,9 @@ package com.joojoo.api.metadata.application.service;
 import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.block.presentation.dto.request.metadata.MatchedMetadataDto;
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
+import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
+import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
 import com.joojoo.api.common.domain.enums.TagSourceType;
 import com.joojoo.api.metadata.application.port.in.MetadataUseCase;
 import com.joojoo.api.metadata.application.port.out.MetadataPort;
@@ -28,7 +30,8 @@ public class MetadataService implements MetadataUseCase {
 
     private final MetadataAnalyzer metadataAnalyzer;
     private final MetadataPort metadataPort;
-
+    private final BlockTickerRepository blockTickerRepository;
+    private final BlockTagRepository blockTagRepository;
     private final TagInService tagInService;
     private final TickerInService tickerInService;
 
@@ -65,7 +68,8 @@ public class MetadataService implements MetadataUseCase {
     @Override
     @Transactional
     public void processMetadata(Block targetBlock, Long userId) {
-        List<BlockTag> oldTags = metadataPort.findAllTagsByBlockId(targetBlock.getId()); // 메서드명 변경
+        List<BlockTag> oldTags = blockTagRepository.findAllTagsByBlockId(targetBlock.getId());
+        List<BlockTicker> oldTickers = blockTickerRepository.findAllTickersByBlockId(targetBlock.getId()); // 추가 필요
 
         // 연관된 티커 태그 삭제
         metadataPort.deleteMetadataByBlockId(targetBlock.getId());
@@ -73,6 +77,11 @@ public class MetadataService implements MetadataUseCase {
         if (!oldTags.isEmpty()) {
             metadataPort.processRedisTagRemoval(userId, oldTags);
         }
+
+        if (!oldTickers.isEmpty()) {
+            metadataPort.processRedisTickerRemoval(userId, oldTickers);
+        }
+
         this.processMetadata(Collections.singletonList(targetBlock), userId);
     }
 
