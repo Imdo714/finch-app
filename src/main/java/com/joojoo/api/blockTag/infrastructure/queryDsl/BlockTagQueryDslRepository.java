@@ -19,5 +19,5 @@ public interface BlockTagQueryDslRepository {
 
     List<BlockTag> findAllTagsByBlockId(Long blockId);
 
-    void deleteByTradeLogId(Long tradeLogId);
+    void deleteByTradeLogId(Long userId, Long tradeLogId);
 }

@@ -61,7 +61,7 @@ public class BlockTickerRepositoryImpl implements BlockTickerRepository {
     }
 
     @Override
-    public void deleteByTradeLogId(Long tradeLogId) {
-        blockTickerQueryDslRepository.deleteByTradeLogId(tradeLogId);
+    public void deleteByTradeLogId(Long userId, Long tradeLogId) {
+        blockTickerQueryDslRepository.deleteByTradeLogId(userId, tradeLogId);
     }
 }

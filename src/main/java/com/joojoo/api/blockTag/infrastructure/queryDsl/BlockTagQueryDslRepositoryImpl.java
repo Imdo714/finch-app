@@ -103,9 +103,12 @@ public class BlockTagQueryDslRepositoryImpl implements BlockTagQueryDslRepositor
     }
 
     @Override
-    public void deleteByTradeLogId(Long tradeLogId) {
+    public void deleteByTradeLogId(Long userId, Long tradeLogId) {
         queryFactory.delete(blockTag)
-                .where(blockTag.tradeLog.id.eq(tradeLogId))
+                .where(
+                        blockTag.userId.eq(userId),
+                        blockTag.tradeLog.id.eq(tradeLogId)
+                )
                 .execute();
     }
 }

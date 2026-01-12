@@ -35,10 +35,10 @@ public class TradeLogRepositoryImpl implements TradeLogRepository {
     }
 
     @Override
-    public void clearMetadataByTradeLog(Long tradeLogId) {
-        blockTagRepository.deleteByTradeLogId(tradeLogId);
-        blockTickerRepository.deleteByTradeLogId(tradeLogId);
-        tradeLogQueryDslRepository.deleteByTradeLogId(tradeLogId);
+    public void clearMetadataByTradeLog(Long userId, Long tradeLogId) {
+        blockTagRepository.deleteByTradeLogId(userId, tradeLogId);
+        blockTickerRepository.deleteByTradeLogId(userId, tradeLogId);
+        tradeLogQueryDslRepository.deleteByTradeLogId(userId, tradeLogId);
     }
 
 }

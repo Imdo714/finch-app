@@ -16,5 +16,5 @@ public interface BlockTickerQueryDslRepository {
 
     List<RecentTickersResponse.RecentTickersDto> findRecentTickers(Long userId);
 
-    void deleteByTradeLogId(Long tradeLogId);
+    void deleteByTradeLogId(Long userId, Long tradeLogId);
 }
