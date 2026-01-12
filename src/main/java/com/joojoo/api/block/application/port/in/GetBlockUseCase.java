@@ -1,12 +1,12 @@
 package com.joojoo.api.block.application.port.in;
 
 import com.joojoo.api.block.presentation.dto.response.detail.BlockDetailResponseDto;
-import com.joojoo.api.block.presentation.dto.response.mainView.BlockMainViewResponse;
+import com.joojoo.api.common.domain.response.detail.DailyBlockDetailsResponse;
 
 import java.time.LocalDate;
 
 public interface GetBlockUseCase {
-    BlockMainViewResponse getBlockMainView(Long userId, LocalDate lastDate);
+    DailyBlockDetailsResponse getBlockMainView(Long userId, LocalDate lastDate);
 
     BlockDetailResponseDto getBlockDetail(Long blockId);
 }

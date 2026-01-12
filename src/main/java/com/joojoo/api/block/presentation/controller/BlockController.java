@@ -13,6 +13,7 @@ import com.joojoo.api.block.presentation.dto.response.mainView.BlockMainViewResp
 import com.joojoo.api.common.domain.request.auth.CustomUserDetails;
 import com.joojoo.api.common.domain.response.BaseResponse;
 import com.joojoo.api.common.domain.response.ErrorResponse;
+import com.joojoo.api.common.domain.response.detail.DailyBlockDetailsResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -81,11 +82,11 @@ public class BlockController {
             @ApiResponse(
                     responseCode = "200",
                     description = "조회 성공",
-                    content = @Content(schema = @Schema(implementation = BlockMainViewResponse.class))
+                    content = @Content(schema = @Schema(implementation = DailyBlockDetailsResponse.class))
             )
     })
     @GetMapping("/detail")
-    public BaseResponse<BlockMainViewResponse> getBlockMainView(
+    public BaseResponse<DailyBlockDetailsResponse> getBlockMainView(
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lastDate
     ) {
