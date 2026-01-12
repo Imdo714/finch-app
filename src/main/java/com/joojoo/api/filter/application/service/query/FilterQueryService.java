@@ -1,8 +1,8 @@
 package com.joojoo.api.filter.application.service.query;
 
-import com.joojoo.api.block.application.validate.blockerTree.BlockTreeValidator;
 import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.common.assembler.detailApiAssembler.DetailResponseAssembler;
+import com.joojoo.api.common.date.DateUtils;
 import com.joojoo.api.common.domain.enums.FilterCategory;
 import com.joojoo.api.common.domain.response.detail.DailyBlockDetailsResponse;
 import com.joojoo.api.filter.application.port.in.GetFilterUseCase;
@@ -27,15 +27,15 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class FilterQueryService implements GetFilterUseCase {
 
-    private final BlockTreeValidator blockTreeValidator;
     private final DetailResponseAssembler detailResponseAssembler;
     private final BlockAndTradeFilterDatePort blockAndTradeFilterDatePort;
     private final FilterQueryPort filterQueryPort;
+    private final DateUtils dateUtils;
 
     @Override
     public DailyBlockDetailsResponse getFilterCategory(Long userId, FilterListDto filterListDto, LocalDate lastDate) {
         filterListDto.validateHasKeywords();
-        LocalDate targetDate = blockTreeValidator.validateAndGetTargetDate(lastDate);
+        LocalDate targetDate = dateUtils.validateAndGetTargetDate(lastDate);
         FilterCategory category = filterListDto.getCategory();
 
         List<LocalDate> targetDates = blockAndTradeFilterDatePort.findTargetDates(userId, filterListDto.getTagIds(), filterListDto.getTickerIds(), targetDate, filterListDto.getCategory(), 3);
