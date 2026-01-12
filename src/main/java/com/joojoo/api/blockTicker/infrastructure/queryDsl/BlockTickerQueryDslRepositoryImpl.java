@@ -82,4 +82,11 @@ public class BlockTickerQueryDslRepositoryImpl implements BlockTickerQueryDslRep
                 .limit(10)
                 .fetch();
     }
+
+    @Override
+    public void deleteByTradeLogId(Long tradeLogId) {
+        queryFactory.delete(blockTicker)
+                .where(blockTicker.tradeLog.id.eq(tradeLogId))
+                .execute();
+    }
 }

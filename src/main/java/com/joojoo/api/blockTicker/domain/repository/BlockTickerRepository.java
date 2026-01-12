@@ -28,4 +28,7 @@ public interface BlockTickerRepository {
 
     /** 사용자가 최근 사용한 Ticker 10개 조회 */
     List<RecentTickersResponse.RecentTickersDto> findRecentTickers(Long userId);
+
+    /** TradeLog에 사용된 티커들 삭제 */
+    void deleteByTradeLogId(Long tradeLogId);
 }

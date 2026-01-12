@@ -62,6 +62,9 @@ public enum ErrorCode {
     INVALID_FILTER_INPUT(400, "INVALID_FILTER_INPUT", "태그 ID 또는 티커 ID 중 하나는 반드시 입력해야 합니다."),
     DUPLICATE_FILTER_INPUT(400, "DUPLICATE_FILTER_INPUT", "태그 ID와 티커 ID는 동시에 입력할 수 없습니다."),
 
+    //---------------------------- 매매일지 (TradeLog) ----------------------------
+    TRADE_LOG_NOT_FOUND(404, "TRADE_LOG_NOT_FOUND", "해당 매매일지를 찾을 수 없습니다."),
+
     ;
 
     private final int httpStatus;

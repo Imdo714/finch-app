@@ -41,4 +41,7 @@ public interface BlockTagRepository {
     /** blockId와 연관된 태그들 조회 */
     List<BlockTag> findAllTagsByBlockId(Long blockId);
 
+    /** TradeLog에 사용된 태그들 삭제 */
+    void deleteByTradeLogId(Long tradeLogId);
+
 }
