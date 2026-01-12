@@ -64,6 +64,7 @@ public enum ErrorCode {
 
     //---------------------------- 매매일지 (TradeLog) ----------------------------
     TRADE_LOG_NOT_FOUND(404, "TRADE_LOG_NOT_FOUND", "해당 매매일지를 찾을 수 없습니다."),
+    TRADE_LOG_OWNER_FOUND(403, "TRADE_LOG_OWNER_FOUND", "해당 매매일지 작성자만 삭제 할 수 있습니다."),
 
     ;
 

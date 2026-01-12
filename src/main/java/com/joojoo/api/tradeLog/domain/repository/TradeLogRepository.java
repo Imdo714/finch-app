@@ -13,5 +13,5 @@ public interface TradeLogRepository {
     TradeLog getTradeLogById(Long traderLogId);
 
     /** 매매일지에 사용한 Tags, Tickers 삭제 */
-    void clearMetadataByTradeLog(Long tradeLogId);
+    void clearMetadataByTradeLog(Long userId, Long tradeLogId);
 }

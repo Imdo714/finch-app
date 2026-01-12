@@ -6,6 +6,7 @@ import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.common.domain.entity.BaseTimeEntity;
 import com.joojoo.api.common.domain.enums.TagSourceType;
 import com.joojoo.api.common.domain.enums.TradeType;
+import com.joojoo.global.exception.handleException.tradeLog.NotTradeLogOwnerException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -95,6 +96,12 @@ public class TradeLog extends BaseTimeEntity {
                 TagSourceType.TRADE_RISK, Objects.requireNonNullElse(this.riskFactor, ""),
                 TagSourceType.TRADE_PLAN, Objects.requireNonNullElse(this.tradingPlan, "")
         );
+    }
+
+    public void validateOwner(Long userId) {
+        if (!this.user.getId().equals(userId)) {
+            throw new NotTradeLogOwnerException();
+        }
     }
 
 }

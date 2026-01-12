@@ -81,8 +81,8 @@ public class BlockTagRepositoryImpl implements BlockTagRepository {
     }
 
     @Override
-    public void deleteByTradeLogId(Long tradeLogId) {
-        blockTagQueryDslRepository.deleteByTradeLogId(tradeLogId);
+    public void deleteByTradeLogId(Long userId, Long tradeLogId) {
+        blockTagQueryDslRepository.deleteByTradeLogId(userId, tradeLogId);
     }
 
 }

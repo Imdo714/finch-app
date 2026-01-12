@@ -84,9 +84,12 @@ public class BlockTickerQueryDslRepositoryImpl implements BlockTickerQueryDslRep
     }
 
     @Override
-    public void deleteByTradeLogId(Long tradeLogId) {
+    public void deleteByTradeLogId(Long userId, Long tradeLogId) {
         queryFactory.delete(blockTicker)
-                .where(blockTicker.tradeLog.id.eq(tradeLogId))
+                .where(
+                        blockTicker.userId.eq(userId),
+                        blockTicker.tradeLog.id.eq(tradeLogId)
+                )
                 .execute();
     }
 }

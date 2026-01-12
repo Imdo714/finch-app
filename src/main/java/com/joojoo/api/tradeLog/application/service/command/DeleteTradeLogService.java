@@ -25,11 +25,13 @@ public class DeleteTradeLogService implements DeleteTradeLogUseCase {
     @Transactional
     public void deleteTradeLog(Long userId, Long tradeLogId) {
         TradeLog tradeLog = tradeLogRepository.getTradeLogById(tradeLogId);
+        tradeLog.validateOwner(userId);
+
         // Redis 삭제용
         List<BlockTag> tagsToRemove = blockTagRepository.findAllTagsByTradeLogIds(Collections.singletonList(tradeLogId));
 
         // 연관 테이블 일괄 삭제
-        tradeLogRepository.clearMetadataByTradeLog(tradeLogId);
+        tradeLogRepository.clearMetadataByTradeLog(userId, tradeLogId);
 
         if (!tagsToRemove.isEmpty()) {
             metadataPort.processRedisTagRemoval(userId, tagsToRemove);
