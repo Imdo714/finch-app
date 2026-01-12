@@ -19,4 +19,12 @@ public class tradeLogQueryDslRepositoryImpl implements tradeLogQueryDslRepositor
                 .where(tradeLog.user.id.eq(userId))
                 .execute();
     }
+
+    @Override
+    public void deleteByTradeLogId(Long tradeLogId) {
+        queryFactory
+                .delete(tradeLog)
+                .where(tradeLog.id.eq(tradeLogId))
+                .execute();
+    }
 }

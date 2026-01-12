@@ -1,6 +1,8 @@
 package com.joojoo.api.tradeLog.presentation.controller;
 
+import com.joojoo.api.block.domain.model.enums.DeleteMode;
 import com.joojoo.api.tradeLog.application.port.in.CreateTradeLogUseCase;
+import com.joojoo.api.tradeLog.application.port.in.DeleteTradeLogUseCase;
 import com.joojoo.api.tradeLog.presentation.dto.request.TradeRequestDto;
 import com.joojoo.api.common.domain.request.auth.CustomUserDetails;
 import com.joojoo.api.common.domain.response.BaseResponse;
@@ -14,10 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "TradeLog API", description = "템플릿 관련 API")
 @RestController
@@ -26,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TradeLogController {
 
     private final CreateTradeLogUseCase createTradeLogUseCase;
+    private final DeleteTradeLogUseCase deleteTradeLogUseCase;
 
     @Operation(summary = "템플릿 생성 API", description = "템플릿 작성 API입니다.")
     @ApiResponses({
@@ -52,6 +52,28 @@ public class TradeLogController {
     ) {
         createTradeLogUseCase.createTradesLog(user.getUserId(), tradeRequestDto);
         return BaseResponse.ok("템플릿 작성 성공!");
+    }
+
+    @Operation(summary = "템플릿 삭제 API", description = "템플릿 삭제 API입니다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "템플릿 삭제 성공",
+                    content = @Content(schema = @Schema(implementation = String.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "해당 매매일지를 찾을 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    @DeleteMapping("/{tradeLogId}")
+    public BaseResponse<String> deleteBlock(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @PathVariable Long tradeLogId
+    ) {
+        deleteTradeLogUseCase.deleteTradeLog(user.getUserId(), tradeLogId);
+        return BaseResponse.ok("템플릿 삭제 성공!");
     }
 
 }

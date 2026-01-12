@@ -15,4 +15,6 @@ public interface BlockTickerQueryDslRepository {
     List<BlockTicker> findAllTickersByBlockIdIn(List<Long> idsToDelete);
 
     List<RecentTickersResponse.RecentTickersDto> findRecentTickers(Long userId);
+
+    void deleteByTradeLogId(Long tradeLogId);
 }

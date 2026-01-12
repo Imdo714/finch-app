@@ -59,4 +59,9 @@ public class BlockTickerRepositoryImpl implements BlockTickerRepository {
     public List<RecentTickersResponse.RecentTickersDto> findRecentTickers(Long userId) {
         return blockTickerQueryDslRepository.findRecentTickers(userId);
     }
+
+    @Override
+    public void deleteByTradeLogId(Long tradeLogId) {
+        blockTickerQueryDslRepository.deleteByTradeLogId(tradeLogId);
+    }
 }

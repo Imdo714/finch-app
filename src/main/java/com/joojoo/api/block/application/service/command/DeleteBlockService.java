@@ -40,7 +40,6 @@ public class DeleteBlockService implements DeleteBlockUseCase {
         // 삭제 대상 ID 수집 및 관련 태그 백업 (Redis 삭제용)
         List<Long> idsToDelete = blockDomainService.getIdsToDelete(targetBlock, mode);
         List<BlockTag> tagsToRemove = blockTagRepository.findAllByBlockIdIn(idsToDelete);
-        List<BlockTicker> tickersToRemove = blockTickerRepository.findAllTickersByBlockIdIn(idsToDelete);
 
         // 트리 구조 재조정 및 DB 삭제
         if (mode.isAll()) {
@@ -52,7 +51,9 @@ public class DeleteBlockService implements DeleteBlockUseCase {
         if (!tagsToRemove.isEmpty()) {
             metadataPort.processRedisTagRemoval(userId, tagsToRemove);
         }
+
         // 최근 티커 사용할거면 사용 아직, 고도화 전에는 보류
+//        List<BlockTicker> tickersToRemove = blockTickerRepository.findAllTickersByBlockIdIn(idsToDelete);
 //        if (!tickersToRemove.isEmpty()) {
 //            metadataPort.processRedisTickerRemoval(userId, tickersToRemove);
 //        }

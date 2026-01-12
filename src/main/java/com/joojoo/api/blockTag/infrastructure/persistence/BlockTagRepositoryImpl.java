@@ -80,4 +80,9 @@ public class BlockTagRepositoryImpl implements BlockTagRepository {
         return blockTagQueryDslRepository.findAllTagsByBlockId(blockId);
     }
 
+    @Override
+    public void deleteByTradeLogId(Long tradeLogId) {
+        blockTagQueryDslRepository.deleteByTradeLogId(tradeLogId);
+    }
+
 }
