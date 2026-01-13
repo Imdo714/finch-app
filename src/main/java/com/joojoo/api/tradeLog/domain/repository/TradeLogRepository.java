@@ -1,6 +1,7 @@
 package com.joojoo.api.tradeLog.domain.repository;
 
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
+import com.joojoo.api.tradeLog.domain.service.TradeMetrics;
 
 public interface TradeLogRepository {
     /** TradeLog 저장 */
@@ -14,4 +15,7 @@ public interface TradeLogRepository {
 
     /** 매매일지에 사용한 Tags, Tickers 삭제 */
     void clearMetadataByTradeLog(Long userId, Long tradeLogId);
+
+    /** 사용자가 특정 종목을 매수한 기록을 조회 */
+    TradeMetrics findAllBuyLogsByTicker(Long userId, Long tickerId);
 }

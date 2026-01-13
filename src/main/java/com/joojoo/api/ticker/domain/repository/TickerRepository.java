@@ -17,4 +17,7 @@ public interface TickerRepository {
 
     /** Ticker 프록시 객체 반환 */
     Ticker getReferenceById(Long tickerId);
+
+    /** Ticker 존재 여부 확인 */
+    boolean existsById(Long tickerId);
 }

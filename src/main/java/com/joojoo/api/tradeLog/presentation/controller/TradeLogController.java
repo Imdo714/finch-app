@@ -1,12 +1,14 @@
 package com.joojoo.api.tradeLog.presentation.controller;
 
-import com.joojoo.api.block.domain.model.enums.DeleteMode;
-import com.joojoo.api.tradeLog.application.port.in.CreateTradeLogUseCase;
-import com.joojoo.api.tradeLog.application.port.in.DeleteTradeLogUseCase;
-import com.joojoo.api.tradeLog.presentation.dto.request.TradeRequestDto;
 import com.joojoo.api.common.domain.request.auth.CustomUserDetails;
 import com.joojoo.api.common.domain.response.BaseResponse;
 import com.joojoo.api.common.domain.response.ErrorResponse;
+import com.joojoo.api.tradeLog.application.port.in.CreateTradeLogUseCase;
+import com.joojoo.api.tradeLog.application.port.in.DeleteTradeLogUseCase;
+import com.joojoo.api.tradeLog.application.port.in.GetTraderLogUseCase;
+import com.joojoo.api.tradeLog.presentation.dto.request.TradeRequestDto;
+import com.joojoo.api.tradeLog.presentation.dto.request.calculate.TradeCalculateRequest;
+import com.joojoo.api.tradeLog.presentation.dto.response.calculate.TradeMetricsResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/trades")
 public class TradeLogController {
 
+    private final GetTraderLogUseCase getTraderLogUseCase;
     private final CreateTradeLogUseCase createTradeLogUseCase;
     private final DeleteTradeLogUseCase deleteTradeLogUseCase;
 
@@ -74,6 +77,27 @@ public class TradeLogController {
     ) {
         deleteTradeLogUseCase.deleteTradeLog(user.getUserId(), tradeLogId);
         return BaseResponse.ok("템플릿 삭제 성공!");
+    }
+
+    @Operation(summary = "템플릿 거래 정보 API", description = "템플릿 거래 정보 API입니다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "조회 성공",
+                    content = @Content(schema = @Schema(implementation = TradeMetricsResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "해당 매매일지를 찾을 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    @GetMapping("/calculate")
+    public BaseResponse<TradeMetricsResponse> getTradeLogCalculate(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @Valid @RequestBody TradeCalculateRequest tradeCalculateRequest
+            ) {
+        return BaseResponse.ok(getTraderLogUseCase.getTradeLogCalculate(user.getUserId(), tradeCalculateRequest));
     }
 
 }
