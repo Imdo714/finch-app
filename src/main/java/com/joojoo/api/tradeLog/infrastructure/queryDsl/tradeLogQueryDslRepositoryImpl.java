@@ -2,7 +2,7 @@ package com.joojoo.api.tradeLog.infrastructure.queryDsl;
 
 import com.joojoo.api.common.domain.enums.TradeType;
 import com.joojoo.api.tradeLog.domain.model.entity.QTradeLog;
-import com.joojoo.api.tradeLog.domain.service.TradeMetrics;
+import com.joojoo.api.tradeLog.domain.service.calculate.TradeMetrics;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;

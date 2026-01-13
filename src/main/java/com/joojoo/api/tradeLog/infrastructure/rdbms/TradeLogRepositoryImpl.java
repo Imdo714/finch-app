@@ -5,7 +5,7 @@ import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
 import com.joojoo.api.tradeLog.domain.repository.TradeLogRepository;
 import com.joojoo.api.tradeLog.infrastructure.queryDsl.tradeLogQueryDslRepository;
-import com.joojoo.api.tradeLog.domain.service.TradeMetrics;
+import com.joojoo.api.tradeLog.domain.service.calculate.TradeMetrics;
 import com.joojoo.global.exception.handleException.tradeLog.TradeLogNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

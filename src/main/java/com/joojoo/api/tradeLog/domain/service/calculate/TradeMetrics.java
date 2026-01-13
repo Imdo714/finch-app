@@ -1,4 +1,4 @@
-package com.joojoo.api.tradeLog.domain.service;
+package com.joojoo.api.tradeLog.domain.service.calculate;
 
 import com.joojoo.api.tradeLog.presentation.dto.response.calculate.TradeMetricsResponse;
 import lombok.Getter;

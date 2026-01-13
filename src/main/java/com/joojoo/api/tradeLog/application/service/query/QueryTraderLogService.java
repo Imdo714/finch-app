@@ -4,7 +4,7 @@ import com.joojoo.api.ticker.domain.repository.TickerRepository;
 import com.joojoo.api.tradeLog.application.port.in.GetTraderLogUseCase;
 import com.joojoo.api.tradeLog.domain.repository.TradeLogRepository;
 import com.joojoo.api.tradeLog.presentation.dto.request.calculate.TradeCalculateRequest;
-import com.joojoo.api.tradeLog.domain.service.TradeMetrics;
+import com.joojoo.api.tradeLog.domain.service.calculate.TradeMetrics;
 import com.joojoo.api.tradeLog.presentation.dto.response.calculate.TradeMetricsResponse;
 import com.joojoo.global.exception.handleException.tickers.TickerNotFoundException;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package com.joojoo.api.tradeLog.domain.repository;
 
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
-import com.joojoo.api.tradeLog.domain.service.TradeMetrics;
+import com.joojoo.api.tradeLog.domain.service.calculate.TradeMetrics;
 
 public interface TradeLogRepository {
     /** TradeLog 저장 */
