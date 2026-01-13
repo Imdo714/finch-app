@@ -52,6 +52,11 @@ public class TickerRepositoryImpl implements TickerRepository, TickerInService {
     }
 
     @Override
+    public boolean existsById(Long tickerId) {
+        return tickerJpaRepository.existsById(tickerId);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Map<String, Ticker> getTickerMap(Set<String> names) {
         if (names.isEmpty()) return Collections.emptyMap();

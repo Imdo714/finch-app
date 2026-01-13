@@ -1,9 +1,15 @@
 package com.joojoo.api.tradeLog.infrastructure.queryDsl;
 
+import com.joojoo.api.common.domain.enums.TradeType;
 import com.joojoo.api.tradeLog.domain.model.entity.QTradeLog;
+import com.joojoo.api.tradeLog.domain.service.calculate.TradeMetrics;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.math.BigDecimal;
 
 @Repository
 @RequiredArgsConstructor
@@ -30,4 +36,37 @@ public class tradeLogQueryDslRepositoryImpl implements tradeLogQueryDslRepositor
                 )
                 .execute();
     }
+
+    @Override
+    public TradeMetrics findAllBuyLogsByTicker(Long userId, Long tickerId) {
+        CaseBuilder caseBuilder = new CaseBuilder();
+
+        return queryFactory
+                .select(Projections.constructor(TradeMetrics.class,
+                        // 매수 수량 합계: BUY일 때만 amount, 아니면 0
+                        caseBuilder.when(tradeLog.tradeType.eq(TradeType.BUY))
+                                .then(tradeLog.amount)
+                                .otherwise(BigDecimal.ZERO)
+                                .sum(),
+
+                        // 매도 수량 합계: SELL일 때만 amount, 아니면 0
+                        caseBuilder.when(tradeLog.tradeType.eq(TradeType.SELL))
+                                .then(tradeLog.amount)
+                                .otherwise(BigDecimal.ZERO)
+                                .sum(),
+
+                        // 총 매수 금액 합계: BUY일 때만 (가격 * 수량), 아니면 0
+                        caseBuilder.when(tradeLog.tradeType.eq(TradeType.BUY))
+                                .then(tradeLog.price.multiply(tradeLog.amount))
+                                .otherwise(BigDecimal.ZERO)
+                                .sum()
+                ))
+                .from(tradeLog)
+                .where(
+                        tradeLog.user.id.eq(userId),
+                        tradeLog.ticker.id.eq(tickerId)
+                )
+                .fetchOne();
+    }
+
 }
