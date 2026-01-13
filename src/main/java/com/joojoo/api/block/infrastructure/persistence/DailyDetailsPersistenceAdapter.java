@@ -73,6 +73,8 @@ public class DailyDetailsPersistenceAdapter implements LoadDailyDetailsPort {
                 .selectFrom(block)
                 .where(
                         block.user.id.eq(userId),
+                        block.parent.isNull(),
+                        block.isDeleted.isFalse(),
                         Expressions.dateTemplate(LocalDate.class, "DATE({0})", block.createdAt).in(dates)
                 )
                 .orderBy(block.createdAt.desc())
