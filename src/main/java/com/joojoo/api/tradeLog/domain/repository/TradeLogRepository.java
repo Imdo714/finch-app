@@ -24,4 +24,7 @@ public interface TradeLogRepository {
 
     /** 사용자가 특정 종목의 매수, 매도 거래 내역 조회 */
     List<ChartOverlayResponse.TradeDetailDto> getTradeBuySellRecords(Long userId, Long tickerId);
+
+    /** TradeLog 조회 */
+    TradeLog findById(Long tradeLogId);
 }

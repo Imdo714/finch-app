@@ -6,8 +6,10 @@ import com.joojoo.api.common.domain.response.ErrorResponse;
 import com.joojoo.api.tradeLog.application.port.in.CreateTradeLogUseCase;
 import com.joojoo.api.tradeLog.application.port.in.DeleteTradeLogUseCase;
 import com.joojoo.api.tradeLog.application.port.in.GetTraderLogUseCase;
+import com.joojoo.api.tradeLog.application.port.in.UpdateTradeLogUseCase;
 import com.joojoo.api.tradeLog.presentation.dto.request.TradeRequestDto;
 import com.joojoo.api.tradeLog.presentation.dto.request.calculate.TradeCalculateRequest;
+import com.joojoo.api.tradeLog.presentation.dto.request.update.UpdateTradeRequestDto;
 import com.joojoo.api.tradeLog.presentation.dto.response.calculate.TradeMetricsResponse;
 import com.joojoo.api.tradeLog.presentation.dto.response.chartOverlay.ChartOverlayResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,6 +32,7 @@ public class TradeLogController {
     private final GetTraderLogUseCase getTraderLogUseCase;
     private final CreateTradeLogUseCase createTradeLogUseCase;
     private final DeleteTradeLogUseCase deleteTradeLogUseCase;
+    private final UpdateTradeLogUseCase updateTradeLogUseCase;
 
     @Operation(summary = "템플릿 생성 API", description = "템플릿 작성 API입니다.")
     @ApiResponses({
@@ -120,6 +123,28 @@ public class TradeLogController {
             @PathVariable Long tickerId
     ) {
         return BaseResponse.ok(getTraderLogUseCase.getTradeLogChart(user.getUserId(), tickerId));
+    }
+
+    @Operation(summary = "템플릿 수정 API", description = "템플릿 수정 API입니다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "수정 성공",
+                    content = @Content(schema = @Schema(implementation = String.class))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "해당 매매일지 작성자만 삭제 할 수 있습니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    @PatchMapping
+    public BaseResponse<String> updateTradesLog(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @Valid @RequestBody UpdateTradeRequestDto updateTradeRequestDto
+    ) {
+        updateTradeLogUseCase.updateTradeLog(user.getUserId(), updateTradeRequestDto);
+        return BaseResponse.ok("템플릿 수정 성공!");
     }
 
 }
