@@ -2,6 +2,7 @@ package com.joojoo.api.tradeLog.domain.model.entity;
 
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.tradeLog.presentation.dto.request.TradeRequestDto;
+import com.joojoo.api.tradeLog.presentation.dto.request.update.UpdateTradeRequestDto;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.common.domain.entity.BaseTimeEntity;
 import com.joojoo.api.common.domain.enums.TagSourceType;
@@ -102,6 +103,19 @@ public class TradeLog extends BaseTimeEntity {
         if (!this.user.getId().equals(userId)) {
             throw new NotTradeLogOwnerException();
         }
+    }
+
+    public void update(UpdateTradeRequestDto dto) {
+        if (dto.getTradeType() != null && !dto.getTradeType().equals(this.tradeType)) {
+            this.tradeType = dto.getTradeType();
+        }
+
+        if (dto.getPrice() != null) this.price = dto.getPrice();
+        if (dto.getAmount() != null) this.amount = dto.getAmount();
+        if (dto.getMemo() != null) this.memo = dto.getMemo();
+        if (dto.getRiskFactor() != null) this.riskFactor = dto.getRiskFactor();
+        if (dto.getTradingPlan() != null) this.tradingPlan = dto.getTradingPlan();
+        if (dto.getExecutedAt() != null) this.executedAt = dto.getExecutedAt();
     }
 
 }

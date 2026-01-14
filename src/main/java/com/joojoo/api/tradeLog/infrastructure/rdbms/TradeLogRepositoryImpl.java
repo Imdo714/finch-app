@@ -55,4 +55,10 @@ public class TradeLogRepositoryImpl implements TradeLogRepository {
         return tradeLogQueryDslRepository.getTradeBuySellRecords(userId, tickerId);
     }
 
+    @Override
+    public TradeLog findById(Long tradeLogId) {
+        return tradeLogJpaRepository.findById(tradeLogId)
+                .orElseThrow(TradeLogNotFoundException::new);
+    }
+
 }
