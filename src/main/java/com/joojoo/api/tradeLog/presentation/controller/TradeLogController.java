@@ -9,6 +9,7 @@ import com.joojoo.api.tradeLog.application.port.in.GetTraderLogUseCase;
 import com.joojoo.api.tradeLog.presentation.dto.request.TradeRequestDto;
 import com.joojoo.api.tradeLog.presentation.dto.request.calculate.TradeCalculateRequest;
 import com.joojoo.api.tradeLog.presentation.dto.response.calculate.TradeMetricsResponse;
+import com.joojoo.api.tradeLog.presentation.dto.response.chartOverlay.ChartOverlayResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -98,6 +99,27 @@ public class TradeLogController {
             @Valid @RequestBody TradeCalculateRequest tradeCalculateRequest
             ) {
         return BaseResponse.ok(getTraderLogUseCase.getTradeLogCalculate(user.getUserId(), tradeCalculateRequest));
+    }
+
+    @Operation(summary = "차트 위 포인트 내역 API", description = "차트 위 포인트 내역 API입니다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "조회 성공",
+                    content = @Content(schema = @Schema(implementation = ChartOverlayResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "해당 매매일지를 찾을 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    @GetMapping("/chart/{tickerId}")
+    public BaseResponse<ChartOverlayResponse> getTradeLogChart(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @PathVariable Long tickerId
+    ) {
+        return BaseResponse.ok(getTraderLogUseCase.getTradeLogChart(user.getUserId(), tickerId));
     }
 
 }

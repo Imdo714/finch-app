@@ -3,6 +3,7 @@ package com.joojoo.api.tradeLog.infrastructure.queryDsl;
 import com.joojoo.api.common.domain.enums.TradeType;
 import com.joojoo.api.tradeLog.domain.model.entity.QTradeLog;
 import com.joojoo.api.tradeLog.domain.service.calculate.TradeMetrics;
+import com.joojoo.api.tradeLog.presentation.dto.response.chartOverlay.ChartOverlayResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -67,6 +69,23 @@ public class tradeLogQueryDslRepositoryImpl implements tradeLogQueryDslRepositor
                         tradeLog.ticker.id.eq(tickerId)
                 )
                 .fetchOne();
+    }
+
+    @Override
+    public List<ChartOverlayResponse.TradeDetailDto> getTradeBuySellRecords(Long userId, Long tickerId) {
+        return queryFactory
+                .select(Projections.constructor(ChartOverlayResponse.TradeDetailDto.class,
+                        tradeLog.id,
+                        tradeLog.executedAt,
+                        tradeLog.tradeType
+                ))
+                .from(tradeLog)
+                .where(
+                        tradeLog.user.id.eq(userId),
+                        tradeLog.ticker.id.eq(tickerId),
+                        tradeLog.isDeleted.isFalse()
+                )
+                .fetch();
     }
 
 }
