@@ -4,6 +4,7 @@ import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.block.domain.repository.BlockRepository;
 import com.joojoo.api.block.infrastructure.queryDsl.BlockQueryDslRepository;
 import com.joojoo.api.block.infrastructure.rdbms.BlockJpaRepository;
+import com.joojoo.api.tradeLog.presentation.dto.response.chartOverlay.ChartOverlayResponse;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.global.exception.handleException.block.BlockNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -79,6 +80,11 @@ public class BlockRepositoryImpl implements BlockRepository {
     @Override
     public void deleteAllBlockMappings(Long userId) {
         blockQueryDslRepository.deleteAllBlockMappings(userId);
+    }
+
+    @Override
+    public List<ChartOverlayResponse.AnalysisBlockDto> findByUserIdAndTickerId(Long userId, Long tickerId) {
+        return blockQueryDslRepository.findByUserIdAndTickerId(userId, tickerId);
     }
 
 }

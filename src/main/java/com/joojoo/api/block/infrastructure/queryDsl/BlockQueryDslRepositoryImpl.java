@@ -4,8 +4,10 @@ import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.block.domain.model.entity.QBlock;
 import com.joojoo.api.blockTag.domain.model.entity.QBlockTag;
 import com.joojoo.api.blockTicker.domain.model.entity.QBlockTicker;
+import com.joojoo.api.tradeLog.presentation.dto.response.chartOverlay.ChartOverlayResponse;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -72,6 +74,25 @@ public class BlockQueryDslRepositoryImpl implements BlockQueryDslRepository {
                 .delete(block)
                 .where(block.user.id.eq(userId))
                 .execute();
+    }
+
+    @Override
+    public List<ChartOverlayResponse.AnalysisBlockDto> findByUserIdAndTickerId(Long userId, Long tickerId) {
+        return queryFactory
+                .select(Projections.constructor(ChartOverlayResponse.AnalysisBlockDto.class,
+                        block.id,
+                        block.content,
+                        block.createdAt
+                ))
+                .from(block)
+                .distinct()
+                .join(blockTicker).on(blockTicker.block.id.eq(block.id))
+                .where(
+                        block.user.id.eq(userId),
+                        blockTicker.ticker.id.eq(tickerId),
+                        block.isDeleted.isFalse()
+                )
+                .fetch();
     }
 
     /** 부모ID 가 있는 자식 블록 ID만 조회합니다. */

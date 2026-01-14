@@ -4,11 +4,14 @@ import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
 import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
 import com.joojoo.api.tradeLog.domain.repository.TradeLogRepository;
-import com.joojoo.api.tradeLog.infrastructure.queryDsl.tradeLogQueryDslRepository;
 import com.joojoo.api.tradeLog.domain.service.calculate.TradeMetrics;
+import com.joojoo.api.tradeLog.infrastructure.queryDsl.tradeLogQueryDslRepository;
+import com.joojoo.api.tradeLog.presentation.dto.response.chartOverlay.ChartOverlayResponse;
 import com.joojoo.global.exception.handleException.tradeLog.TradeLogNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -45,6 +48,11 @@ public class TradeLogRepositoryImpl implements TradeLogRepository {
     @Override
     public TradeMetrics findAllBuyLogsByTicker(Long userId, Long tickerId) {
         return tradeLogQueryDslRepository.findAllBuyLogsByTicker(userId, tickerId);
+    }
+
+    @Override
+    public List<ChartOverlayResponse.TradeDetailDto> getTradeBuySellRecords(Long userId, Long tickerId) {
+        return tradeLogQueryDslRepository.getTradeBuySellRecords(userId, tickerId);
     }
 
 }

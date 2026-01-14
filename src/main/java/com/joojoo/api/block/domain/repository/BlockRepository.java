@@ -1,6 +1,7 @@
 package com.joojoo.api.block.domain.repository;
 
 import com.joojoo.api.block.domain.model.entity.Block;
+import com.joojoo.api.tradeLog.presentation.dto.response.chartOverlay.ChartOverlayResponse;
 import com.joojoo.api.user.domain.model.entity.User;
 
 import java.util.List;
@@ -32,4 +33,7 @@ public interface BlockRepository {
     Optional<Block> findByIdWithChildren(Long blockId);
 
     void deleteAllBlockMappings(Long userId);
+
+    /** 사용자가 작성한 블럭에 포함된 티커 관련 정보 조회 */
+    List<ChartOverlayResponse.AnalysisBlockDto> findByUserIdAndTickerId(Long userId, Long tickerId);
 }
