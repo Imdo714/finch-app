@@ -15,6 +15,7 @@ import com.joojoo.api.tag.application.in.TagInService;
 import com.joojoo.api.ticker.application.in.TickerInService;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
+import com.joojoo.api.tradeLog.domain.repository.TradeLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +31,7 @@ public class MetadataService implements MetadataUseCase {
 
     private final MetadataAnalyzer metadataAnalyzer;
     private final MetadataPort metadataPort;
-    private final BlockTickerRepository blockTickerRepository;
+    private final TradeLogRepository tradeLogRepository;
     private final BlockTagRepository blockTagRepository;
     private final TagInService tagInService;
     private final TickerInService tickerInService;
@@ -117,6 +118,18 @@ public class MetadataService implements MetadataUseCase {
 //        if (!context.getTickerMap().isEmpty()) {
 //            metadataPort.syncUserTickersToRedis(userId, context.getTickerMap());
 //        }
+    }
+
+    @Override
+    public void processTradeLogUpdateMetadata(TradeLog tradeLog, Long userId, Ticker ticker) {
+        List<BlockTag> oldTags = blockTagRepository.findAllTagsByTradeLogIds(Collections.singletonList(tradeLog.getId()));
+
+        metadataPort.deleteMetadataByTradeLogId(tradeLog.getId(), userId);
+
+        if (!oldTags.isEmpty()) {
+            metadataPort.processRedisTagRemoval(userId, oldTags);
+        }
+        this.processTradeLogMetadata(tradeLog, userId, ticker);
     }
 
 }

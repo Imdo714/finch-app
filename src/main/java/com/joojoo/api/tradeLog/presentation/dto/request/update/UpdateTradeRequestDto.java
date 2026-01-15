@@ -10,6 +10,7 @@ import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @AllArgsConstructor
@@ -34,4 +35,11 @@ public class UpdateTradeRequestDto {
     @PastOrPresent(message = "매매 일시는 미래일 수 없습니다.")
     @JsonFormat(pattern = "yyyy.MM.dd HH:mm")
     private LocalDateTime executedAt;
+
+    public boolean isMetadataRelatedFieldsChanged(UpdateTradeRequestDto dto) {
+        return (memo != null && !memo.trim().isEmpty()) ||
+                (riskFactor != null && !riskFactor.trim().isEmpty()) ||
+                (tradingPlan != null && !tradingPlan.trim().isEmpty());
+    }
+
 }
