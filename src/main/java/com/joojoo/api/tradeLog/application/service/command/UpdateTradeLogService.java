@@ -1,5 +1,6 @@
 package com.joojoo.api.tradeLog.application.service.command;
 
+import com.joojoo.api.metadata.application.port.in.MetadataUseCase;
 import com.joojoo.api.tradeLog.application.port.in.UpdateTradeLogUseCase;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
 import com.joojoo.api.tradeLog.domain.repository.TradeLogRepository;
@@ -14,17 +15,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class UpdateTradeLogService implements UpdateTradeLogUseCase {
 
     private final TradeLogRepository tradeLogRepository;
+    private final MetadataUseCase metadataUseCase;
 
     @Override
     @Transactional
     public void updateTradeLog(Long userId, UpdateTradeRequestDto updateTradeRequestDto) {
         TradeLog tradeLog = tradeLogRepository.findById(updateTradeRequestDto.getTradeLogId());
-
         if (!tradeLog.getUser().getId().equals(userId)) {
             throw new NotTradeLogOwnerException();
         }
 
         tradeLog.update(updateTradeRequestDto);
+        if(updateTradeRequestDto.isMetadataRelatedFieldsChanged(updateTradeRequestDto)){
+            metadataUseCase.processTradeLogUpdateMetadata(tradeLog, userId, tradeLog.getTicker());
+        }
     }
 
 }

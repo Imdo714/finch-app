@@ -12,6 +12,7 @@ import com.joojoo.api.tag.domain.model.entity.Tag;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
-public class MetadataPersistenceAdapter implements MetadataPort { // User 도메인에 있는 어뎁터도 수정해야 함
+public class MetadataPersistenceAdapter implements MetadataPort {
 
     private final BlockTickerRepository blockTickerRepository;
     private final BlockTickerRedisRepository blockTickerRedisRepository;
@@ -88,6 +89,13 @@ public class MetadataPersistenceAdapter implements MetadataPort { // User 도메
     public void deleteMetadataByBlockId(Long blockId) {
         blockTickerRepository.deleteByBlockIds(blockId);
         blockTagRepository.deleteByBlockIds(blockId);
+    }
+
+    @Override
+    @Transactional
+    public void deleteMetadataByTradeLogId(Long tradeLogId, Long userId) {
+        blockTagRepository.deleteByTradeLogId(userId, tradeLogId);
+        blockTickerRepository.deleteByTradeLogId(userId, tradeLogId);
     }
 
     /** Redis Tag Key 생성 로직 */

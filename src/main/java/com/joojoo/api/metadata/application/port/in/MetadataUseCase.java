@@ -15,4 +15,7 @@ public interface MetadataUseCase {
 
     /** TradeLog 타입으로 티커, 태그 찾기 */
     void processTradeLogMetadata(TradeLog save, Long userId, Ticker ticker);
+
+    /** TradeLog 단일 타입으로 티커, 태그 찾기 (수정용) */
+    void processTradeLogUpdateMetadata(TradeLog tradeLog, Long userId, Ticker ticker);
 }

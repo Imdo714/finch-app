@@ -28,4 +28,6 @@ public interface MetadataPort {
     /** BlockId 연관된 BlockTag, BlockTicker 삭제  */
     void deleteMetadataByBlockId(Long blockId);
 
+    /** TradeLog와 연관된 BlockTag, BlockTicker 삭제 */
+    void deleteMetadataByTradeLogId(Long tradeLogId, Long userId);
 }
