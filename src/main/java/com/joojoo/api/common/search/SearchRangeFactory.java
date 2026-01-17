@@ -13,7 +13,7 @@ public class SearchRangeFactory {
     private static final String END_UNICODE = "\uffff";
 
     public SearchRange createSearchRange(String query) {
-        String converted = hangulConverter.jasoConvert(query);
+        String converted = hangulConverter.jasoConvert(query).toUpperCase();
         return buildRange(converted);
     }
 
