@@ -1,9 +1,9 @@
 package com.joojoo.api.ticker.presentation.controller;
 
-import com.joojoo.api.ticker.application.TickerService;
 import com.joojoo.api.common.domain.request.auth.CustomUserDetails;
 import com.joojoo.api.common.domain.response.BaseResponse;
 import com.joojoo.api.common.domain.response.ErrorResponse;
+import com.joojoo.api.ticker.application.TickerService;
 import com.joojoo.api.ticker.application.port.in.CreateTIckerUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -49,7 +49,7 @@ public class TickerController {
 
     @PostMapping("/load-Cache")
     public void dbToRedis(@AuthenticationPrincipal CustomUserDetails user){
-        tickerService.loadTickersToCache(user.getUserId());
+        createTIckerUseCase.loadTickersToCache(user.getUserId());
     }
 
 }
