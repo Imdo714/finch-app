@@ -1,7 +1,8 @@
 package com.joojoo.api.ticker.infrastructure.persistence;
 
-import com.joojoo.api.ticker.application.in.TickerInService;
+import com.joojoo.api.ticker.application.port.in.TickerInService;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
+import com.joojoo.api.ticker.domain.model.enums.MarketType;
 import com.joojoo.api.ticker.domain.repository.TickerRepository;
 import com.joojoo.api.ticker.infrastructure.queryDsl.TickerQueryDslRepository;
 import com.joojoo.api.ticker.infrastructure.rdbms.TickerJpaRepository;
@@ -17,7 +18,8 @@ import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-public class TickerRepositoryImpl implements TickerRepository, TickerInService {
+public class TickerRepositoryImpl implements
+        TickerRepository, TickerInService {
 
     private final TickerJpaRepository tickerJpaRepository;
     private final TickerQueryDslRepository tickerQueryDslRepository;
@@ -54,6 +56,16 @@ public class TickerRepositoryImpl implements TickerRepository, TickerInService {
     @Override
     public boolean existsById(Long tickerId) {
         return tickerJpaRepository.existsById(tickerId);
+    }
+
+    @Override
+    public List<Ticker> findByTickerMarket(MarketType type) {
+        return tickerQueryDslRepository.findByTickerMarket(type);
+    }
+
+    @Override
+    public List<Ticker> findKoreaTickers(List<MarketType> marketTypes) {
+        return tickerQueryDslRepository.findKoreaTickers(marketTypes);
     }
 
     @Override

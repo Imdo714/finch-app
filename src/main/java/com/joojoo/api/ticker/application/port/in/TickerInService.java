@@ -1,4 +1,4 @@
-package com.joojoo.api.ticker.application.in;
+package com.joojoo.api.ticker.application.port.in;
 
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 

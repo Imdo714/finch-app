@@ -5,14 +5,13 @@ import com.joojoo.api.block.presentation.dto.request.metadata.MatchedMetadataDto
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTag.domain.repository.BlockTagRepository;
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
-import com.joojoo.api.blockTicker.domain.repository.BlockTickerRepository;
 import com.joojoo.api.common.domain.enums.TagSourceType;
 import com.joojoo.api.metadata.application.port.in.MetadataUseCase;
 import com.joojoo.api.metadata.application.port.out.MetadataPort;
 import com.joojoo.api.metadata.domain.MetadataContext;
 import com.joojoo.api.metadata.domain.service.MetadataAnalyzer;
 import com.joojoo.api.tag.application.in.TagInService;
-import com.joojoo.api.ticker.application.in.TickerInService;
+import com.joojoo.api.ticker.application.port.in.TickerInService;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
 import com.joojoo.api.tradeLog.domain.repository.TradeLogRepository;

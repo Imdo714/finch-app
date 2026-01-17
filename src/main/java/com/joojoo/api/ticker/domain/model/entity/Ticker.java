@@ -6,7 +6,6 @@ import lombok.*;
 
 import java.time.LocalDate;
 
-@ToString
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -43,8 +42,17 @@ public class Ticker {
         this.listingDate = listingDate;
     }
 
+    public static Ticker create(String symbol, String name, MarketType market, LocalDate listingDate) {
+        return Ticker.builder()
+                .symbol(symbol)
+                .name(name)
+                .market(market)
+                .listingDate(listingDate)
+                .build();
+    }
+
     public void updateInfo(String name, MarketType market, LocalDate listingDate) {
-        this.name = name;
+        if (!this.name.equals(name)) this.name = name;
         this.market = market;
         this.listingDate = listingDate;
     }

@@ -2,7 +2,7 @@ package com.joojoo.api.metadata.domain;
 
 import com.joojoo.api.tag.application.in.TagInService;
 import com.joojoo.api.tag.domain.model.entity.Tag;
-import com.joojoo.api.ticker.application.in.TickerInService;
+import com.joojoo.api.ticker.application.port.in.TickerInService;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import lombok.Getter;
 
