@@ -4,6 +4,7 @@ import com.joojoo.api.ticker.application.TickerService;
 import com.joojoo.api.common.domain.request.auth.CustomUserDetails;
 import com.joojoo.api.common.domain.response.BaseResponse;
 import com.joojoo.api.common.domain.response.ErrorResponse;
+import com.joojoo.api.ticker.application.port.in.CreateTIckerUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Ticker API", description = "주식 마스터 티커 관련 API")
 public class TickerController {
     private final TickerService tickerService;
+    private final CreateTIckerUseCase createTIckerUseCase;
 
     @Operation(summary = "주식 티커 추가 (검색 확인용)", description = "Redis에 새로운 주식 이름과 티커 심볼을 저장합니다.")
     @ApiResponses(value = {

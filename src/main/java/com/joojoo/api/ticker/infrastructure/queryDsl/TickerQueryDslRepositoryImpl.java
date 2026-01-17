@@ -4,6 +4,7 @@ import com.joojoo.api.common.domain.response.detail.count.RelatedBlockDetailCoun
 import com.joojoo.api.blockTicker.domain.model.entity.QBlockTicker;
 import com.joojoo.api.ticker.domain.model.entity.QTicker;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
+import com.joojoo.api.ticker.domain.model.enums.MarketType;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +52,22 @@ public class TickerQueryDslRepositoryImpl implements TickerQueryDslRepository {
                 )
                 .groupBy(ticker.id, ticker.name)
                 .fetchOne();
+    }
+
+    @Override
+    public List<Ticker> findByTickerMarket(MarketType type) {
+        return queryFactory
+                .selectFrom(ticker)
+                .where(ticker.market.in(type))
+                .fetch();
+    }
+
+    @Override
+    public List<Ticker> findKoreaTickers(List<MarketType> marketTypes) {
+        return queryFactory
+                .selectFrom(ticker)
+                .where(ticker.market.in(MarketType.koreaMarkets()))
+                .fetch();
     }
 
 }
