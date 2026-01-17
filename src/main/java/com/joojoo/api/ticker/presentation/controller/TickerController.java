@@ -52,12 +52,4 @@ public class TickerController {
         tickerService.loadTickersToCache(user.getUserId());
     }
 
-    @PostMapping("/nasdaq")
-    public void nasdaqAdd(){
-        createTIckerUseCase.initKoreaTickerData();
-        createTIckerUseCase.initNasdaqTickerData();
-        createTIckerUseCase.initAmexTickerData();
-    }
-
-
 }

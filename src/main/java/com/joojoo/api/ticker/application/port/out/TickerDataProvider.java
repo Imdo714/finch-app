@@ -13,4 +13,7 @@ public interface TickerDataProvider {
 
     /** 아멕스 Ticker 읽어오기 */
     List<TickerDataDto> fetchAmexTickers();
+
+    /** 뉴욕증권 Ticker 읽어오기 */
+    List<TickerDataDto> fetchNyseTickers();
 }

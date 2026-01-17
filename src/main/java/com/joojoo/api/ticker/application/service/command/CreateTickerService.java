@@ -50,6 +50,15 @@ public class CreateTickerService implements CreateTIckerUseCase {
         processSynchronization(externalStocks, existingTickers);
     }
 
+    @Override
+    @Transactional
+    public void initNyseTickerData() {
+        List<TickerDataDto> externalStocks = tickerDataProvider.fetchNyseTickers();
+        List<Ticker> existingTickers = tickerRepository.findByTickerMarket(MarketType.NYSE);
+
+        processSynchronization(externalStocks, existingTickers);
+    }
+
     private void processSynchronization(List<TickerDataDto> externalStocks, List<Ticker> currentTickers) {
         Map<String, Ticker> tickerMap = currentTickers.stream()
                 .collect(Collectors.toMap(Ticker::getSymbol, t -> t));

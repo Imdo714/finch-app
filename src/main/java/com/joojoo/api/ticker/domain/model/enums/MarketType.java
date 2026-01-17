@@ -15,6 +15,7 @@ public enum MarketType {
     KONEX("코넥스"),
     NASDAQ("나스닥"),
     AMEX("아멕스"),
+    NYSE("뉴욕증권"),
     ETC("기타"),
     ;
 

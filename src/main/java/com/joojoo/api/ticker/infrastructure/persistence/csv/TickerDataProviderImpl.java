@@ -21,7 +21,8 @@ public class TickerDataProviderImpl implements TickerDataProvider {
 
     private static final String FILE_PATH = "data/stocks.csv";
     private static final String NASDAQ_FILE_PATH = "data/nasdaq.csv";
-    private static final String AMEX_FILE_PATH = "data/nasdaq.csv";
+    private static final String AMEX_FILE_PATH = "data/amex.csv";
+    private static final String NYSE_FILE_PATH = "data/nyse.csv";
 
     @Override
     public List<TickerDataDto> getTickerCsvData() {
@@ -36,6 +37,11 @@ public class TickerDataProviderImpl implements TickerDataProvider {
     @Override
     public List<TickerDataDto> fetchAmexTickers() {
         return readCsv(AMEX_FILE_PATH, new AmericaTickerStrategy());
+    }
+
+    @Override
+    public List<TickerDataDto> fetchNyseTickers() {
+        return readCsv(NYSE_FILE_PATH, new AmericaTickerStrategy());
     }
 
     private List<TickerDataDto> readCsv(String path, TickerMappingStrategy strategy) {
