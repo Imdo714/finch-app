@@ -9,10 +9,10 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class DefaultTickerStrategy implements TickerMappingStrategy {
+public class KoreaTickerStrategy implements TickerMappingStrategy {
 
     @Override
     public Optional<TickerDataDto> TickerConverter(String[] row) {
-        return TickerDataDto.fromDefaultCsv(row);
+        return TickerDataDto.fromKoreaCsv(row);
     }
 }

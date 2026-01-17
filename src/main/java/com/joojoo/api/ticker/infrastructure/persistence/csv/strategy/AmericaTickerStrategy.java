@@ -9,11 +9,11 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class NasdaqTickerStrategy implements TickerMappingStrategy {
+public class AmericaTickerStrategy implements TickerMappingStrategy {
 
     @Override
     public Optional<TickerDataDto> TickerConverter(String[] row) {
-        return TickerDataDto.fromNasdaqCsv(row);
+        return TickerDataDto.fromAmericaCsv(row);
     }
 
 }

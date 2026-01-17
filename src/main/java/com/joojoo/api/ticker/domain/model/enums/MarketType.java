@@ -14,6 +14,7 @@ public enum MarketType {
     KOSDAQ_GLOBAL("코스닥 글로벌"),
     KONEX("코넥스"),
     NASDAQ("나스닥"),
+    AMEX("아멕스"),
     ETC("기타"),
     ;
 

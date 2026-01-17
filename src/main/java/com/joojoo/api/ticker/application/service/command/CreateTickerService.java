@@ -25,7 +25,7 @@ public class CreateTickerService implements CreateTIckerUseCase {
 
     @Override
     @Transactional
-    public void initTickerData() {
+    public void initKoreaTickerData() {
         List<TickerDataDto> externalStocks = tickerDataProvider.getTickerCsvData();
         List<Ticker> existingTickers = tickerRepository.findKoreaTickers(MarketType.koreaMarkets());
 
@@ -37,6 +37,15 @@ public class CreateTickerService implements CreateTIckerUseCase {
     public void initNasdaqTickerData() {
         List<TickerDataDto> externalStocks = tickerDataProvider.fetchNasdaqTickers();
         List<Ticker> existingTickers = tickerRepository.findByTickerMarket(MarketType.NASDAQ);
+
+        processSynchronization(externalStocks, existingTickers);
+    }
+
+    @Override
+    @Transactional
+    public void initAmexTickerData() {
+        List<TickerDataDto> externalStocks = tickerDataProvider.fetchAmexTickers();
+        List<Ticker> existingTickers = tickerRepository.findByTickerMarket(MarketType.AMEX);
 
         processSynchronization(externalStocks, existingTickers);
     }

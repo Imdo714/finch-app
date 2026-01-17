@@ -54,8 +54,9 @@ public class TickerController {
 
     @PostMapping("/nasdaq")
     public void nasdaqAdd(){
-        createTIckerUseCase.initTickerData();
+        createTIckerUseCase.initKoreaTickerData();
         createTIckerUseCase.initNasdaqTickerData();
+        createTIckerUseCase.initAmexTickerData();
     }
 
 

@@ -34,7 +34,7 @@ public class TickerDataDto {
     }
 
     /** 국내 주식 CSV 매핑 */
-    public static Optional<TickerDataDto> fromDefaultCsv(String[] row) {
+    public static Optional<TickerDataDto> fromKoreaCsv(String[] row) {
         if (row.length < 7 || row[1] == null || row[1].isBlank()) {
             return Optional.empty();
         }
@@ -52,7 +52,7 @@ public class TickerDataDto {
     }
 
     /** 나스닥 CSV 매핑 */
-    public static Optional<TickerDataDto> fromNasdaqCsv(String[] row) {
+    public static Optional<TickerDataDto> fromAmericaCsv(String[] row) {
         if (row.length < 2 || row[0] == null || row[0].isBlank() || row[1] == null || row[1].isBlank()) {
             return Optional.empty();
         }

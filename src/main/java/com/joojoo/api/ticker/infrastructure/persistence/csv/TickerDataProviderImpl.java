@@ -2,8 +2,8 @@ package com.joojoo.api.ticker.infrastructure.persistence.csv;
 
 import com.joojoo.api.ticker.application.port.out.TickerMappingStrategy;
 import com.joojoo.api.ticker.application.port.out.TickerDataProvider;
-import com.joojoo.api.ticker.infrastructure.persistence.csv.strategy.DefaultTickerStrategy;
-import com.joojoo.api.ticker.infrastructure.persistence.csv.strategy.NasdaqTickerStrategy;
+import com.joojoo.api.ticker.infrastructure.persistence.csv.strategy.KoreaTickerStrategy;
+import com.joojoo.api.ticker.infrastructure.persistence.csv.strategy.AmericaTickerStrategy;
 import com.joojoo.api.ticker.presentation.dto.request.TickerDataDto;
 import com.opencsv.CSVReader;
 import lombok.extern.slf4j.Slf4j;
@@ -21,15 +21,21 @@ public class TickerDataProviderImpl implements TickerDataProvider {
 
     private static final String FILE_PATH = "data/stocks.csv";
     private static final String NASDAQ_FILE_PATH = "data/nasdaq.csv";
+    private static final String AMEX_FILE_PATH = "data/nasdaq.csv";
 
     @Override
     public List<TickerDataDto> getTickerCsvData() {
-        return readCsv(FILE_PATH, new DefaultTickerStrategy());
+        return readCsv(FILE_PATH, new KoreaTickerStrategy());
     }
 
     @Override
     public List<TickerDataDto> fetchNasdaqTickers() {
-        return readCsv(NASDAQ_FILE_PATH, new NasdaqTickerStrategy());
+        return readCsv(NASDAQ_FILE_PATH, new AmericaTickerStrategy());
+    }
+
+    @Override
+    public List<TickerDataDto> fetchAmexTickers() {
+        return readCsv(AMEX_FILE_PATH, new AmericaTickerStrategy());
     }
 
     private List<TickerDataDto> readCsv(String path, TickerMappingStrategy strategy) {
