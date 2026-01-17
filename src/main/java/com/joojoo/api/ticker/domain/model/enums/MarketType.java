@@ -38,4 +38,13 @@ public enum MarketType {
     public static List<MarketType> koreaMarkets() {
         return List.of(KOSPI, KOSDAQ, KONEX, KOSDAQ_GLOBAL);
     }
+
+    /** 전체 시장 리스트 반환 */
+    public static List<MarketType> getActiveMarkets() {
+        return List.of(KOSPI, KOSDAQ, KONEX, KOSDAQ_GLOBAL, NASDAQ, NYSE, AMEX);
+    }
+
+    public boolean isKorea() {
+        return List.of(KOSPI, KOSDAQ, KONEX, KOSDAQ_GLOBAL).contains(this);
+    }
 }

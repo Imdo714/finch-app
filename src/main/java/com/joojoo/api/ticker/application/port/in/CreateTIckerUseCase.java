@@ -10,4 +10,7 @@ public interface CreateTIckerUseCase {
     void initAmexTickerData();
 
     void initNyseTickerData();
+
+    /** 운영 DB에 있는 주식을 Redis에 저장 */
+    void loadTickersToCache(Long userId);
 }
