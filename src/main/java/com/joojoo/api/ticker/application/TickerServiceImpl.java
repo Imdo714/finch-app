@@ -2,12 +2,13 @@ package com.joojoo.api.ticker.application;
 
 import com.joojoo.api.common.hangul.HangulConverter;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
+import com.joojoo.api.ticker.domain.model.enums.MarketType;
 import com.joojoo.api.ticker.domain.repository.TickerRedisRepository;
 import com.joojoo.api.ticker.domain.repository.TickerRepository;
+import com.joojoo.api.ticker.domain.service.SearchKeywordMapper;
 import com.joojoo.api.user.domain.model.entity.User;
 import com.joojoo.api.user.domain.repository.UserRepository;
 import com.joojoo.global.exception.handleException.tickers.InvalidTickerOrNameException;
-import com.joojoo.global.exception.handleException.users.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -30,6 +30,7 @@ public class TickerServiceImpl implements TickerService {
     private final TickerRepository tickerRepository;
     private final UserRepository userRepository;
     private final HangulConverter hangulConverter;
+    private final SearchKeywordMapper searchKeywordMapper;
 
     @Override
     public void addStockToRedis(String name, String ticker) {
@@ -44,32 +45,26 @@ public class TickerServiceImpl implements TickerService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void loadTickersToCache(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+        User user = userRepository.getUserById(userId);
         user.validateAdminPermission();
 
-        List<Ticker> allStocks = tickerRepository.findAll();
-        Set<String> tickers = allStocks.stream()
-                .filter(ticker -> StringUtils.hasText(ticker.getName()) && StringUtils.hasText(ticker.getSymbol()))
-                .flatMap(this::generateSearchKeywords)
-                .collect(Collectors.toSet());
+        List<MarketType> targetMarkets = MarketType.getActiveMarkets();
+        for (MarketType market : targetMarkets) {
+            // 시장 별 데이터 조회
+            List<Ticker> stocks = tickerRepository.findByTickerMarket(market);
 
-        if (!tickers.isEmpty()) {
-            tickerRedisRepository.addStocksToRedis(tickers);
+            Set<String> searchIndexes = stocks.stream()
+                    .filter(s -> StringUtils.hasText(s.getName()) && StringUtils.hasText(s.getSymbol()))
+                    .flatMap(searchKeywordMapper::mapToSearchIndex) // Redis에 저장할 내용 생성
+                    .collect(Collectors.toSet());
+
+            if (!searchIndexes.isEmpty()) {
+                tickerRedisRepository.addStocksToRedis(searchIndexes);
+            }
+            log.info("{} 시장 캐시 업데이트 완료: {}건", market, searchIndexes.size());
         }
-        log.info("티커 Cache 업데이트 완료: {}건 처리됨", tickers.size());
-    }
-
-    private Stream<String> generateSearchKeywords(Ticker stock) {
-        String name = stock.getName();
-        String symbol = stock.getSymbol();
-        Long tickerId = stock.getId();
-
-        return Stream.of(
-                hangulConverter.jasoConvert(name) + "*" + name + "*" + symbol + "*" + tickerId,
-                hangulConverter.chosungConvert(name) + "*" + name + "*" + symbol + "*" + tickerId
-        );
     }
 
 }
