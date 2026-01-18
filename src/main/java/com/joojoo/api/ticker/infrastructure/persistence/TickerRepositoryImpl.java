@@ -1,12 +1,12 @@
 package com.joojoo.api.ticker.infrastructure.persistence;
 
+import com.joojoo.api.common.domain.response.detail.count.RelatedBlockDetailCountResponse;
 import com.joojoo.api.ticker.application.port.in.TickerInService;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.ticker.domain.model.enums.MarketType;
 import com.joojoo.api.ticker.domain.repository.TickerRepository;
 import com.joojoo.api.ticker.infrastructure.queryDsl.TickerQueryDslRepository;
 import com.joojoo.api.ticker.infrastructure.rdbms.TickerJpaRepository;
-import com.joojoo.api.common.domain.response.detail.count.RelatedBlockDetailCountResponse;
 import com.joojoo.global.exception.handleException.tickers.TickerNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -70,9 +69,17 @@ public class TickerRepositoryImpl implements
 
     @Override
     @Transactional(readOnly = true)
-    public Map<String, Ticker> getTickerMap(Set<String> names) {
-        if (names.isEmpty()) return Collections.emptyMap();
-        return tickerQueryDslRepository.findAllByTickerNames(names).stream()
-                .collect(Collectors.toMap(Ticker::getName, t -> t));
+    public Map<String, Ticker> getTickerMap(Set<String> identifiers) {
+        if (identifiers.isEmpty()) return Collections.emptyMap();
+
+        List<Ticker> tickers = tickerQueryDslRepository.findAllByTickerNames(identifiers);
+
+        Map<String, Ticker> resultMap = new HashMap<>();
+        for (Ticker t : tickers) {
+            resultMap.put(t.getName(), t);
+            resultMap.put(t.getSymbol(), t);
+        }
+        return resultMap;
     }
+
 }
