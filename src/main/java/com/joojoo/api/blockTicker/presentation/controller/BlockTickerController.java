@@ -83,7 +83,7 @@ public class BlockTickerController {
             )
     })
     @GetMapping("/recent")
-    public BaseResponse<RecentTickersResponse> getRecentTags(
+    public BaseResponse<RecentTickersResponse> getRecentTickers(
             @AuthenticationPrincipal CustomUserDetails user
     ){
         return BaseResponse.ok(getTickerUseCase.getRecentTickers(user.getUserId()));

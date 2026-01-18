@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class RecentTickersResponse {
-    private List<RecentTickersDto> tags;
+    private List<RecentTickersDto> tickers;
 
     public static RecentTickersResponse of(List<RecentTickersDto> tickers) {
         return new RecentTickersResponse(tickers);
