@@ -54,7 +54,7 @@ public class MetadataService implements MetadataUseCase {
         // 도메인 엔티티 생성
         List<BlockTicker> bTickers = metadataAnalyzer.createBlockTickers(analysisMap, context, userId);
         List<BlockTag> bTags = metadataAnalyzer.createBlockTags(analysisMap, context, userId);
-        
+
         // 저장 및 동기화
         metadataPort.saveTickersAndTags(bTickers, bTags);
 

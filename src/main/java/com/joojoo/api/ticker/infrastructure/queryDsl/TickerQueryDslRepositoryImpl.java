@@ -30,7 +30,8 @@ public class TickerQueryDslRepositoryImpl implements TickerQueryDslRepository {
 
         return queryFactory
                 .selectFrom(ticker)
-                .where(ticker.name.in(symbols))
+                .where(ticker.name.in(symbols)
+                        .or(ticker.symbol.in(symbols)))
                 .fetch();
     }
 

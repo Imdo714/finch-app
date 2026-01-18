@@ -4,11 +4,11 @@ import com.joojoo.api.block.domain.model.entity.Block;
 import com.joojoo.api.block.presentation.dto.request.metadata.MatchedMetadataDto;
 import com.joojoo.api.blockTag.domain.model.entity.BlockTag;
 import com.joojoo.api.blockTicker.domain.model.entity.BlockTicker;
+import com.joojoo.api.common.domain.enums.TagSourceType;
+import com.joojoo.api.metadata.domain.MetadataContext;
 import com.joojoo.api.tag.domain.model.entity.Tag;
 import com.joojoo.api.ticker.domain.model.entity.Ticker;
 import com.joojoo.api.tradeLog.domain.model.entity.TradeLog;
-import com.joojoo.api.metadata.domain.MetadataContext;
-import com.joojoo.api.common.domain.enums.TagSourceType;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
