@@ -7,7 +7,7 @@
 |:------:|:------:|:------:|:------:|
 | <img src="https://github.com/user-attachments/assets/c0f0b632-32e1-48d4-9c00-508b5c8cbbb5" alt="김민기" width="150"> | <img src="https://github.com/user-attachments/assets/eab6bb66-811f-4b6a-acb5-5e24a105a7c2" alt="임도현" width="150"/> | <img src="https://github.com/user-attachments/assets/0c444240-c652-4714-8cfa-10ba16b00a19" alt="강민지" width="150"> | <img alt="Image" src="https://github.com/user-attachments/assets/c0f0b632-32e1-48d4-9c00-508b5c8cbbb5" alt="유일송" width="150"> |
 | PM | BE | Mobile | Mobile |
-| [GitHub](https://github.com/LDK1009) | [GitHub](https://github.com/Imdo714) | [GitHub](https://github.com/Meezzi) | [GitHub](https://github.com/ilsong963) |
+|  | [GitHub](https://github.com/Imdo714) | [GitHub](https://github.com/Meezzi) | [GitHub](https://github.com/ilsong963) |
 
 ---
 
